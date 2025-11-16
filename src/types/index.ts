@@ -110,6 +110,10 @@ export const MODULES: Module[] = [
   { id: 'torrent-3', name: 'Torrent III', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
   { id: 'vaux', name: 'Vaux', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
   { id: 'vaux-c2', name: 'Vaux-C2', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
+  { id: 'vaux-c3', name: 'Vaux-C3', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
+  { id: 'xtr', name: 'XTR', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
+  { id: 'xtr-l', name: 'XTR-L', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
+  { id: 'xtr-xl', name: 'XTR-XL', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
 ];
 
 // Gadgets database
