@@ -11,7 +11,7 @@ import ResultDisplay from './components/ResultDisplay';
 import GadgetSelector from './components/GadgetSelector';
 import ConfigManager from './components/ConfigManager';
 import ShipPoolManager from './components/ShipPoolManager';
-import TabNavigation, { TabType } from './components/TabNavigation';
+import TabNavigation, { type TabType } from './components/TabNavigation';
 
 function App() {
   // Load saved state or use defaults
