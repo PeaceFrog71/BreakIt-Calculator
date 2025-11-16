@@ -62,17 +62,14 @@ function App() {
 
       <div className="main-container">
         <div className="left-panel">
-          <ShipSelector
-            selectedShip={selectedShip}
-            onShipChange={handleShipChange}
-          />
+          <RockInput rock={rock} onChange={setRock} />
+
+          <ResultDisplay result={result} rock={rock} />
 
           <GadgetSelector
             gadgets={config.gadgets}
             onChange={(gadgets) => setConfig({ ...config, gadgets })}
           />
-
-          <RockInput rock={rock} onChange={setRock} />
 
           <ConfigManager
             currentShip={selectedShip}
@@ -81,11 +78,12 @@ function App() {
           />
         </div>
 
-        <div className="center-panel">
-          <ResultDisplay result={result} rock={rock} />
-        </div>
-
         <div className="right-panel">
+          <ShipSelector
+            selectedShip={selectedShip}
+            onShipChange={handleShipChange}
+          />
+
           <div className="lasers-container">
             <h2>Laser Configuration</h2>
             {config.lasers.map((laser, index) => (

@@ -24,12 +24,26 @@ export default function ResultDisplay({ result, rock }: ResultDisplayProps) {
     ? Math.min((result.totalLaserPower / result.adjustedLPNeeded) * 100, 100)
     : 0;
 
+  // Calculate rock size category based on mass
+  const getRockSize = () => {
+    if (rock.mass < 1000) return 'Tiny';
+    if (rock.mass < 3000) return 'Small';
+    if (rock.mass < 8000) return 'Medium';
+    if (rock.mass < 15000) return 'Large';
+    return 'Huge';
+  };
+
   return (
     <div className="result-display">
       <div className="rock-display">
-        <div className="rock-icon">
+        <div className={`rock-icon ${getStatusClass()}`}>
           <div className="rock-symbol">⬢</div>
           {rock.name && <div className="rock-name">{rock.name}</div>}
+          <div className="rock-stats-overlay">
+            <div className="rock-stat">Mass: {rock.mass.toFixed(0)}</div>
+            <div className="rock-stat">Size: {getRockSize()}</div>
+            <div className="rock-stat">Res: {rock.resistance.toFixed(1)}%</div>
+          </div>
         </div>
       </div>
 

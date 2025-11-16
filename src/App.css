@@ -58,8 +58,8 @@ body {
 
 .main-container {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: 1.5rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
   padding: 2rem;
   flex: 1;
   max-width: 1800px;
@@ -68,8 +68,7 @@ body {
 }
 
 .left-panel,
-.right-panel,
-.center-panel {
+.right-panel {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
