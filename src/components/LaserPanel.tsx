@@ -7,9 +7,10 @@ interface LaserPanelProps {
   laser: LaserConfiguration;
   selectedShip: Ship;
   onChange: (laser: LaserConfiguration) => void;
+  showMannedToggle?: boolean;
 }
 
-export default function LaserPanel({ laserIndex, laser, selectedShip, onChange }: LaserPanelProps) {
+export default function LaserPanel({ laserIndex, laser, selectedShip, onChange, showMannedToggle }: LaserPanelProps) {
   const handleLaserHeadChange = (headId: string) => {
     const head = LASER_HEADS.find((h) => h.id === headId) || null;
     onChange({ ...laser, laserHead: head });
@@ -34,9 +35,24 @@ export default function LaserPanel({ laserIndex, laser, selectedShip, onChange }
   // Get the number of module slots for the current laser head
   const moduleSlotCount = laser.laserHead?.moduleSlots || 0;
 
+  const handleMannedToggle = () => {
+    onChange({ ...laser, isManned: !laser.isManned });
+  };
+
   return (
     <div className="laser-panel panel">
-      <h3>Laser {laserIndex + 1}</h3>
+      <div className="laser-panel-header">
+        <h3>Laser {laserIndex + 1}</h3>
+        {showMannedToggle && (
+          <button
+            className={`manned-status-button ${laser.isManned !== false ? 'manned' : 'unmanned'}`}
+            onClick={handleMannedToggle}
+            title={laser.isManned !== false ? 'Click to mark as unmanned' : 'Click to mark as manned'}
+          >
+            {laser.isManned !== false ? 'MANNED' : 'UNMANNED'}
+          </button>
+        )}
+      </div>
 
       <div className="form-group">
         <label>Laser Head:</label>

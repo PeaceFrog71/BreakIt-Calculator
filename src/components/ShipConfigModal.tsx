@@ -113,26 +113,11 @@ export default function ShipConfigModal({ isOpen, onClose, onSave, editingShip }
             <h3>Laser Configuration</h3>
             {config.lasers.map((laser, index) => (
               <div key={index} className="laser-config-row">
-                {selectedShip.id === 'mole' && (
-                  <div className="manned-toggle">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={laser.isManned !== false}
-                        onChange={(e) => {
-                          const newLasers = [...config.lasers];
-                          newLasers[index] = { ...laser, isManned: e.target.checked };
-                          setConfig({ ...config, lasers: newLasers });
-                        }}
-                      />
-                      <span>Manned</span>
-                    </label>
-                  </div>
-                )}
                 <LaserPanel
                   laserIndex={index}
                   laser={laser}
                   selectedShip={selectedShip}
+                  showMannedToggle={selectedShip.id === 'mole'}
                   onChange={(updatedLaser: LaserConfiguration) => {
                     const newLasers = [...config.lasers];
                     newLasers[index] = updatedLaser;

@@ -2,6 +2,49 @@
   border-left: 3px solid var(--accent-blue);
 }
 
+.laser-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.laser-panel-header h3 {
+  margin: 0;
+}
+
+.manned-status-button {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.manned-status-button.manned {
+  color: var(--success);
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid var(--success);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+  text-shadow: 0 0 4px rgba(0, 255, 136, 0.6);
+}
+
+.manned-status-button.unmanned {
+  color: var(--text-secondary);
+  background: rgba(168, 181, 199, 0.15);
+  border: 1px solid var(--text-secondary);
+  box-shadow: 0 0 8px rgba(168, 181, 199, 0.3);
+  text-shadow: 0 0 4px rgba(168, 181, 199, 0.5);
+}
+
+.manned-status-button:hover {
+  transform: scale(1.05);
+}
+
 .modules-section {
   margin-top: 1rem;
   padding-top: 1rem;
