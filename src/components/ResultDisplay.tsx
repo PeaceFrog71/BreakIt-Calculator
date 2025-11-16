@@ -69,7 +69,7 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip,
           {!miningGroup && selectedShip && (
             <div className="ships-around-rock">
               <div>
-                {/* Laser beam from ship to rock */}
+                {/* Laser beam from ship to rock - always show for single ship */}
                 <svg
                   className="laser-beam"
                   style={{
@@ -104,14 +104,14 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip,
 
                 {/* Ship icon */}
                 <div
-                  className="ship-icon active clickable"
+                  className="ship-icon active"
                   style={{
                     position: 'absolute',
                     top: '50%',
                     left: 'calc(50% - 120px)',
                     transform: 'translate(-50%, -50%)',
                   }}
-                  title={`${selectedShip.name} (Click to toggle)`}
+                  title={selectedShip.name}
                 >
                   <div className="ship-symbol">{getShipIcon(selectedShip.id)}</div>
                   <div className="ship-label">{selectedShip.name}</div>

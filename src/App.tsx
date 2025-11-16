@@ -1,17 +1,24 @@
-import { useState, useEffect } from 'react';
-import './App.css';
-import type { MiningConfiguration, Ship, Rock, MiningGroup } from './types';
-import { SHIPS, LASER_HEADS } from './types';
-import { createEmptyConfig, calculateBreakability, calculateGroupBreakability } from './utils/calculator';
-import { saveCurrentConfiguration, loadCurrentConfiguration } from './utils/storage';
-import ShipSelector from './components/ShipSelector';
-import LaserPanel from './components/LaserPanel';
-import RockInput from './components/RockInput';
-import ResultDisplay from './components/ResultDisplay';
-import GadgetSelector from './components/GadgetSelector';
-import ConfigManager from './components/ConfigManager';
-import ShipPoolManager from './components/ShipPoolManager';
-import TabNavigation, { type TabType } from './components/TabNavigation';
+import { useState, useEffect } from "react";
+import "./App.css";
+import type { MiningConfiguration, Ship, Rock, MiningGroup } from "./types";
+import { SHIPS, LASER_HEADS } from "./types";
+import {
+  createEmptyConfig,
+  calculateBreakability,
+  calculateGroupBreakability,
+} from "./utils/calculator";
+import {
+  saveCurrentConfiguration,
+  loadCurrentConfiguration,
+} from "./utils/storage";
+import ShipSelector from "./components/ShipSelector";
+import LaserPanel from "./components/LaserPanel";
+import RockInput from "./components/RockInput";
+import ResultDisplay from "./components/ResultDisplay";
+import GadgetSelector from "./components/GadgetSelector";
+import ConfigManager from "./components/ConfigManager";
+import ShipPoolManager from "./components/ShipPoolManager";
+import TabNavigation, { type TabType } from "./components/TabNavigation";
 
 function App() {
   // Load saved state or use defaults
@@ -23,16 +30,16 @@ function App() {
     loadedState?.config || createEmptyConfig(SHIPS[0].laserSlots)
   );
   const [rock, setRock] = useState<Rock>({
-    mass: 8431,
-    resistance: 32,
-    name: 'The Rock',
+    mass: 25000,
+    resistance: 30,
+    name: "The Rock",
   });
   const [miningGroup, setMiningGroup] = useState<MiningGroup>({
     ships: [],
     gadgets: [null, null, null],
   });
   const [useMiningGroup, setUseMiningGroup] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabType>('overview');
+  const [activeTab, setActiveTab] = useState<TabType>("overview");
 
   // Auto-save when config or ship changes
   useEffect(() => {
@@ -49,8 +56,8 @@ function App() {
     const newConfig = createEmptyConfig(ship.laserSlots);
 
     // If GOLEM, automatically set Pitman laser
-    if (ship.id === 'golem') {
-      const pitmanLaser = LASER_HEADS.find((h) => h.id === 'pitman');
+    if (ship.id === "golem") {
+      const pitmanLaser = LASER_HEADS.find((h) => h.id === "pitman");
       if (pitmanLaser) {
         newConfig.lasers[0].laserHead = pitmanLaser;
       }
@@ -59,7 +66,10 @@ function App() {
     setConfig(newConfig);
   };
 
-  const handleLoadConfiguration = (ship: Ship, loadedConfig: MiningConfiguration) => {
+  const handleLoadConfiguration = (
+    ship: Ship,
+    loadedConfig: MiningConfiguration
+  ) => {
     setSelectedShip(ship);
     setConfig(loadedConfig);
   };
@@ -82,7 +92,7 @@ function App() {
 
         <div className="tab-content">
           {/* Overview Tab */}
-          {activeTab === 'overview' && (
+          {activeTab === "overview" && (
             <div className="overview-tab">
               <ResultDisplay
                 result={result}
@@ -95,14 +105,16 @@ function App() {
           )}
 
           {/* Rock Config Tab */}
-          {activeTab === 'rock' && (
+          {activeTab === "rock" && (
             <div className="rock-config-tab">
               <RockInput rock={rock} onChange={setRock} />
 
               {useMiningGroup ? (
                 <GadgetSelector
                   gadgets={miningGroup.gadgets}
-                  onChange={(gadgets) => setMiningGroup({ ...miningGroup, gadgets })}
+                  onChange={(gadgets) =>
+                    setMiningGroup({ ...miningGroup, gadgets })
+                  }
                 />
               ) : (
                 <GadgetSelector
@@ -114,20 +126,18 @@ function App() {
           )}
 
           {/* Mining Config Tab */}
-          {activeTab === 'mining' && (
+          {activeTab === "mining" && (
             <div className="mining-config-tab">
               {/* Mode toggle */}
               <div className="mode-toggle">
                 <button
-                  className={`mode-button ${!useMiningGroup ? 'active' : ''}`}
-                  onClick={() => setUseMiningGroup(false)}
-                >
+                  className={`mode-button ${!useMiningGroup ? "active" : ""}`}
+                  onClick={() => setUseMiningGroup(false)}>
                   Single Ship
                 </button>
                 <button
-                  className={`mode-button ${useMiningGroup ? 'active' : ''}`}
-                  onClick={() => setUseMiningGroup(true)}
-                >
+                  className={`mode-button ${useMiningGroup ? "active" : ""}`}
+                  onClick={() => setUseMiningGroup(true)}>
                   Mining Group
                 </button>
               </div>

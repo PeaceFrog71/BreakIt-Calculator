@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import type { MiningGroup, ShipInstance } from '../types';
 import ShipConfigModal from './ShipConfigModal';
+import ShipPoolLibrary from './ShipPoolLibrary';
+import MiningGroupManager from './MiningGroupManager';
+import { saveShipInstance } from '../utils/storage';
 import './ShipPoolManager.css';
 
 interface ShipPoolManagerProps {
@@ -62,6 +65,35 @@ export default function ShipPoolManager({ miningGroup, onChange }: ShipPoolManag
     onChange({ ...miningGroup, ships: updatedShips });
   };
 
+  const handleSaveShipToLibrary = (ship: ShipInstance) => {
+    const name = prompt('Enter a name for this ship configuration:', ship.name);
+    if (name && name.trim()) {
+      saveShipInstance(name, ship);
+      alert(`Ship "${name}" saved to library!`);
+    }
+  };
+
+  const handleLoadShipFromLibrary = (shipInstance: ShipInstance) => {
+    if (miningGroup.ships.length >= 4) {
+      alert('Maximum of 4 ships allowed in mining group');
+      return;
+    }
+
+    // Assign position
+    const positions = [180, 0, 225, 315];
+    const usedPositions = miningGroup.ships.map(s => s.position);
+    const availablePosition = positions.find(pos => !usedPositions.includes(pos)) || 0;
+
+    shipInstance.position = availablePosition;
+    shipInstance.isActive = true;
+
+    onChange({ ...miningGroup, ships: [...miningGroup.ships, shipInstance] });
+  };
+
+  const handleLoadMiningGroup = (loadedGroup: MiningGroup) => {
+    onChange(loadedGroup);
+  };
+
   return (
     <div className="ship-pool-manager">
       <div className="ship-pool-header">
@@ -105,6 +137,13 @@ export default function ShipPoolManager({ miningGroup, onChange }: ShipPoolManag
                       Edit
                     </button>
                     <button
+                      className="save-library-button"
+                      onClick={() => handleSaveShipToLibrary(ship)}
+                      title="Save to Ship Library"
+                    >
+                      💾
+                    </button>
+                    <button
                       className="remove-button"
                       onClick={() => handleRemoveShip(ship.id)}
                       title="Remove ship from group"
@@ -138,6 +177,13 @@ export default function ShipPoolManager({ miningGroup, onChange }: ShipPoolManag
         onSave={handleSaveShip}
         editingShip={editingShip}
       />
+
+      <MiningGroupManager
+        currentMiningGroup={miningGroup}
+        onLoad={handleLoadMiningGroup}
+      />
+
+      <ShipPoolLibrary onLoadShip={handleLoadShipFromLibrary} />
     </div>
   );
 }

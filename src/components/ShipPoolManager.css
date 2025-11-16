@@ -136,6 +136,7 @@
 }
 
 .edit-button,
+.save-library-button,
 .remove-button {
   background: var(--bg-secondary);
   color: var(--text-secondary);
@@ -151,6 +152,17 @@
   background: var(--accent);
   color: var(--text-primary);
   border-color: var(--accent);
+}
+
+.save-library-button {
+  padding: 0.2rem 0.6rem;
+}
+
+.save-library-button:hover {
+  background: var(--accent-cyan);
+  color: var(--text-primary);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
 }
 
 .remove-button {

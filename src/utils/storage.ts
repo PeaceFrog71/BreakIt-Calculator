@@ -1,13 +1,31 @@
-import type { MiningConfiguration, Ship } from '../types';
+import type { MiningConfiguration, Ship, MiningGroup, ShipInstance } from '../types';
 
 const STORAGE_KEY = 'rock-breaker-configs';
 const CURRENT_CONFIG_KEY = 'rock-breaker-current';
+const MINING_GROUPS_KEY = 'rock-breaker-mining-groups';
+const SHIP_POOL_KEY = 'rock-breaker-ship-pool';
 
 export interface SavedConfiguration {
   id: string;
   name: string;
   ship: Ship;
   config: MiningConfiguration;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface SavedMiningGroup {
+  id: string;
+  name: string;
+  miningGroup: MiningGroup;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface SavedShipInstance {
+  id: string;
+  name: string;
+  shipInstance: ShipInstance;
   createdAt: number;
   updatedAt: number;
 }
@@ -166,4 +184,164 @@ export function importConfiguration(file: File): Promise<SavedConfiguration> {
     reader.onerror = () => reject(new Error('Failed to read file'));
     reader.readAsText(file);
   });
+}
+
+// ===== MINING GROUP STORAGE =====
+
+/**
+ * Get all saved mining groups
+ */
+export function getSavedMiningGroups(): SavedMiningGroup[] {
+  try {
+    const data = localStorage.getItem(MINING_GROUPS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Error loading saved mining groups:', error);
+    return [];
+  }
+}
+
+/**
+ * Save a new mining group
+ */
+export function saveMiningGroup(name: string, miningGroup: MiningGroup): SavedMiningGroup {
+  const groups = getSavedMiningGroups();
+
+  const newGroup: SavedMiningGroup = {
+    id: Date.now().toString(),
+    name,
+    miningGroup,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  };
+
+  groups.push(newGroup);
+  localStorage.setItem(MINING_GROUPS_KEY, JSON.stringify(groups));
+
+  return newGroup;
+}
+
+/**
+ * Update an existing mining group
+ */
+export function updateMiningGroup(
+  id: string,
+  name: string,
+  miningGroup: MiningGroup
+): SavedMiningGroup | null {
+  const groups = getSavedMiningGroups();
+  const index = groups.findIndex((g) => g.id === id);
+
+  if (index === -1) return null;
+
+  groups[index] = {
+    ...groups[index],
+    name,
+    miningGroup,
+    updatedAt: Date.now(),
+  };
+
+  localStorage.setItem(MINING_GROUPS_KEY, JSON.stringify(groups));
+  return groups[index];
+}
+
+/**
+ * Delete a mining group
+ */
+export function deleteMiningGroup(id: string): boolean {
+  const groups = getSavedMiningGroups();
+  const filtered = groups.filter((g) => g.id !== id);
+
+  if (filtered.length === groups.length) return false;
+
+  localStorage.setItem(MINING_GROUPS_KEY, JSON.stringify(filtered));
+  return true;
+}
+
+/**
+ * Load a mining group by ID
+ */
+export function loadMiningGroup(id: string): SavedMiningGroup | null {
+  const groups = getSavedMiningGroups();
+  return groups.find((g) => g.id === id) || null;
+}
+
+// ===== SHIP POOL STORAGE =====
+
+/**
+ * Get all saved ship instances
+ */
+export function getSavedShipInstances(): SavedShipInstance[] {
+  try {
+    const data = localStorage.getItem(SHIP_POOL_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Error loading saved ship instances:', error);
+    return [];
+  }
+}
+
+/**
+ * Save a new ship instance
+ */
+export function saveShipInstance(name: string, shipInstance: ShipInstance): SavedShipInstance {
+  const ships = getSavedShipInstances();
+
+  const newShip: SavedShipInstance = {
+    id: Date.now().toString(),
+    name,
+    shipInstance,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  };
+
+  ships.push(newShip);
+  localStorage.setItem(SHIP_POOL_KEY, JSON.stringify(ships));
+
+  return newShip;
+}
+
+/**
+ * Update an existing ship instance
+ */
+export function updateShipInstance(
+  id: string,
+  name: string,
+  shipInstance: ShipInstance
+): SavedShipInstance | null {
+  const ships = getSavedShipInstances();
+  const index = ships.findIndex((s) => s.id === id);
+
+  if (index === -1) return null;
+
+  ships[index] = {
+    ...ships[index],
+    name,
+    shipInstance,
+    updatedAt: Date.now(),
+  };
+
+  localStorage.setItem(SHIP_POOL_KEY, JSON.stringify(ships));
+  return ships[index];
+}
+
+/**
+ * Delete a ship instance
+ */
+export function deleteShipInstance(id: string): boolean {
+  const ships = getSavedShipInstances();
+  const filtered = ships.filter((s) => s.id !== id);
+
+  if (filtered.length === ships.length) return false;
+
+  localStorage.setItem(SHIP_POOL_KEY, JSON.stringify(filtered));
+  return true;
+}
+
+/**
+ * Load a ship instance by ID
+ */
+export function loadShipInstance(id: string): SavedShipInstance | null {
+  const ships = getSavedShipInstances();
+  return ships.find((s) => s.id === id) || null;
 }
