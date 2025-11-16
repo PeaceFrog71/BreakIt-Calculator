@@ -85,12 +85,30 @@
   box-shadow: 0 2px 8px rgba(0, 170, 255, 0.2);
 }
 
+.status-indicator {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  margin-left: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .status-indicator.on {
   color: var(--success);
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid var(--success);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+  text-shadow: 0 0 4px rgba(0, 255, 136, 0.6);
 }
 
 .status-indicator.off {
   color: var(--danger);
+  background: rgba(255, 51, 102, 0.15);
+  border: 1px solid var(--danger);
+  box-shadow: 0 0 8px rgba(255, 51, 102, 0.4);
+  text-shadow: 0 0 4px rgba(255, 51, 102, 0.6);
 }
 
 .ship-card-header {

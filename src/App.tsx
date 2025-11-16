@@ -64,6 +64,13 @@ function App() {
     setConfig(loadedConfig);
   };
 
+  const handleToggleShip = (shipId: string) => {
+    const updatedShips = miningGroup.ships.map((s) =>
+      s.id === shipId ? { ...s, isActive: !s.isActive } : s
+    );
+    setMiningGroup({ ...miningGroup, ships: updatedShips });
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -82,6 +89,7 @@ function App() {
                 rock={rock}
                 miningGroup={useMiningGroup ? miningGroup : undefined}
                 selectedShip={!useMiningGroup ? selectedShip : undefined}
+                onToggleShip={useMiningGroup ? handleToggleShip : undefined}
               />
             </div>
           )}

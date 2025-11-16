@@ -7,13 +7,14 @@ interface ResultDisplayProps {
   result: CalculationResult;
   rock: Rock;
   miningGroup?: MiningGroup;
+  onToggleShip?: (shipId: string) => void;
 }
 
 interface SingleShipDisplayProps {
   selectedShip?: { id: string; name: string };
 }
 
-export default function ResultDisplay({ result, rock, miningGroup, selectedShip }: ResultDisplayProps & SingleShipDisplayProps) {
+export default function ResultDisplay({ result, rock, miningGroup, selectedShip, onToggleShip }: ResultDisplayProps & SingleShipDisplayProps) {
   const getStatusClass = () => {
     if (!result.canBreak) return 'cannot-break';
     if (result.powerMarginPercent < 20) return 'marginal';
@@ -103,14 +104,14 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip 
 
                 {/* Ship icon */}
                 <div
-                  className="ship-icon active"
+                  className="ship-icon active clickable"
                   style={{
                     position: 'absolute',
                     top: '50%',
                     left: 'calc(50% - 120px)',
                     transform: 'translate(-50%, -50%)',
                   }}
-                  title={selectedShip.name}
+                  title={`${selectedShip.name} (Click to toggle)`}
                 >
                   <div className="ship-symbol">{getShipIcon(selectedShip.id)}</div>
                   <div className="ship-label">{selectedShip.name}</div>
@@ -168,14 +169,15 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip 
 
                     {/* Ship icon */}
                     <div
-                      className={`ship-icon ${isActive ? 'active' : 'inactive'}`}
+                      className={`ship-icon ${isActive ? 'active' : 'inactive'} clickable`}
                       style={{
                         position: 'absolute',
                         top: `calc(50% + ${y}px)`,
                         left: `calc(50% + ${x}px)`,
                         transform: 'translate(-50%, -50%)',
                       }}
-                      title={`${shipInstance.name} (${shipInstance.ship.name}) - ${isActive ? 'ACTIVE' : 'INACTIVE'}`}
+                      onClick={() => onToggleShip && onToggleShip(shipInstance.id)}
+                      title={`${shipInstance.name} (${shipInstance.ship.name}) - ${isActive ? 'ACTIVE' : 'INACTIVE'} (Click to toggle)`}
                     >
                       <div className="ship-symbol">{getShipIcon(shipInstance.ship.id)}</div>
                       <div className="ship-label">{shipInstance.name}</div>

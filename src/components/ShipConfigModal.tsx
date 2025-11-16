@@ -50,6 +50,7 @@ export default function ShipConfigModal({ isOpen, onClose, onSave, editingShip }
       name: shipName,
       config: config,
       position: editingShip?.position,
+      isActive: editingShip?.isActive !== undefined ? editingShip.isActive : true,
     };
 
     onSave(shipInstance);
