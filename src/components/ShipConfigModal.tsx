@@ -17,10 +17,13 @@ export default function ShipConfigModal({ isOpen, onClose, onSave, editingShip }
     editingShip?.ship || SHIPS[0]
   );
   const [shipName, setShipName] = useState<string>(
-    editingShip?.name || `${SHIPS[0].name} 1`
+    editingShip?.name || SHIPS[0].name
   );
   const [config, setConfig] = useState<MiningConfiguration>(
     editingShip?.config || createEmptyConfig(SHIPS[0].laserSlots)
+  );
+  const [isNameCustomized, setIsNameCustomized] = useState<boolean>(
+    editingShip ? editingShip.name !== editingShip.ship.name : false
   );
 
   if (!isOpen) return null;
@@ -30,6 +33,12 @@ export default function ShipConfigModal({ isOpen, onClose, onSave, editingShip }
     if (!ship) return;
 
     setSelectedShip(ship);
+
+    // Only update ship name if user hasn't customized it
+    if (!isNameCustomized) {
+      setShipName(ship.name);
+    }
+
     const newConfig = createEmptyConfig(ship.laserSlots);
 
     // If GOLEM, automatically set Pitman laser
@@ -41,6 +50,12 @@ export default function ShipConfigModal({ isOpen, onClose, onSave, editingShip }
     }
 
     setConfig(newConfig);
+  };
+
+  const handleNameChange = (newName: string) => {
+    setShipName(newName);
+    // Mark as customized if user changes name to something other than ship type
+    setIsNameCustomized(newName !== selectedShip.name);
   };
 
   const handleSave = () => {
@@ -62,11 +77,11 @@ export default function ShipConfigModal({ isOpen, onClose, onSave, editingShip }
   };
 
   return (
-    <div className="modal-overlay" onClick={handleCancel}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay">
+      <div className="modal-content">
         <div className="modal-header">
           <h2>{editingShip ? 'Edit Ship Configuration' : 'Add Ship to Mining Group'}</h2>
-          <button className="close-button" onClick={handleCancel}>×</button>
+          <button className="close-button" onClick={handleCancel} title="Close">×</button>
         </div>
 
         <div className="modal-body">
@@ -75,7 +90,7 @@ export default function ShipConfigModal({ isOpen, onClose, onSave, editingShip }
             <input
               type="text"
               value={shipName}
-              onChange={(e) => setShipName(e.target.value)}
+              onChange={(e) => handleNameChange(e.target.value)}
               placeholder="Enter ship name..."
             />
           </div>
