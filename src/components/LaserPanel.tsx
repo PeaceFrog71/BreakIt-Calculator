@@ -1,4 +1,4 @@
-import type { LaserConfiguration, LaserHead, Module } from '../types';
+import type { LaserConfiguration } from '../types';
 import { LASER_HEADS, MODULES } from '../types';
 import './LaserPanel.css';
 
