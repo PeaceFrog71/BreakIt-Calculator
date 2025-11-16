@@ -26,10 +26,10 @@ export default function LaserPanel({ laserIndex, laser, selectedShip, onChange }
   const isGolem = selectedShip.id === 'golem';
   const pitmanLaser = LASER_HEADS.find((h) => h.id === 'pitman');
 
-  // Determine which laser heads to show
+  // Determine which laser heads to show based on ship's max laser size
   const availableLaserHeads = isGolem
     ? LASER_HEADS.filter((h) => h.id === 'pitman')
-    : LASER_HEADS;
+    : LASER_HEADS.filter((h) => h.size <= selectedShip.maxLaserSize);
 
   // Get the number of module slots for the current laser head
   const moduleSlotCount = laser.laserHead?.moduleSlots || 0;
