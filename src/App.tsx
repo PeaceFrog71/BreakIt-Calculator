@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import type { MiningConfiguration, Ship, Rock } from './types';
-import { SHIPS } from './types';
+import { SHIPS, LASER_HEADS } from './types';
 import { createEmptyConfig, calculateBreakability } from './utils/calculator';
 import { saveCurrentConfiguration, loadCurrentConfiguration } from './utils/storage';
 import ShipSelector from './components/ShipSelector';
@@ -35,7 +35,17 @@ function App() {
 
   const handleShipChange = (ship: Ship) => {
     setSelectedShip(ship);
-    setConfig(createEmptyConfig(ship.laserSlots));
+    const newConfig = createEmptyConfig(ship.laserSlots);
+
+    // If GOLEM, automatically set Pitman laser
+    if (ship.id === 'golem') {
+      const pitmanLaser = LASER_HEADS.find((h) => h.id === 'pitman');
+      if (pitmanLaser) {
+        newConfig.lasers[0].laserHead = pitmanLaser;
+      }
+    }
+
+    setConfig(newConfig);
   };
 
   const handleLoadConfiguration = (ship: Ship, loadedConfig: MiningConfiguration) => {
@@ -83,6 +93,7 @@ function App() {
                 key={index}
                 laserIndex={index}
                 laser={laser}
+                selectedShip={selectedShip}
                 onChange={(updatedLaser) => {
                   const newLasers = [...config.lasers];
                   newLasers[index] = updatedLaser;

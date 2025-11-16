@@ -1,14 +1,15 @@
-import type { LaserConfiguration } from '../types';
+import type { LaserConfiguration, Ship } from '../types';
 import { LASER_HEADS, MODULES } from '../types';
 import './LaserPanel.css';
 
 interface LaserPanelProps {
   laserIndex: number;
   laser: LaserConfiguration;
+  selectedShip: Ship;
   onChange: (laser: LaserConfiguration) => void;
 }
 
-export default function LaserPanel({ laserIndex, laser, onChange }: LaserPanelProps) {
+export default function LaserPanel({ laserIndex, laser, selectedShip, onChange }: LaserPanelProps) {
   const handleLaserHeadChange = (headId: string) => {
     const head = LASER_HEADS.find((h) => h.id === headId) || null;
     onChange({ ...laser, laserHead: head });
@@ -21,27 +22,53 @@ export default function LaserPanel({ laserIndex, laser, onChange }: LaserPanelPr
     onChange({ ...laser, modules: newModules });
   };
 
+  // Check if GOLEM ship - if so, lock to Pitman laser
+  const isGolem = selectedShip.id === 'golem';
+  const pitmanLaser = LASER_HEADS.find((h) => h.id === 'pitman');
+
+  // Determine which laser heads to show
+  const availableLaserHeads = isGolem
+    ? LASER_HEADS.filter((h) => h.id === 'pitman')
+    : LASER_HEADS;
+
+  // Get the number of module slots for the current laser head
+  const moduleSlotCount = laser.laserHead?.moduleSlots || 0;
+
   return (
     <div className="laser-panel panel">
       <h3>Laser {laserIndex + 1}</h3>
 
       <div className="form-group">
         <label>Laser Head:</label>
-        <select
-          value={laser.laserHead?.id || 'none'}
-          onChange={(e) => handleLaserHeadChange(e.target.value)}
-        >
-          {LASER_HEADS.map((head) => (
-            <option key={head.id} value={head.id}>
-              {head.name} {head.maxPower > 0 ? `(${head.maxPower} power)` : ''}
-            </option>
-          ))}
-        </select>
+        {isGolem ? (
+          <div className="locked-laser">
+            <input
+              type="text"
+              value={`${pitmanLaser?.name} (Fixed - ${pitmanLaser?.maxPower} power)`}
+              disabled
+              style={{ width: '100%', opacity: 0.7, cursor: 'not-allowed' }}
+            />
+            <small style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+              GOLEM has a fixed Pitman laser
+            </small>
+          </div>
+        ) : (
+          <select
+            value={laser.laserHead?.id || 'none'}
+            onChange={(e) => handleLaserHeadChange(e.target.value)}
+          >
+            {availableLaserHeads.map((head) => (
+              <option key={head.id} value={head.id}>
+                {head.name} {head.maxPower > 0 ? `(${head.maxPower} power)` : ''}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       <div className="modules-section">
-        <label>Modules:</label>
-        {[0, 1, 2].map((moduleIndex) => (
+        <label>Modules ({moduleSlotCount} slots):</label>
+        {Array.from({ length: moduleSlotCount }).map((_, moduleIndex) => (
           <div key={moduleIndex} className="form-group">
             <select
               value={laser.modules[moduleIndex]?.id || 'none'}

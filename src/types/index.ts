@@ -6,6 +6,7 @@ export interface LaserHead {
   maxPower: number; // Base power output
   resistModifier: number; // Effect on rock resistance (0.7 = reduces by 30%)
   size: 1 | 2; // Size 1 or Size 2
+  moduleSlots: number; // Number of module slots (Size 1 = 3, Size 2 = 2)
 }
 
 export interface Module {
@@ -69,20 +70,20 @@ export const SHIPS: Ship[] = [
 
 // Laser heads database
 export const LASER_HEADS: LaserHead[] = [
-  { id: 'none', name: '---', maxPower: 0, resistModifier: 1, size: 1 },
-  { id: 'pitman', name: 'Pitman', maxPower: 3150, resistModifier: 1.25, size: 1 },
-  { id: 'arbor-mh1', name: 'Arbor MH1', maxPower: 1890, resistModifier: 1.25, size: 1 },
-  { id: 'arbor-mh2', name: 'Arbor MH2', maxPower: 2400, resistModifier: 1.25, size: 2 },
-  { id: 'helix-1', name: 'Helix I', maxPower: 3150, resistModifier: 0.7, size: 1 },
-  { id: 'helix-2', name: 'Helix II', maxPower: 4080, resistModifier: 0.7, size: 2 },
-  { id: 'hofstede-s1', name: 'Hofstede-S1', maxPower: 2100, resistModifier: 0.7, size: 1 },
-  { id: 'hofstede-s2', name: 'Hofstede-S2', maxPower: 3360, resistModifier: 0.7, size: 2 },
-  { id: 'impact-1', name: 'Impact I', maxPower: 2100, resistModifier: 1.1, size: 1 },
-  { id: 'impact-2', name: 'Impact II', maxPower: 3360, resistModifier: 1.1, size: 2 },
-  { id: 'klein-s1', name: 'Klein-S1', maxPower: 2220, resistModifier: 0.55, size: 1 },
-  { id: 'klein-s2', name: 'Klein-S2', maxPower: 3600, resistModifier: 0.55, size: 2 },
-  { id: 'lancet-mh1', name: 'Lancet MH1', maxPower: 2520, resistModifier: 1.0, size: 1 },
-  { id: 'lancet-mh2', name: 'Lancet MH2', maxPower: 3600, resistModifier: 1.0, size: 2 },
+  { id: 'none', name: '---', maxPower: 0, resistModifier: 1, size: 1, moduleSlots: 0 },
+  { id: 'pitman', name: 'Pitman', maxPower: 3150, resistModifier: 1.25, size: 1, moduleSlots: 3 },
+  { id: 'arbor-mh1', name: 'Arbor MH1', maxPower: 1890, resistModifier: 1.25, size: 1, moduleSlots: 3 },
+  { id: 'arbor-mh2', name: 'Arbor MH2', maxPower: 2400, resistModifier: 1.25, size: 2, moduleSlots: 2 },
+  { id: 'helix-1', name: 'Helix I', maxPower: 3150, resistModifier: 0.7, size: 1, moduleSlots: 3 },
+  { id: 'helix-2', name: 'Helix II', maxPower: 4080, resistModifier: 0.7, size: 2, moduleSlots: 2 },
+  { id: 'hofstede-s1', name: 'Hofstede-S1', maxPower: 2100, resistModifier: 0.7, size: 1, moduleSlots: 3 },
+  { id: 'hofstede-s2', name: 'Hofstede-S2', maxPower: 3360, resistModifier: 0.7, size: 2, moduleSlots: 2 },
+  { id: 'impact-1', name: 'Impact I', maxPower: 2100, resistModifier: 1.1, size: 1, moduleSlots: 3 },
+  { id: 'impact-2', name: 'Impact II', maxPower: 3360, resistModifier: 1.1, size: 2, moduleSlots: 2 },
+  { id: 'klein-s1', name: 'Klein-S1', maxPower: 2220, resistModifier: 0.55, size: 1, moduleSlots: 3 },
+  { id: 'klein-s2', name: 'Klein-S2', maxPower: 3600, resistModifier: 0.55, size: 2, moduleSlots: 2 },
+  { id: 'lancet-mh1', name: 'Lancet MH1', maxPower: 2520, resistModifier: 1.0, size: 1, moduleSlots: 3 },
+  { id: 'lancet-mh2', name: 'Lancet MH2', maxPower: 3600, resistModifier: 1.0, size: 2, moduleSlots: 2 },
 ];
 
 // Modules database
