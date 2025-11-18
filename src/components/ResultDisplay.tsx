@@ -4,6 +4,7 @@ import { getGadgetSymbol } from '../types';
 import './ResultDisplay.css';
 import golemShipImage from '../assets/mining_ship_golem_pixel_120x48.png';
 import moleShipImage from '../assets/mining_ship_mole_pixel_120x48_transparent.png';
+import prospectorShipImage from '../assets/mining_ship_prospector_pixel_120x48.png';
 
 interface ResultDisplayProps {
   result: CalculationResult;
@@ -129,6 +130,13 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip,
                       className="ship-image"
                       style={{ width: '90px', height: '36px', imageRendering: 'pixelated', transform: 'scaleX(-1)' }}
                     />
+                  ) : selectedShip.id === 'prospector' ? (
+                    <img
+                      src={prospectorShipImage}
+                      alt="Prospector"
+                      className="ship-image"
+                      style={{ width: '90px', height: '36px', imageRendering: 'pixelated', transform: 'scaleX(-1)' }}
+                    />
                   ) : (
                     <div className="ship-symbol">{getShipIcon(selectedShip.id)}</div>
                   )}
@@ -213,6 +221,18 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip,
                         <img
                           src={moleShipImage}
                           alt="MOLE"
+                          className="ship-image"
+                          style={{
+                            width: '90px',
+                            height: '36px',
+                            imageRendering: 'pixelated',
+                            transform: x < 0 ? 'scaleX(-1)' : 'none'
+                          }}
+                        />
+                      ) : shipInstance.ship.id === 'prospector' ? (
+                        <img
+                          src={prospectorShipImage}
+                          alt="Prospector"
                           className="ship-image"
                           style={{
                             width: '90px',
