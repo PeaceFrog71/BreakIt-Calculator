@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import type { MiningGroup, ShipInstance } from '../types';
+import { SHIPS, LASER_HEADS } from '../types';
 import ShipConfigModal from './ShipConfigModal';
 import ShipPoolLibrary from './ShipPoolLibrary';
 import MiningGroupManager from './MiningGroupManager';
 import { saveShipInstance } from '../utils/storage';
+import { createEmptyConfig } from '../utils/calculator';
 import './ShipPoolManager.css';
 
 interface ShipPoolManagerProps {
@@ -16,8 +18,30 @@ export default function ShipPoolManager({ miningGroup, onChange }: ShipPoolManag
   const [editingShip, setEditingShip] = useState<ShipInstance | undefined>(undefined);
 
   const handleAddShip = () => {
-    setEditingShip(undefined);
-    setIsModalOpen(true);
+    // Check max ships limit
+    if (miningGroup.ships.length >= 4) {
+      alert('Maximum of 4 ships allowed in mining group');
+      return;
+    }
+
+    // Create default Prospector with Arbor MH1
+    const prospectorShip = SHIPS.find(s => s.id === 'prospector');
+    const arborMH1 = LASER_HEADS.find(h => h.id === 'arbor-mh1');
+
+    if (!prospectorShip || !arborMH1) return;
+
+    const config = createEmptyConfig(prospectorShip.laserSlots);
+    config.lasers[0].laserHead = arborMH1;
+
+    const newShip: ShipInstance = {
+      id: `ship-${Date.now()}`,
+      ship: prospectorShip,
+      name: `${prospectorShip.name} ${miningGroup.ships.length + 1}`,
+      config: config,
+      isActive: true,
+    };
+
+    onChange({ ...miningGroup, ships: [...miningGroup.ships, newShip] });
   };
 
   const handleEditShip = (ship: ShipInstance) => {
