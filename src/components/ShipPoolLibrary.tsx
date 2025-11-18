@@ -29,7 +29,6 @@ export default function ShipPoolLibrary({ onLoadShip }: ShipPoolLibraryProps) {
       const newShipInstance: ShipInstance = {
         ...ship.shipInstance,
         id: `ship-${Date.now()}`,
-        position: undefined, // Will be assigned when added to group
       };
       onLoadShip(newShipInstance);
       alert(`Loaded ship "${ship.name}"`);
@@ -53,7 +52,6 @@ export default function ShipPoolLibrary({ onLoadShip }: ShipPoolLibraryProps) {
         ship: config.ship,
         config: config.config,
         isActive: true,
-        position: undefined, // Will be assigned when added to group
       };
       onLoadShip(newShipInstance);
       alert(`Loaded ship "${config.name}" from Single Ship Library`);

@@ -169,8 +169,10 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip,
           {/* Multiple ships positioned around the rock */}
           {miningGroup && miningGroup.ships.length > 0 && (
             <div className="ships-around-rock">
-              {miningGroup.ships.map((shipInstance) => {
-                const angle = shipInstance.position || 0;
+              {miningGroup.ships.map((shipInstance, index) => {
+                // Positions: 60°, 120°, 240°, 300° (top is 0°, clockwise)
+                const positions = [60, 120, 240, 300];
+                const angle = positions[index] || 60;
                 const asteroidSize = getAsteroidSize();
                 // Position ships at 110% of asteroid radius
                 const asteroidRadius = asteroidSize.width / 2;

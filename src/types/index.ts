@@ -68,7 +68,6 @@ export interface ShipInstance {
   ship: Ship; // The ship type (Prospector, MOLE, GOLEM)
   name: string; // Custom name for this ship instance (e.g., "Ship 1", "Mining Lead")
   config: MiningConfiguration; // Laser configuration for this ship (no gadgets)
-  position?: number; // Position around the rock (0, 45, 90, 135, 180, 225, 270, 315 degrees)
   isActive?: boolean; // Whether this ship is currently active (laser on)
 }
 
