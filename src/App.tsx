@@ -55,11 +55,26 @@ function App() {
     setSelectedShip(ship);
     const newConfig = createEmptyConfig(ship.laserSlots);
 
-    // If GOLEM, automatically set Pitman laser
+    // Set default laser heads based on ship type
     if (ship.id === "golem") {
+      // GOLEM: Fixed Pitman laser
       const pitmanLaser = LASER_HEADS.find((h) => h.id === "pitman");
       if (pitmanLaser) {
         newConfig.lasers[0].laserHead = pitmanLaser;
+      }
+    } else if (ship.id === "prospector") {
+      // Prospector: Default to first S1 laser (Arbor MH1)
+      const defaultS1Laser = LASER_HEADS.find((h) => h.size === 1 && h.id !== 'none' && h.id !== 'pitman');
+      if (defaultS1Laser) {
+        newConfig.lasers[0].laserHead = defaultS1Laser;
+      }
+    } else if (ship.id === "mole") {
+      // MOLE: Default all 3 lasers to first S2 laser (Arbor MH2)
+      const defaultS2Laser = LASER_HEADS.find((h) => h.size === 2 && h.id !== 'none');
+      if (defaultS2Laser) {
+        newConfig.lasers.forEach((laser) => {
+          laser.laserHead = defaultS2Laser;
+        });
       }
     }
 

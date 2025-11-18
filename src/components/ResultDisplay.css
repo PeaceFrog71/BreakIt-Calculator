@@ -102,7 +102,7 @@
 }
 
 .laser-beam line {
-  filter: drop-shadow(0 0 3px var(--accent));
+  filter: drop-shadow(0 0 4px var(--warning)) drop-shadow(0 0 8px rgba(255, 170, 0, 0.4));
 }
 
 .rock-icon {

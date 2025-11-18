@@ -80,7 +80,7 @@ export interface MiningGroup {
 export const SHIPS: Ship[] = [
   { id: 'prospector', name: 'MISC Prospector', laserSlots: 1, maxLaserSize: 1, description: 'Solo mining ship - Size 1 lasers only' },
   { id: 'mole', name: 'Argo MOLE', laserSlots: 3, maxLaserSize: 2, description: 'Multi-crew mining ship - Up to Size 2 lasers' },
-  { id: 'golem', name: 'Greycat GOLEM', laserSlots: 1, maxLaserSize: 1, description: 'Heavy mining vehicle - Fixed Pitman laser' },
+  { id: 'golem', name: 'Drake GOLEM', laserSlots: 1, maxLaserSize: 1, description: 'Heavy mining vehicle - Fixed Pitman laser' },
 ];
 
 // Laser heads database

@@ -83,20 +83,20 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip,
                   }}
                 >
                   <line
-                    x1={30}
+                    x1={50}
                     y1={150}
-                    x2={150}
+                    x2={130}
                     y2={150}
-                    stroke="var(--accent)"
+                    stroke="var(--warning)"
                     strokeWidth="2"
                     strokeDasharray="4 4"
-                    opacity="0.6"
+                    opacity="0.8"
                   >
                     <animate
                       attributeName="stroke-dashoffset"
-                      from="0"
-                      to="8"
-                      dur="0.5s"
+                      from="8"
+                      to="0"
+                      dur="0.3s"
                       repeatCount="indefinite"
                     />
                   </line>
@@ -114,7 +114,7 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip,
                   title={selectedShip.name}
                 >
                   <div className="ship-symbol">{getShipIcon(selectedShip.id)}</div>
-                  <div className="ship-label">{selectedShip.name}</div>
+                  <div className="ship-label">{selectedShip.name.split(' ').slice(1).join(' ')}</div>
                 </div>
               </div>
             </div>
@@ -147,20 +147,20 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip,
                         }}
                       >
                         <line
-                          x1={150 + x}
-                          y1={150 + y}
+                          x1={150 + x * 0.7}
+                          y1={150 + y * 0.7}
                           x2={150}
                           y2={150}
-                          stroke="var(--accent)"
+                          stroke="var(--warning)"
                           strokeWidth="2"
                           strokeDasharray="4 4"
-                          opacity="0.6"
+                          opacity="0.8"
                         >
                           <animate
                             attributeName="stroke-dashoffset"
-                            from="0"
-                            to="8"
-                            dur="0.5s"
+                            from="8"
+                            to="0"
+                            dur="0.3s"
                             repeatCount="indefinite"
                           />
                         </line>
@@ -177,10 +177,10 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip,
                         transform: 'translate(-50%, -50%)',
                       }}
                       onClick={() => onToggleShip && onToggleShip(shipInstance.id)}
-                      title={`${shipInstance.name} (${shipInstance.ship.name}) - ${isActive ? 'ACTIVE' : 'INACTIVE'} (Click to toggle)`}
+                      title={`${shipInstance.name} (${shipInstance.ship.name.split(' ').slice(1).join(' ')}) - ${isActive ? 'ACTIVE' : 'INACTIVE'} (Click to toggle)`}
                     >
                       <div className="ship-symbol">{getShipIcon(shipInstance.ship.id)}</div>
-                      <div className="ship-label">{shipInstance.name}</div>
+                      <div className="ship-label">{shipInstance.ship.name.split(' ').slice(1).join(' ')}</div>
                     </div>
                   </div>
                 );
