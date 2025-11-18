@@ -46,10 +46,10 @@ export default function ResultDisplay({ result, rock, miningGroup, selectedShip,
 
   // Get asteroid size multiplier based on rock size (1:1 aspect ratio)
   const getAsteroidSize = () => {
-    if (rock.mass < 15000) return { width: 200, height: 200 }; // Tiny
-    if (rock.mass < 25000) return { width: 250, height: 250 }; // Small
-    if (rock.mass < 50000) return { width: 300, height: 300 }; // Medium
-    if (rock.mass < 100000) return { width: 350, height: 350 }; // Large
+    if (rock.mass < 15000) return { width: 100, height: 100 }; // Tiny (50% smaller)
+    if (rock.mass < 25000) return { width: 175, height: 175 }; // Small
+    if (rock.mass < 50000) return { width: 250, height: 250 }; // Medium
+    if (rock.mass < 100000) return { width: 325, height: 325 }; // Large
     return { width: 400, height: 400 }; // Huge
   };
 
