@@ -3,7 +3,6 @@ import type { ShipInstance } from '../types';
 import type { SavedShipInstance } from '../utils/storage';
 import {
   getSavedShipInstances,
-  saveShipInstance,
   deleteShipInstance,
   loadShipInstance,
 } from '../utils/storage';

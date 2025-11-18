@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { calculateBreakability, calculateGroupBreakability } from './calculator';
 import { LASER_HEADS, MODULES, GADGETS, SHIPS } from '../types';
-import type { MiningConfiguration, Rock, LaserConfiguration, MiningGroup, ShipInstance } from '../types';
+import type { MiningConfiguration, Rock, MiningGroup, ShipInstance } from '../types';
 
 /**
  * Test suite for Star Citizen Mining Calculator
