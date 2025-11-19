@@ -181,6 +181,7 @@ function App() {
                         laserIndex={index}
                         laser={laser}
                         selectedShip={selectedShip}
+                        showMannedToggle={selectedShip.id === 'mole'}
                         onChange={(updatedLaser) => {
                           const newLasers = [...config.lasers];
                           newLasers[index] = updatedLaser;
