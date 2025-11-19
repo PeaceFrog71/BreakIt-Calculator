@@ -1,4 +1,4 @@
-import type { CalculationResult, Rock, MiningGroup, Gadget } from "../types";
+import type { CalculationResult, Rock, MiningGroup, Gadget, MiningConfiguration } from "../types";
 import { formatPower, formatPercent } from "../utils/calculator";
 import { getGadgetSymbol } from "../types";
 import "./ResultDisplay.css";
@@ -11,21 +11,31 @@ interface ResultDisplayProps {
   result: CalculationResult;
   rock: Rock;
   gadgets: (Gadget | null)[];
+  gadgetEnabled?: boolean[];
+  onToggleGadget?: (index: number) => void;
   miningGroup?: MiningGroup;
   onToggleShip?: (shipId: string) => void;
+  onToggleLaser?: (shipId: string, laserIndex: number) => void;
 }
 
 interface SingleShipDisplayProps {
   selectedShip?: { id: string; name: string };
+  config?: MiningConfiguration;
+  onSingleShipToggleLaser?: (laserIndex: number) => void;
 }
 
 export default function ResultDisplay({
   result,
   rock,
   gadgets,
+  gadgetEnabled,
+  onToggleGadget,
   miningGroup,
   selectedShip,
+  config,
   onToggleShip,
+  onToggleLaser,
+  onSingleShipToggleLaser,
 }: ResultDisplayProps & SingleShipDisplayProps) {
   const getStatusClass = () => {
     if (!result.canBreak) return "cannot-break";
@@ -35,14 +45,27 @@ export default function ResultDisplay({
 
   const getStatusText = () => {
     if (!result.canBreak) return "CANNOT BREAK";
-    if (result.powerMarginPercent < 20) return "RISKY - LOW MARGIN";
+    if (result.powerMarginPercent < 20) return "LOW MARGIN BREAK";
     return "CAN BREAK";
   };
 
   const powerPercentage =
     result.adjustedLPNeeded > 0
-      ? Math.min((result.totalLaserPower / result.adjustedLPNeeded) * 100, 100)
+      ? (result.totalLaserPower / result.adjustedLPNeeded) * 100
       : 0;
+
+  // Determine if we have overcharge (>100%) and if it's excessive (>200%)
+  // Note: powerPercentage represents total power as % of required power
+  // So 200% means you have 2x the required power (100% margin)
+  const hasOvercharge = powerPercentage > 100;
+  const hasExcessiveOvercharge = result.powerMarginPercent > 100; // >100% margin = >200% total power
+  const hasCriticalOvercharge = result.powerMarginPercent > 100;
+
+  // Calculate the percentage of the bar that should show overcharge gradient
+  // If we have 120% power, the rightmost 20% of the bar should be red
+  const overchargeGradientPercent = hasOvercharge
+    ? Math.min((powerPercentage - 100), 100) // Cap at 100% overcharge
+    : 0;
 
   // Calculate rock size category based on mass
   const getRockSize = () => {
@@ -123,38 +146,106 @@ export default function ResultDisplay({
               const laserEndX = center - directionX * shortfall;
               const laserEndY = center - directionY * shortfall;
 
+              // Check if this is a MOLE and count manned lasers
+              const isMole = selectedShip.id === 'mole';
+              const mannedLasers = isMole && config
+                ? config.lasers.filter(laser => laser.isManned !== false)
+                : [];
+              const numMannedLasers = isMole ? mannedLasers.length : 1;
+
               return (
                 <div className="ships-around-rock">
                   {/* Laser beam from ship to rock - always show for single ship */}
-                  <svg
-                    className="laser-beam"
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      width: `${svgSize}px`,
-                      height: `${svgSize}px`,
-                      transform: "translate(-50%, -50%)",
-                      pointerEvents: "none",
-                    }}>
-                    <line
-                      x1={laserStartX}
-                      y1={laserStartY}
-                      x2={laserEndX}
-                      y2={laserEndY}
-                      stroke="var(--warning)"
-                      strokeWidth="2"
-                      strokeDasharray="4 4"
-                      opacity="0.8">
-                      <animate
-                        attributeName="stroke-dashoffset"
-                        from="8"
-                        to="0"
-                        dur="0.3s"
-                        repeatCount="indefinite"
-                      />
-                    </line>
-                  </svg>
+                  {(() => {
+                    // For MOLE, render multiple lasers with slight angle variations
+                    if (isMole && numMannedLasers > 0) {
+                      // Calculate angle spread: ±10° for up to 3 lasers (increased for visibility)
+                      const angleOffsets = numMannedLasers === 1
+                        ? [0]
+                        : numMannedLasers === 2
+                        ? [-10, 10]
+                        : [-10, 0, 10];
+
+                      return (
+                        <svg
+                          className="laser-beam"
+                          style={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            width: `${svgSize}px`,
+                            height: `${svgSize}px`,
+                            transform: "translate(-50%, -50%)",
+                            pointerEvents: "none",
+                          }}>
+                          {angleOffsets.map((angleOffset, laserIndex) => {
+                            // Convert angle offset to radians
+                            const angleRad = (angleOffset * Math.PI) / 180;
+
+                            // Rotate the end point around the center
+                            const dx = laserEndX - center;
+                            const dy = laserEndY - center;
+                            const rotatedEndX = center + dx * Math.cos(angleRad) - dy * Math.sin(angleRad);
+                            const rotatedEndY = center + dx * Math.sin(angleRad) + dy * Math.cos(angleRad);
+
+                            return (
+                              <line
+                                key={laserIndex}
+                                x1={laserStartX}
+                                y1={laserStartY}
+                                x2={rotatedEndX}
+                                y2={rotatedEndY}
+                                stroke="var(--warning)"
+                                strokeWidth="2"
+                                strokeDasharray="4 4"
+                                opacity="0.8">
+                                <animate
+                                  attributeName="stroke-dashoffset"
+                                  from="8"
+                                  to="0"
+                                  dur="0.3s"
+                                  repeatCount="indefinite"
+                                />
+                              </line>
+                            );
+                          })}
+                        </svg>
+                      );
+                    }
+
+                    // For non-MOLE ships, render single laser
+                    return (
+                      <svg
+                        className="laser-beam"
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          width: `${svgSize}px`,
+                          height: `${svgSize}px`,
+                          transform: "translate(-50%, -50%)",
+                          pointerEvents: "none",
+                        }}>
+                        <line
+                          x1={laserStartX}
+                          y1={laserStartY}
+                          x2={laserEndX}
+                          y2={laserEndY}
+                          stroke="var(--warning)"
+                          strokeWidth="2"
+                          strokeDasharray="4 4"
+                          opacity="0.8">
+                          <animate
+                            attributeName="stroke-dashoffset"
+                            from="8"
+                            to="0"
+                            dur="0.3s"
+                            repeatCount="indefinite"
+                          />
+                        </line>
+                      </svg>
+                    );
+                  })()}
 
                   {/* Ship icon */}
                   <div
@@ -224,6 +315,36 @@ export default function ResultDisplay({
                       {selectedShip.name.split(" ").slice(1).join(" ")}
                     </div>
                   </div>
+
+                  {/* Laser controls for MOLE */}
+                  {selectedShip.id === 'mole' && onSingleShipToggleLaser && config && (
+                    <div className="laser-controls" style={{
+                      position: "absolute",
+                      top: `calc(50% + ${shipY}px)`,
+                      left: `calc(50% + ${shipX - 100}px)`,
+                      transform: "translateY(-50%)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.5rem",
+                    }}>
+                      {[0, 1, 2].map((laserIndex) => {
+                        const isLaserManned = config.lasers[laserIndex]?.isManned !== false;
+                        return (
+                          <button
+                            key={laserIndex}
+                            className={`laser-button ${isLaserManned ? 'manned' : 'unmanned'}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSingleShipToggleLaser(laserIndex);
+                            }}
+                            title={isLaserManned ? 'Click to mark as unmanned' : 'Click to mark as manned'}
+                          >
+                            L{laserIndex + 1}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               );
             })()}
@@ -239,15 +360,15 @@ export default function ResultDisplay({
                 // Position ships at radius that scales with rock size
                 const asteroidRadius = asteroidSize.width / 2;
                 // Add extra spacing for tiny and small rocks
-                let radiusMultiplier = 1.15;
-                if (rock.mass < 15000) radiusMultiplier = 1.65; // Tiny
-                else if (rock.mass < 25000) radiusMultiplier = 1.35; // Small
+                let radiusMultiplier = 1.35;
+                if (rock.mass < 15000) radiusMultiplier = 1.85; // Tiny
+                else if (rock.mass < 25000) radiusMultiplier = 1.55; // Small
                 const radius = asteroidRadius * radiusMultiplier;
                 // Subtract 90° to make 0° point to top instead of right
                 const adjustedAngle = angle - 90;
                 const x = Math.cos((adjustedAngle * Math.PI) / 180) * radius;
-                // Move ships up by 20% of asteroid height
-                const y = Math.sin((adjustedAngle * Math.PI) / 180) * radius - (asteroidSize.height * 0.2);
+                // Move ships down by 12.5% of asteroid height
+                const y = Math.sin((adjustedAngle * Math.PI) / 180) * radius + (asteroidSize.height * 0.125);
                 const isActive = shipInstance.isActive !== false;
 
                 return (
@@ -268,6 +389,70 @@ export default function ResultDisplay({
                         const laserEndX = center - directionX * shortfall;
                         const laserEndY = center - directionY * shortfall;
 
+                        // Check if this is a MOLE and count manned lasers
+                        const isMole = shipInstance.ship.id === 'mole';
+                        const mannedLasers = isMole
+                          ? shipInstance.config.lasers.filter(laser => laser.isManned !== false)
+                          : [];
+                        const numMannedLasers = isMole ? mannedLasers.length : 1;
+
+                        // For MOLE, render multiple lasers with slight angle variations
+                        if (isMole && numMannedLasers > 0) {
+                          // Calculate angle spread: ±10° for up to 3 lasers (increased for visibility)
+                          const angleOffsets = numMannedLasers === 1
+                            ? [0]
+                            : numMannedLasers === 2
+                            ? [-10, 10]
+                            : [-10, 0, 10];
+
+                          return (
+                            <svg
+                              className="laser-beam"
+                              style={{
+                                position: "absolute",
+                                top: "50%",
+                                left: "50%",
+                                width: `${svgSize}px`,
+                                height: `${svgSize}px`,
+                                transform: "translate(-50%, -50%)",
+                                pointerEvents: "none",
+                              }}>
+                              {angleOffsets.map((angleOffset, laserIndex) => {
+                                // Convert angle offset to radians
+                                const angleRad = (angleOffset * Math.PI) / 180;
+
+                                // Rotate the end point around the center
+                                const dx = laserEndX - center;
+                                const dy = laserEndY - center;
+                                const rotatedEndX = center + dx * Math.cos(angleRad) - dy * Math.sin(angleRad);
+                                const rotatedEndY = center + dx * Math.sin(angleRad) + dy * Math.cos(angleRad);
+
+                                return (
+                                  <line
+                                    key={laserIndex}
+                                    x1={laserStartX}
+                                    y1={laserStartY}
+                                    x2={rotatedEndX}
+                                    y2={rotatedEndY}
+                                    stroke="var(--warning)"
+                                    strokeWidth="2"
+                                    strokeDasharray="4 4"
+                                    opacity="0.8">
+                                    <animate
+                                      attributeName="stroke-dashoffset"
+                                      from="8"
+                                      to="0"
+                                      dur="0.3s"
+                                      repeatCount="indefinite"
+                                    />
+                                  </line>
+                                );
+                              })}
+                            </svg>
+                          );
+                        }
+
+                        // For non-MOLE ships, render single laser
                         return (
                           <svg
                             className="laser-beam"
@@ -391,6 +576,40 @@ export default function ResultDisplay({
                         {shipInstance.ship.name.split(" ").slice(1).join(" ")}
                       </div>
                     </div>
+
+                    {/* Laser control buttons for MOLE ships */}
+                    {shipInstance.ship.id === 'mole' && onToggleLaser && (
+                      <div
+                        className="laser-controls"
+                        style={{
+                          position: "absolute",
+                          top: `calc(50% + ${y}px)`,
+                          left: x < 0
+                            ? `calc(50% + ${x - 80}px)` // Left side: buttons on the left
+                            : `calc(50% + ${x + 80}px)`, // Right side: buttons on the right
+                          transform: "translate(-50%, -50%)",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "4px",
+                          pointerEvents: "auto",
+                        }}>
+                        {[0, 1, 2].map((laserIndex) => {
+                          const isLaserManned = shipInstance.config.lasers[laserIndex]?.isManned !== false;
+                          return (
+                            <button
+                              key={laserIndex}
+                              className={`laser-button ${isLaserManned ? 'manned' : 'unmanned'}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleLaser(shipInstance.id, laserIndex);
+                              }}
+                              title={`Laser ${laserIndex + 1}: ${isLaserManned ? 'MANNED' : 'UNMANNED'} (click to toggle)`}>
+                              L{laserIndex + 1}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -414,15 +633,20 @@ export default function ResultDisplay({
               {gadgets && gadgets.length > 0 && (
                 <div className="gadget-symbols-on-rock">
                   {gadgets
-                    .filter((g) => g && g.id !== "none")
-                    .map((gadget, index) => (
-                      <span
-                        key={index}
-                        className="gadget-symbol-small"
-                        title={gadget!.name}>
-                        {getGadgetSymbol(gadget!.id)}
-                      </span>
-                    ))}
+                    .map((gadget, index) => {
+                      if (!gadget || gadget.id === "none") return null;
+                      const isEnabled = gadgetEnabled ? gadgetEnabled[index] !== false : true;
+                      return (
+                        <span
+                          key={index}
+                          className={`gadget-symbol-small ${!isEnabled ? 'disabled' : ''} ${onToggleGadget ? 'clickable' : ''}`}
+                          title={`${gadget.name}${onToggleGadget ? (isEnabled ? ' (click to disable)' : ' (click to enable)') : ''}`}
+                          onClick={() => onToggleGadget && onToggleGadget(index)}
+                        >
+                          {getGadgetSymbol(gadget.id)}
+                        </span>
+                      );
+                    })}
                 </div>
               )}
             </div>
@@ -430,11 +654,12 @@ export default function ResultDisplay({
         </div>
       </div>
 
-      <div className={`status-indicator ${getStatusClass()}`}>
+      <div className={`status-indicator ${getStatusClass()} ${hasCriticalOvercharge ? 'critical-overcharge' : ''}`}>
         <h2>{getStatusText()}</h2>
-        {result.canBreak && (
-          <div className="margin-text">
-            Power Margin: {formatPercent(result.powerMarginPercent)}
+        {((result.powerMarginPercent >= -10 && result.powerMarginPercent < 0) ||
+          (result.powerMarginPercent > 0 && result.powerMarginPercent <= 10)) && (
+          <div className="distance-tip">
+            <strong>Tip:</strong> Reducing laser distance may increase chances of a successful break.
           </div>
         )}
       </div>
@@ -442,15 +667,32 @@ export default function ResultDisplay({
       <div className="power-bar-container">
         <div className="power-bar">
           <div
-            className={`power-fill ${getStatusClass()}`}
-            style={{ width: `${powerPercentage}%` }}
+            className={`power-fill ${getStatusClass()} ${hasOvercharge ? 'has-overcharge' : ''}`}
+            style={{
+              width: '100%',
+              background: hasOvercharge
+                ? `linear-gradient(90deg,
+                    ${getStatusClass() === 'can-break' ? 'var(--success)' : getStatusClass() === 'marginal' ? 'var(--warning)' : 'var(--danger)'} 0%,
+                    ${getStatusClass() === 'can-break' ? 'var(--accent-cyan)' : getStatusClass() === 'marginal' ? 'var(--accent-gold)' : '#ff6688'} ${Math.max(100 - overchargeGradientPercent, 50)}%,
+                    ${powerPercentage > 150 ? 'var(--warning)' : 'var(--accent-gold)'} ${Math.max(100 - (overchargeGradientPercent / 2), 75)}%,
+                    ${hasExcessiveOvercharge ? 'var(--danger)' : 'var(--warning)'} 100%)`
+                : undefined
+            }}
           />
           <div className="power-required-marker" />
+          <div className="power-margin-overlay">
+            {result.powerMarginPercent >= 0 ? 'Surplus:' : 'Deficit:'} {formatPercent(result.powerMarginPercent)}
+          </div>
         </div>
         <div className="power-labels">
           <span>Your Power: {formatPower(result.totalLaserPower)}</span>
           <span>Required: {formatPower(result.adjustedLPNeeded)}</span>
         </div>
+        {hasExcessiveOvercharge && (
+          <div className="overcharge-warning">
+            <strong>WARNING!</strong> Excessive overcharge capability detected. Rock overcharge and premature fracture could easily occur. Approach with caution or reduce the number of lasers used.
+          </div>
+        )}
       </div>
 
       <div className="stats-grid">

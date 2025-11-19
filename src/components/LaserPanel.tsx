@@ -1,5 +1,6 @@
 import type { LaserConfiguration, Ship } from '../types';
 import { LASER_HEADS, MODULES } from '../types';
+import { calculateLaserPower } from '../utils/calculator';
 import './LaserPanel.css';
 
 interface LaserPanelProps {
@@ -117,6 +118,10 @@ export default function LaserPanel({ laserIndex, laser, selectedShip, onChange, 
           <div className="stat">
             <span className="stat-label">Base Power:</span>
             <span className="stat-value">{laser.laserHead.maxPower}</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Modified Power:</span>
+            <span className="stat-value modified-power">{calculateLaserPower(laser).toFixed(2)}</span>
           </div>
           <div className="stat">
             <span className="stat-label">Resist Mod:</span>

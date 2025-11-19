@@ -74,3 +74,9 @@
   color: var(--accent-cyan);
   font-weight: 600;
 }
+
+.stat-value.modified-power {
+  color: var(--success);
+  font-weight: 700;
+  font-size: 1.05rem;
+}

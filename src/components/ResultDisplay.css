@@ -109,6 +109,43 @@
   display: inline-block;
 }
 
+.laser-controls {
+  z-index: 30;
+}
+
+.laser-button {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  min-width: 32px;
+}
+
+.laser-button.manned {
+  color: var(--success);
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid var(--success);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+  text-shadow: 0 0 4px rgba(0, 255, 136, 0.6);
+}
+
+.laser-button.unmanned {
+  color: var(--text-secondary);
+  background: rgba(168, 181, 199, 0.15);
+  border: 1px solid var(--text-secondary);
+  box-shadow: 0 0 8px rgba(168, 181, 199, 0.3);
+  text-shadow: 0 0 4px rgba(168, 181, 199, 0.5);
+}
+
+.laser-button:hover {
+  transform: scale(1.1);
+}
+
 .laser-beam {
   z-index: 10;
 }
@@ -188,7 +225,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
   gap: 0.3rem;
   z-index: 10;
 }
@@ -204,6 +242,26 @@
   box-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
   text-shadow: 0 0 4px rgba(0, 255, 204, 0.6);
   backdrop-filter: blur(2px);
+  transition: all 0.2s ease;
+}
+
+.gadget-symbol-small.clickable {
+  cursor: pointer;
+}
+
+.gadget-symbol-small.clickable:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(0, 255, 204, 0.6);
+}
+
+.gadget-symbol-small.disabled {
+  opacity: 0.6;
+  color: var(--text-secondary);
+  background: rgba(168, 181, 199, 0.2);
+  border: 2px solid var(--text-secondary);
+  box-shadow: 0 0 4px rgba(168, 181, 199, 0.3);
+  text-shadow: none;
+  text-decoration: line-through;
 }
 
 /* Rock color based on breakability status */
@@ -316,10 +374,43 @@
   color: var(--danger);
 }
 
+/* Critical overcharge state (>200%) - pulsing red glow */
+.status-indicator.critical-overcharge {
+  animation: pulse-critical-overcharge 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-critical-overcharge {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(255, 51, 102, 0.4), 0 0 30px rgba(255, 51, 102, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(255, 51, 102, 0.8), 0 0 50px rgba(255, 51, 102, 0.6);
+  }
+}
+
 .margin-text {
   margin-top: 0.5rem;
   font-size: 1.1rem;
   color: var(--text-secondary);
+}
+
+.distance-tip {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 170, 0, 0.1);
+  border-left: 3px solid var(--warning);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.distance-tip strong {
+  color: var(--warning);
+  font-weight: 700;
+  margin-right: 0.25rem;
 }
 
 .power-bar-container {
@@ -334,13 +425,16 @@
   height: 30px;
   background: var(--bg-dark);
   border-radius: 15px;
-  overflow: hidden;
+  overflow: visible;
   border: 2px solid var(--border);
 }
 
 .power-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
   height: 100%;
-  transition: width 0.5s ease;
+  transition: all 0.5s ease;
   border-radius: 13px;
 }
 
@@ -359,6 +453,20 @@
   box-shadow: 0 0 15px rgba(255, 51, 102, 0.5);
 }
 
+/* Overcharge state - applies pulsing animation */
+.power-fill.has-overcharge {
+  animation: pulse-overcharge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-overcharge {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(255, 170, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 170, 0, 0.9);
+  }
+}
+
 .power-required-marker {
   position: absolute;
   right: 0;
@@ -367,6 +475,47 @@
   width: 2px;
   background: var(--accent-blue);
   box-shadow: 0 0 10px var(--accent-blue);
+  z-index: 10;
+}
+
+.power-margin-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000,
+    0 0 4px rgba(0, 0, 0, 0.9),
+    0 0 8px rgba(0, 0, 0, 0.7),
+    0 0 12px rgba(0, 0, 0, 0.5);
+  z-index: 15;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.overcharge-warning {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 51, 102, 0.1);
+  border-left: 3px solid var(--danger);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.overcharge-warning strong {
+  color: var(--danger);
+  font-weight: 700;
+  margin-right: 0.25rem;
 }
 
 .power-labels {

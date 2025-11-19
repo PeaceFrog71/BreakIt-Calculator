@@ -38,6 +38,20 @@ function App() {
     ships: [],
   });
   const [gadgets, setGadgets] = useState<(Gadget | null)[]>([null, null, null]);
+  const [gadgetCount, setGadgetCount] = useState(3);
+  const [gadgetEnabled, setGadgetEnabled] = useState<boolean[]>([true, true, true]);
+
+  // Update gadgetEnabled array when gadgetCount changes
+  useEffect(() => {
+    setGadgetEnabled(prev => {
+      const newEnabled = Array(gadgetCount).fill(true);
+      // Preserve existing enabled states up to the new count
+      for (let i = 0; i < Math.min(prev.length, gadgetCount); i++) {
+        newEnabled[i] = prev[i];
+      }
+      return newEnabled;
+    });
+  }, [gadgetCount]);
   const [useMiningGroup, setUseMiningGroup] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
@@ -46,10 +60,22 @@ function App() {
     saveCurrentConfiguration(selectedShip, config);
   }, [selectedShip, config]);
 
+  // Filter gadgets to only include enabled ones
+  const enabledGadgets = gadgets.map((gadget, index) =>
+    gadgetEnabled[index] ? gadget : null
+  );
+
   // Calculate result based on mode (single ship or mining group)
   const result = useMiningGroup
-    ? calculateGroupBreakability(miningGroup, rock, gadgets)
-    : calculateBreakability(config, rock, gadgets);
+    ? calculateGroupBreakability(miningGroup, rock, enabledGadgets)
+    : calculateBreakability(config, rock, enabledGadgets);
+
+  // Handle toggling gadget enabled state
+  const handleToggleGadget = (index: number) => {
+    const newEnabled = [...gadgetEnabled];
+    newEnabled[index] = !newEnabled[index];
+    setGadgetEnabled(newEnabled);
+  };
 
   const handleShipChange = (ship: Ship) => {
     setSelectedShip(ship);
@@ -100,6 +126,55 @@ function App() {
     setMiningGroup({ ...miningGroup, ships: updatedShips });
   };
 
+  const handleToggleLaser = (shipId: string, laserIndex: number) => {
+    const updatedShips = miningGroup.ships.map((s) => {
+      if (s.id === shipId) {
+        const updatedLasers = [...s.config.lasers];
+        const currentLaser = updatedLasers[laserIndex];
+        // Toggle isManned state (undefined or true -> false, false -> true)
+        updatedLasers[laserIndex] = {
+          ...currentLaser,
+          isManned: currentLaser.isManned === false ? true : false,
+        };
+
+        // Check if all lasers are unmanned
+        const allUnmanned = updatedLasers.every(laser => laser.isManned === false);
+        // Check if any laser is manned
+        const anyManned = updatedLasers.some(laser => laser.isManned !== false);
+
+        return {
+          ...s,
+          config: { ...s.config, lasers: updatedLasers },
+          // If all lasers are unmanned, deactivate the ship
+          // If any laser is manned and ship was inactive, activate the ship
+          isActive: allUnmanned ? false : (anyManned ? true : s.isActive),
+        };
+      }
+      return s;
+    });
+    setMiningGroup({ ...miningGroup, ships: updatedShips });
+  };
+
+  const handleSingleShipToggleLaser = (laserIndex: number) => {
+    const updatedLasers = [...config.lasers];
+    const currentLaser = updatedLasers[laserIndex];
+
+    // Count how many lasers are currently manned
+    const mannedCount = updatedLasers.filter(laser => laser.isManned !== false).length;
+
+    // If this is the last manned laser and we're trying to unman it, don't allow it
+    if (mannedCount === 1 && currentLaser.isManned !== false) {
+      return; // Prevent unmanning the last laser
+    }
+
+    // Toggle isManned state (undefined or true -> false, false -> true)
+    updatedLasers[laserIndex] = {
+      ...currentLaser,
+      isManned: currentLaser.isManned === false ? true : false,
+    };
+    setConfig({ ...config, lasers: updatedLasers });
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -117,9 +192,14 @@ function App() {
                 result={result}
                 rock={rock}
                 gadgets={gadgets}
+                gadgetEnabled={gadgetEnabled}
+                onToggleGadget={handleToggleGadget}
                 miningGroup={useMiningGroup ? miningGroup : undefined}
                 selectedShip={!useMiningGroup ? selectedShip : undefined}
+                config={!useMiningGroup ? config : undefined}
                 onToggleShip={useMiningGroup ? handleToggleShip : undefined}
+                onToggleLaser={useMiningGroup ? handleToggleLaser : undefined}
+                onSingleShipToggleLaser={!useMiningGroup && selectedShip.id === 'mole' ? handleSingleShipToggleLaser : undefined}
               />
             </div>
           )}
@@ -132,6 +212,8 @@ function App() {
               <GadgetSelector
                 gadgets={gadgets}
                 onChange={setGadgets}
+                gadgetCount={gadgetCount}
+                onGadgetCountChange={setGadgetCount}
               />
             </div>
           )}

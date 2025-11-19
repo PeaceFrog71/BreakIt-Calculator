@@ -1,3 +1,48 @@
+.gadget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.gadget-header h2 {
+  margin: 0;
+}
+
+.gadget-count-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gadget-count-selector label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.gadget-count-input {
+  width: 60px;
+  padding: 0.4rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* Remove spinners from gadget count input */
+.gadget-count-input::-webkit-inner-spin-button,
+.gadget-count-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.gadget-count-input {
+  -moz-appearance: textfield;
+}
+
 .gadget-description {
   margin-top: 0.5rem;
   padding: 0.5rem;

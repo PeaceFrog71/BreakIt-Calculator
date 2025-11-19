@@ -3,7 +3,7 @@ import type { MiningConfiguration, Rock, CalculationResult, LaserConfiguration, 
 /**
  * Calculate power for a single laser with its modules
  */
-function calculateLaserPower(laser: LaserConfiguration): number {
+export function calculateLaserPower(laser: LaserConfiguration): number {
   if (!laser.laserHead) return 0;
 
   let power = laser.laserHead.maxPower;
