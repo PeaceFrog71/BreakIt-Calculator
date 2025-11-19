@@ -1,4 +1,4 @@
-import type { CalculationResult, Rock, MiningGroup } from "../types";
+import type { CalculationResult, Rock, MiningGroup, MiningConfiguration } from "../types";
 import { formatPower, formatPercent } from "../utils/calculator";
 import { getGadgetSymbol } from "../types";
 import "./ResultDisplay.css";
@@ -11,6 +11,7 @@ interface ResultDisplayProps {
   result: CalculationResult;
   rock: Rock;
   miningGroup?: MiningGroup;
+  config?: MiningConfiguration;
   onToggleShip?: (shipId: string) => void;
 }
 
@@ -22,6 +23,7 @@ export default function ResultDisplay({
   result,
   rock,
   miningGroup,
+  config,
   selectedShip,
   onToggleShip,
 }: ResultDisplayProps & SingleShipDisplayProps) {
@@ -409,11 +411,14 @@ export default function ResultDisplay({
                 }}
               />
               {/* Gadget symbols ON the rock */}
-              {miningGroup &&
-                miningGroup.gadgets &&
-                miningGroup.gadgets.length > 0 && (
+              {/* Show gadgets from mining group OR single ship config */}
+              {(() => {
+                const gadgets = miningGroup?.gadgets || config?.gadgets;
+                if (!gadgets || gadgets.length === 0) return null;
+
+                return (
                   <div className="gadget-symbols-on-rock">
-                    {miningGroup.gadgets
+                    {gadgets
                       .filter((g) => g && g.id !== "none")
                       .map((gadget, index) => (
                         <span
@@ -424,7 +429,8 @@ export default function ResultDisplay({
                         </span>
                       ))}
                   </div>
-                )}
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -512,7 +518,7 @@ export default function ResultDisplay({
         </div>
         <div className="detail-row">
           <span>Formula:</span>
-          <span>(Mass × Adjusted Resist) ÷ 108.7</span>
+          <span>(Mass / (1 - (Resist × 0.01))) / 5</span>
         </div>
       </div>
     </div>

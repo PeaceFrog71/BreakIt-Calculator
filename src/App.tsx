@@ -116,6 +116,7 @@ function App() {
                 result={result}
                 rock={rock}
                 miningGroup={useMiningGroup ? miningGroup : undefined}
+                config={!useMiningGroup ? config : undefined}
                 selectedShip={!useMiningGroup ? selectedShip : undefined}
                 onToggleShip={useMiningGroup ? handleToggleShip : undefined}
               />
