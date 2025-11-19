@@ -44,7 +44,9 @@ export default function LaserPanel({ laserIndex, laser, selectedShip, onChange, 
   const moduleSlotCount = laser.laserHead?.moduleSlots || 0;
 
   const handleMannedToggle = () => {
-    onChange({ ...laser, isManned: !laser.isManned });
+    // Treat undefined as manned (default state), so toggle to unmanned
+    const currentState = laser.isManned !== false; // true or undefined = manned
+    onChange({ ...laser, isManned: !currentState });
   };
 
   return (

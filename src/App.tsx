@@ -77,6 +77,7 @@ function App() {
         newConfig.lasers.forEach((laser) => {
           laser.laserHead = defaultS2Laser;
           laser.modules = Array(defaultS2Laser.moduleSlots).fill(null);
+          laser.isManned = true; // Initialize as manned by default
         });
       }
     }
