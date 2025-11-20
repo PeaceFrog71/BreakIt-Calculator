@@ -11,7 +11,7 @@ import "./ResultDisplay.css";
 import golemShipImage from "../assets/mining_ship_golem_pixel_120x48.png";
 import moleShipImage from "../assets/mining_ship_mole_pixel_120x48_transparent.png";
 import prospectorShipImage from "../assets/mining_ship_prospector_pixel_120x48.png";
-import asteroidImage from "../assets/asteroid_pixel_120x48_true_transparent.png";
+import asteroidImage from "../assets/asteroid_pixel_1024x1024_true_transparent.png";
 
 interface ResultDisplayProps {
   result: CalculationResult;
