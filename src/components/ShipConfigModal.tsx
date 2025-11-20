@@ -53,6 +53,7 @@ export default function ShipConfigModal({ isOpen, onClose, onSave, editingShip }
             newConfig.lasers.forEach((laser) => {
               laser.laserHead = arborMH2;
               laser.modules = Array(arborMH2.moduleSlots).fill(null);
+              laser.isManned = true; // Explicitly set as manned by default
             });
           }
         }
@@ -98,6 +99,7 @@ export default function ShipConfigModal({ isOpen, onClose, onSave, editingShip }
         newConfig.lasers.forEach((laser) => {
           laser.laserHead = arborMH2;
           laser.modules = Array(arborMH2.moduleSlots).fill(null);
+          laser.isManned = true; // Explicitly set as manned by default
         });
       }
     }

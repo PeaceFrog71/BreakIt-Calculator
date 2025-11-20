@@ -60,7 +60,7 @@ body {
 .content-wrapper {
   padding: 2rem;
   flex: 1;
-  max-width: 1400px;
+  max-width: 1050px;
   margin: 0 auto;
   width: 100%;
 }
@@ -206,7 +206,7 @@ body {
   border-color: var(--accent-cyan);
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1050px) {
   .content-wrapper {
     padding: 1rem;
   }

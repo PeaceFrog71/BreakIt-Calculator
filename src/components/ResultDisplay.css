@@ -491,16 +491,6 @@
   }
 }
 
-.power-required-marker {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: 2px;
-  background: var(--accent-blue);
-  box-shadow: 0 0 10px var(--accent-blue);
-  z-index: 10;
-}
 
 .power-margin-overlay {
   position: absolute;

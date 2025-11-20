@@ -171,19 +171,18 @@ export default function ResultDisplay({
               const laserEndX = center - directionX * shortfall;
               const laserEndY = center - directionY * shortfall;
 
-              // Check if this is a MOLE and count manned lasers
+              // Check if this is a MOLE and count manned lasers (with laser heads configured)
               const isMole = selectedShip.id === "mole";
-              const mannedLasers =
-                isMole && config
-                  ? config.lasers.filter((laser) => laser.isManned !== false)
-                  : [];
-              const numMannedLasers = isMole ? mannedLasers.length : 1;
+              const mannedLasers = config
+                ? config.lasers.filter((laser) => laser.laserHead && laser.laserHead.id !== 'none' && laser.isManned !== false)
+                : [];
+              const numMannedLasers = mannedLasers.length;
 
               return (
                 <div className="ships-around-rock">
-                  {/* Laser beam from ship to rock - always show for single ship */}
+                  {/* Laser beam from ship to rock - only show if MOLE has manned lasers or if not a MOLE */}
                   {(() => {
-                    // For MOLE, render multiple lasers with slight angle variations
+                    // For MOLE, only render lasers if there are manned lasers
                     if (isMole && numMannedLasers > 0) {
                       // Calculate angle spread: ±10° for up to 3 lasers (increased for visibility)
                       const angleOffsets =
@@ -244,6 +243,11 @@ export default function ResultDisplay({
                           })}
                         </svg>
                       );
+                    }
+
+                    // If no manned lasers (MOLE or non-MOLE), don't render any lasers
+                    if (numMannedLasers === 0) {
+                      return null;
                     }
 
                     // For non-MOLE ships, render single laser
@@ -418,10 +422,18 @@ export default function ResultDisplay({
                   asteroidSize.height * 0.125;
                 const isActive = shipInstance.isActive !== false;
 
+                // Check if this ship has any manned lasers (with laser heads configured)
+                const isMole = shipInstance.ship.id === "mole";
+                const mannedLasers = shipInstance.config.lasers.filter(
+                  (laser) => laser.laserHead && laser.laserHead.id !== 'none' && laser.isManned !== false
+                );
+                const numMannedLasers = mannedLasers.length;
+                const hasLasers = numMannedLasers > 0;
+
                 return (
                   <div key={shipInstance.id}>
-                    {/* Laser beam from ship to rock - only show if active */}
-                    {isActive &&
+                    {/* Laser beam from ship to rock - only show if active AND has manned lasers */}
+                    {isActive && hasLasers &&
                       (() => {
                         const svgSize = 800;
                         const center = svgSize / 2;
@@ -436,19 +448,8 @@ export default function ResultDisplay({
                         const laserEndX = center - directionX * shortfall;
                         const laserEndY = center - directionY * shortfall;
 
-                        // Check if this is a MOLE and count manned lasers
-                        const isMole = shipInstance.ship.id === "mole";
-                        const mannedLasers = isMole
-                          ? shipInstance.config.lasers.filter(
-                              (laser) => laser.isManned !== false
-                            )
-                          : [];
-                        const numMannedLasers = isMole
-                          ? mannedLasers.length
-                          : 1;
-
                         // For MOLE, render multiple lasers with slight angle variations
-                        if (isMole && numMannedLasers > 0) {
+                        if (isMole) {
                           // Calculate angle spread: ±10° for up to 3 lasers (increased for visibility)
                           const angleOffsets =
                             numMannedLasers === 1
@@ -787,7 +788,6 @@ export default function ResultDisplay({
                 : undefined,
             }}
           />
-          <div className="power-required-marker" />
           <div className="power-margin-overlay">
             {result.powerMarginPercent >= 0 ? "Surplus:" : "Deficit:"}{" "}
             {formatPercent(result.powerMarginPercent)}

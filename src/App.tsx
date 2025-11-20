@@ -137,17 +137,10 @@ function App() {
           isManned: currentLaser.isManned === false ? true : false,
         };
 
-        // Check if all lasers are unmanned
-        const allUnmanned = updatedLasers.every(laser => laser.isManned === false);
-        // Check if any laser is manned
-        const anyManned = updatedLasers.some(laser => laser.isManned !== false);
-
         return {
           ...s,
           config: { ...s.config, lasers: updatedLasers },
-          // If all lasers are unmanned, deactivate the ship
-          // If any laser is manned and ship was inactive, activate the ship
-          isActive: allUnmanned ? false : (anyManned ? true : s.isActive),
+          // Ship active state is not affected by laser toggling
         };
       }
       return s;
