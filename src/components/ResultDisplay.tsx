@@ -329,6 +329,9 @@ export default function ResultDisplay({
                     }}>
                       {[0, 1, 2].map((laserIndex) => {
                         const isLaserManned = config.lasers[laserIndex]?.isManned !== false;
+                        const laserHead = config.lasers[laserIndex]?.laserHead;
+                        const laserName = laserHead?.name || 'No Laser';
+                        const tooltipText = `${laserName} - ${isLaserManned ? 'MANNED' : 'UNMANNED'} (click to toggle)`;
                         return (
                           <button
                             key={laserIndex}
@@ -337,7 +340,7 @@ export default function ResultDisplay({
                               e.stopPropagation();
                               onSingleShipToggleLaser(laserIndex);
                             }}
-                            title={isLaserManned ? 'Click to mark as unmanned' : 'Click to mark as manned'}
+                            title={tooltipText}
                           >
                             L{laserIndex + 1}
                           </button>
@@ -595,6 +598,9 @@ export default function ResultDisplay({
                         }}>
                         {[0, 1, 2].map((laserIndex) => {
                           const isLaserManned = shipInstance.config.lasers[laserIndex]?.isManned !== false;
+                          const laserHead = shipInstance.config.lasers[laserIndex]?.laserHead;
+                          const laserName = laserHead?.name || 'No Laser';
+                          const tooltipText = `${laserName} - ${isLaserManned ? 'MANNED' : 'UNMANNED'} (click to toggle)`;
                           return (
                             <button
                               key={laserIndex}
@@ -603,7 +609,7 @@ export default function ResultDisplay({
                                 e.stopPropagation();
                                 onToggleLaser(shipInstance.id, laserIndex);
                               }}
-                              title={`Laser ${laserIndex + 1}: ${isLaserManned ? 'MANNED' : 'UNMANNED'} (click to toggle)`}>
+                              title={tooltipText}>
                               L{laserIndex + 1}
                             </button>
                           );
@@ -617,7 +623,7 @@ export default function ResultDisplay({
           )}
 
           {/* Rock in center */}
-          <div className={`rock-icon ${getStatusClass()}`} style={{ position: 'relative', top: '-15%' }}>
+          <div className={`rock-icon ${getStatusClass()} ${hasExcessiveOvercharge ? 'overcharge-warning' : ''}`} style={{ position: 'relative', top: '-15%' }}>
             <div className="rock-symbol">
               <img
                 src={asteroidImage}
