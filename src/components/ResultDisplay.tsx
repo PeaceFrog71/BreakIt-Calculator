@@ -12,6 +12,57 @@ import golemShipImage from "../assets/mining_ship_golem_pixel_120x48.png";
 import moleShipImage from "../assets/mining_ship_mole_pixel_120x48_transparent.png";
 import prospectorShipImage from "../assets/mining_ship_prospector_pixel_120x48.png";
 import asteroidImage from "../assets/asteroid_pixel_1024x1024_true_transparent.png";
+import laserGif from "../assets/mining_laser_wave_tileable.gif";
+
+// Laser beam component using tileable GIF
+interface LaserBeamProps {
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+  svgSize: number;
+}
+
+function LaserBeam({ startX, startY, endX, endY, svgSize }: LaserBeamProps) {
+  // Calculate length and angle
+  const dx = endX - startX;
+  const dy = endY - startY;
+  const length = Math.sqrt(dx * dx + dy * dy);
+  const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+  const beamHeight = 20;
+
+  return (
+    <div
+      className="laser-beam-gif"
+      style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        width: `${svgSize}px`,
+        height: `${svgSize}px`,
+        transform: "translate(-50%, -50%)",
+        pointerEvents: "none",
+      }}>
+      <div
+        className="laser-beam-animated"
+        style={{
+          position: "absolute",
+          left: `${startX}px`,
+          top: `${startY - beamHeight / 2}px`,
+          width: `${length}px`,
+          height: `${beamHeight}px`,
+          transform: `rotate(${angle}deg)`,
+          transformOrigin: "0 50%",
+          backgroundImage: `url(${laserGif})`,
+          backgroundRepeat: "repeat-x",
+          backgroundSize: "auto 100%",
+          imageRendering: "pixelated",
+          filter: "drop-shadow(0 0 8px rgba(255, 200, 0, 0.8)) drop-shadow(0 0 15px rgba(255, 170, 0, 0.5))",
+        }}
+      />
+    </div>
+  );
+}
 
 interface ResultDisplayProps {
   result: CalculationResult;
@@ -193,17 +244,7 @@ export default function ResultDisplay({
                           : [-10, 0, 10];
 
                       return (
-                        <svg
-                          className="laser-beam"
-                          style={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            width: `${svgSize}px`,
-                            height: `${svgSize}px`,
-                            transform: "translate(-50%, -50%)",
-                            pointerEvents: "none",
-                          }}>
+                        <>
                           {angleOffsets.map((angleOffset, laserIndex) => {
                             // Convert angle offset to radians
                             const angleRad = (angleOffset * Math.PI) / 180;
@@ -221,27 +262,17 @@ export default function ResultDisplay({
                               dy * Math.cos(angleRad);
 
                             return (
-                              <line
+                              <LaserBeam
                                 key={laserIndex}
-                                x1={laserStartX}
-                                y1={laserStartY}
-                                x2={rotatedEndX}
-                                y2={rotatedEndY}
-                                stroke="var(--warning)"
-                                strokeWidth="2"
-                                strokeDasharray="4 4"
-                                opacity="0.8">
-                                <animate
-                                  attributeName="stroke-dashoffset"
-                                  from="8"
-                                  to="0"
-                                  dur="0.3s"
-                                  repeatCount="indefinite"
-                                />
-                              </line>
+                                startX={laserStartX}
+                                startY={laserStartY}
+                                endX={rotatedEndX}
+                                endY={rotatedEndY}
+                                svgSize={svgSize}
+                              />
                             );
                           })}
-                        </svg>
+                        </>
                       );
                     }
 
@@ -252,35 +283,13 @@ export default function ResultDisplay({
 
                     // For non-MOLE ships, render single laser
                     return (
-                      <svg
-                        className="laser-beam"
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          width: `${svgSize}px`,
-                          height: `${svgSize}px`,
-                          transform: "translate(-50%, -50%)",
-                          pointerEvents: "none",
-                        }}>
-                        <line
-                          x1={laserStartX}
-                          y1={laserStartY}
-                          x2={laserEndX}
-                          y2={laserEndY}
-                          stroke="var(--warning)"
-                          strokeWidth="2"
-                          strokeDasharray="4 4"
-                          opacity="0.8">
-                          <animate
-                            attributeName="stroke-dashoffset"
-                            from="8"
-                            to="0"
-                            dur="0.3s"
-                            repeatCount="indefinite"
-                          />
-                        </line>
-                      </svg>
+                      <LaserBeam
+                        startX={laserStartX}
+                        startY={laserStartY}
+                        endX={laserEndX}
+                        endY={laserEndY}
+                        svgSize={svgSize}
+                      />
                     );
                   })()}
 
@@ -459,17 +468,7 @@ export default function ResultDisplay({
                               : [-10, 0, 10];
 
                           return (
-                            <svg
-                              className="laser-beam"
-                              style={{
-                                position: "absolute",
-                                top: "50%",
-                                left: "50%",
-                                width: `${svgSize}px`,
-                                height: `${svgSize}px`,
-                                transform: "translate(-50%, -50%)",
-                                pointerEvents: "none",
-                              }}>
+                            <>
                               {angleOffsets.map((angleOffset, laserIndex) => {
                                 // Convert angle offset to radians
                                 const angleRad = (angleOffset * Math.PI) / 180;
@@ -487,61 +486,29 @@ export default function ResultDisplay({
                                   dy * Math.cos(angleRad);
 
                                 return (
-                                  <line
+                                  <LaserBeam
                                     key={laserIndex}
-                                    x1={laserStartX}
-                                    y1={laserStartY}
-                                    x2={rotatedEndX}
-                                    y2={rotatedEndY}
-                                    stroke="var(--warning)"
-                                    strokeWidth="2"
-                                    strokeDasharray="4 4"
-                                    opacity="0.8">
-                                    <animate
-                                      attributeName="stroke-dashoffset"
-                                      from="8"
-                                      to="0"
-                                      dur="0.3s"
-                                      repeatCount="indefinite"
-                                    />
-                                  </line>
+                                    startX={laserStartX}
+                                    startY={laserStartY}
+                                    endX={rotatedEndX}
+                                    endY={rotatedEndY}
+                                    svgSize={svgSize}
+                                  />
                                 );
                               })}
-                            </svg>
+                            </>
                           );
                         }
 
                         // For non-MOLE ships, render single laser
                         return (
-                          <svg
-                            className="laser-beam"
-                            style={{
-                              position: "absolute",
-                              top: "50%",
-                              left: "50%",
-                              width: `${svgSize}px`,
-                              height: `${svgSize}px`,
-                              transform: "translate(-50%, -50%)",
-                              pointerEvents: "none",
-                            }}>
-                            <line
-                              x1={laserStartX}
-                              y1={laserStartY}
-                              x2={laserEndX}
-                              y2={laserEndY}
-                              stroke="var(--warning)"
-                              strokeWidth="2"
-                              strokeDasharray="4 4"
-                              opacity="0.8">
-                              <animate
-                                attributeName="stroke-dashoffset"
-                                from="8"
-                                to="0"
-                                dur="0.3s"
-                                repeatCount="indefinite"
-                              />
-                            </line>
-                          </svg>
+                          <LaserBeam
+                            startX={laserStartX}
+                            startY={laserStartY}
+                            endX={laserEndX}
+                            endY={laserEndY}
+                            svgSize={svgSize}
+                          />
                         );
                       })()}
 

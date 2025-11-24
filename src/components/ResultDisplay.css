@@ -154,6 +154,23 @@
   filter: drop-shadow(0 0 4px var(--warning)) drop-shadow(0 0 8px rgba(255, 170, 0, 0.4));
 }
 
+.laser-beam-gif {
+  z-index: 10;
+}
+
+.laser-beam-animated {
+  animation: laser-flow 1.5s linear infinite;
+}
+
+@keyframes laser-flow {
+  from {
+    background-position: 0 center;
+  }
+  to {
+    background-position: 100px center;
+  }
+}
+
 .rock-icon {
   text-align: center;
   position: relative;
