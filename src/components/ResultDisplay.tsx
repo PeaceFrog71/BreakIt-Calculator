@@ -265,13 +265,14 @@ export default function ResultDisplay({
               // Laser starts at ship position (center of ship image)
               const laserStartX = center + shipX;
               const laserStartY = center + shipY - 10;
-              // Laser ends 5% short of asteroid center
+              // Laser ends at rock surface (80% of radius from center, toward ship)
               const distance = Math.sqrt(shipX * shipX + shipY * shipY);
               const directionX = -shipX / distance; // Normalized direction from ship to center
               const directionY = -shipY / distance;
-              const shortfall = (asteroidSize.width / 2) * 0.2; // 10% of radius
-              const laserEndX = center - directionX * shortfall;
-              const laserEndY = center - directionY * shortfall;
+              const stopDistance = asteroidRadius * 0.8; // Stop at 80% of radius (on rock surface)
+              // Endpoint is at center minus direction (toward ship) times stopDistance
+              const laserEndX = center - directionX * stopDistance;
+              const laserEndY = center - directionY * stopDistance;
 
               // Check if this is a MOLE and count manned lasers (with laser heads configured)
               const isMole = selectedShip.id === "mole";
