@@ -235,13 +235,13 @@ export default function ResultDisplay({
                   {(() => {
                     // For MOLE, only render lasers if there are manned lasers
                     if (isMole && numMannedLasers > 0) {
-                      // Calculate angle spread: ±10° for up to 3 lasers (increased for visibility)
+                      // Calculate angle spread for up to 3 lasers
                       const angleOffsets =
                         numMannedLasers === 1
                           ? [0]
                           : numMannedLasers === 2
-                          ? [-10, 10]
-                          : [-10, 0, 10];
+                          ? [-20, 20]
+                          : [-20, 0, 20];
 
                       return (
                         <>
@@ -464,8 +464,8 @@ export default function ResultDisplay({
                             numMannedLasers === 1
                               ? [0]
                               : numMannedLasers === 2
-                              ? [-10, 10]
-                              : [-10, 0, 10];
+                              ? [-20, 20]
+                              : [-20, 0, 20];
 
                           return (
                             <>
