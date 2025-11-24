@@ -237,11 +237,8 @@ export default function ResultDisplay({
 
               // Adjust radius multiplier based on rock size
               let radiusMultiplier = 1.1;
-              if (rock.mass < 15000) {
-                // Tiny rocks - much larger multiplier
-                radiusMultiplier = 2.0;
-              } else if (rock.mass < 25000) {
-                // Small rocks - larger multiplier
+              if (rock.mass < 25000) {
+                // Tiny and small rocks - same multiplier
                 radiusMultiplier = 1.6;
               } else if (rock.mass >= 100000) {
                 // Huge rocks - use same positioning as large rocks
