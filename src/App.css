@@ -143,6 +143,18 @@ body {
   transition: all 0.2s ease;
 }
 
+/* Remove number input spinners/arrows for rock properties */
+.compact-form-group input[type="number"]::-webkit-inner-spin-button,
+.compact-form-group input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.compact-form-group input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 .compact-form-group input:focus,
 .compact-form-group select:focus {
   outline: none;
