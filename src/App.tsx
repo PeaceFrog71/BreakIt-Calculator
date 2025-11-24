@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import type { MiningConfiguration, Ship, Rock, MiningGroup, Gadget } from "./types";
-import { SHIPS, LASER_HEADS } from "./types";
+import { SHIPS, LASER_HEADS, GADGETS, getGadgetSymbol } from "./types";
 import {
   createEmptyConfig,
   calculateBreakability,
@@ -13,9 +13,7 @@ import {
 } from "./utils/storage";
 import ShipSelector from "./components/ShipSelector";
 import LaserPanel from "./components/LaserPanel";
-import RockInput from "./components/RockInput";
 import ResultDisplay from "./components/ResultDisplay";
-import GadgetSelector from "./components/GadgetSelector";
 import ConfigManager from "./components/ConfigManager";
 import ShipPoolManager from "./components/ShipPoolManager";
 import TabNavigation, { type TabType } from "./components/TabNavigation";
@@ -181,33 +179,180 @@ function App() {
           {/* Overview Tab */}
           {activeTab === "overview" && (
             <div className="overview-tab">
-              <ResultDisplay
-                result={result}
-                rock={rock}
-                gadgets={gadgets}
-                gadgetEnabled={gadgetEnabled}
-                onToggleGadget={handleToggleGadget}
-                miningGroup={useMiningGroup ? miningGroup : undefined}
-                selectedShip={!useMiningGroup ? selectedShip : undefined}
-                config={!useMiningGroup ? config : undefined}
-                onToggleShip={useMiningGroup ? handleToggleShip : undefined}
-                onToggleLaser={useMiningGroup ? handleToggleLaser : undefined}
-                onSingleShipToggleLaser={!useMiningGroup && selectedShip.id === 'mole' ? handleSingleShipToggleLaser : undefined}
-              />
-            </div>
-          )}
+              {/* Left Sidebar - Rock Parameters */}
+              <div className="overview-sidebar overview-left">
+                <div className="sidebar-panel">
+                  <h2>Rock Properties</h2>
+                  <div className="compact-form-group">
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      value={rock.name || ''}
+                      onChange={(e) => setRock({ ...rock, name: e.target.value })}
+                      placeholder="Rock name"
+                    />
+                  </div>
+                  <div className="compact-form-group">
+                    <label>Mass</label>
+                    <input
+                      type="number"
+                      value={rock.mass}
+                      onChange={(e) => setRock({ ...rock, mass: parseFloat(e.target.value) || 0 })}
+                      min="0"
+                      step="0.1"
+                    />
+                  </div>
+                  <div className="compact-form-group">
+                    <label>Resistance</label>
+                    <input
+                      type="number"
+                      value={rock.resistance}
+                      onChange={(e) => setRock({ ...rock, resistance: parseFloat(e.target.value) || 0 })}
+                      min="0"
+                      step="0.1"
+                    />
+                  </div>
+                  <div className="compact-form-group">
+                    <label>Instability</label>
+                    <input
+                      type="number"
+                      value={rock.instability || 0}
+                      onChange={(e) => setRock({ ...rock, instability: parseFloat(e.target.value) || 0 })}
+                      min="0"
+                      step="0.1"
+                    />
+                  </div>
+                </div>
+              </div>
 
-          {/* Rock Config Tab */}
-          {activeTab === "rock" && (
-            <div className="rock-config-tab">
-              <RockInput rock={rock} onChange={setRock} />
+              {/* Center - Mining Graphic */}
+              <div className="overview-center">
+                <ResultDisplay
+                  result={result}
+                  rock={rock}
+                  gadgets={gadgets}
+                  gadgetEnabled={gadgetEnabled}
+                  onToggleGadget={handleToggleGadget}
+                  miningGroup={useMiningGroup ? miningGroup : undefined}
+                  selectedShip={!useMiningGroup ? selectedShip : undefined}
+                  config={!useMiningGroup ? config : undefined}
+                  onToggleShip={useMiningGroup ? handleToggleShip : undefined}
+                  onToggleLaser={useMiningGroup ? handleToggleLaser : undefined}
+                  onSingleShipToggleLaser={!useMiningGroup && selectedShip.id === 'mole' ? handleSingleShipToggleLaser : undefined}
+                />
+              </div>
 
-              <GadgetSelector
-                gadgets={gadgets}
-                onChange={setGadgets}
-                gadgetCount={gadgetCount}
-                onGadgetCountChange={setGadgetCount}
-              />
+              {/* Right Sidebar - Gadgets */}
+              <div className="overview-sidebar overview-right">
+                <div className="sidebar-panel">
+                  <div className="gadget-header-compact">
+                    <h2>Gadgets</h2>
+                    <div className="gadget-count-stepper">
+                      <button
+                        className="stepper-btn"
+                        onClick={() => setGadgetCount(Math.max(0, gadgetCount - 1))}
+                        disabled={gadgetCount <= 0}
+                      >
+                        ▼
+                      </button>
+                      <span className="stepper-value">{gadgetCount}</span>
+                      <button
+                        className="stepper-btn"
+                        onClick={() => setGadgetCount(Math.min(10, gadgetCount + 1))}
+                        disabled={gadgetCount >= 10}
+                      >
+                        ▲
+                      </button>
+                    </div>
+                  </div>
+                  {Array.from({ length: gadgetCount }).map((_, index) => {
+                    // Helper to format all gadget effects for tooltips
+                    const formatGadgetTooltip = (gadget: Gadget | null) => {
+                      if (!gadget || gadget.id === 'none') return '';
+                      const formatEffect = (value: number | undefined, label: string) => {
+                        if (value === undefined || value === 1) return null;
+                        const pct = value > 1 ? `+${Math.round((value - 1) * 100)}%` : `-${Math.round((1 - value) * 100)}%`;
+                        return `${label}: ${pct}`;
+                      };
+                      const effects = [
+                        formatEffect(gadget.resistModifier, 'Resist'),
+                        formatEffect(gadget.instabilityModifier, 'Instability'),
+                        formatEffect(gadget.chargeWindowModifier, 'Window'),
+                        formatEffect(gadget.chargeRateModifier, 'Rate'),
+                        formatEffect(gadget.clusterModifier, 'Cluster'),
+                      ].filter(Boolean);
+                      return `${gadget.name}: ${effects.join(', ')}`;
+                    };
+                    return (
+                    <div key={index} className="compact-form-group gadget-select-wrapper">
+                      <label>Gadget {index + 1}</label>
+                      <select
+                        value={gadgets[index]?.id || 'none'}
+                        onChange={(e) => {
+                          const gadget = GADGETS.find((g) => g.id === e.target.value) || null;
+                          const newGadgets = [...gadgets];
+                          newGadgets[index] = gadget;
+                          setGadgets(newGadgets);
+                        }}
+                        title={gadgets[index] && gadgets[index].id !== 'none' ?
+                          formatGadgetTooltip(gadgets[index]) : 'Select a gadget'}
+                      >
+                        {GADGETS.map((gadget) => (
+                          <option
+                            key={gadget.id}
+                            value={gadget.id}
+                            title={formatGadgetTooltip(gadget)}
+                          >
+                            {gadget.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  );})}
+
+                  {/* Gadget Info Boxes - stacked vertically */}
+                  {gadgets.filter(g => g && g.id !== 'none').length > 0 && (
+                    <div className="gadget-info-list">
+                      {gadgets.map((gadget, index) => {
+                        if (!gadget || gadget.id === 'none') return null;
+                        const isEnabled = gadgetEnabled[index] !== false;
+                        const formatEffect = (value: number | undefined, label: string) => {
+                          if (value === undefined || value === 1) return null;
+                          const pct = value > 1 ? `+${Math.round((value - 1) * 100)}%` : `-${Math.round((1 - value) * 100)}%`;
+                          const isPositive = (label === 'Resist' || label === 'Instability') ? value < 1 : value > 1;
+                          return { label, pct, isPositive };
+                        };
+                        const effects = [
+                          formatEffect(gadget.resistModifier, 'Resist'),
+                          formatEffect(gadget.instabilityModifier, 'Instability'),
+                          formatEffect(gadget.chargeWindowModifier, 'Window'),
+                          formatEffect(gadget.chargeRateModifier, 'Rate'),
+                          formatEffect(gadget.clusterModifier, 'Cluster'),
+                        ].filter(Boolean) as { label: string; pct: string; isPositive: boolean }[];
+                        return (
+                          <div
+                            key={index}
+                            className={`gadget-info-item ${!isEnabled ? 'disabled' : ''}`}
+                            onClick={() => handleToggleGadget(index)}
+                          >
+                            <div className="gadget-info-header">
+                              <span className="gadget-info-symbol">{getGadgetSymbol(gadget.id)}</span>
+                              <span className="gadget-info-name">{gadget.name}</span>
+                            </div>
+                            <div className="gadget-info-effects">
+                              {effects.map((effect, i) => (
+                                <span key={i} className={`gadget-effect ${effect.isPositive ? 'positive' : 'negative'}`}>
+                                  {effect.label}: {effect.pct}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 

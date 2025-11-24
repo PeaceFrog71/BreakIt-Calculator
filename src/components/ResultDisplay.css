@@ -7,16 +7,22 @@
 
 .rock-display {
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: stretch;
   padding: 2rem;
   background: radial-gradient(circle, var(--bg-light) 0%, var(--bg-medium) 100%);
   border-radius: 12px;
   border: 2px solid var(--border);
   min-height: 500px;
   position: relative;
-  gap: 2rem;
+  gap: 1rem;
   overflow: hidden;
+}
+
+.rock-display-centered {
+  /* Don't override justify-content - let rock-container flex:1 handle vertical centering */
+  align-items: center;
 }
 
 .rock-stats-topleft {
@@ -282,6 +288,98 @@
   box-shadow: 0 0 4px rgba(168, 181, 199, 0.3);
   text-shadow: none;
   text-decoration: line-through;
+}
+
+/* Gadget Properties Panel - horizontal row at bottom of rock display */
+.gadget-properties-panel {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: stretch;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-top: auto;
+}
+
+.gadget-property-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--accent-cyan);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gadget-property-item:hover {
+  border-color: var(--accent-blue);
+  background: rgba(0, 217, 255, 0.15);
+}
+
+.gadget-property-item.disabled {
+  opacity: 0.5;
+  border-color: var(--text-secondary);
+}
+
+.gadget-property-item.disabled .gadget-property-name,
+.gadget-property-item.disabled .gadget-property-symbol {
+  text-decoration: line-through;
+}
+
+.gadget-property-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.gadget-property-symbol {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  background: rgba(0, 255, 204, 0.2);
+  padding: 0.15rem 0.3rem;
+  border-radius: 3px;
+  border: 1px solid var(--accent-cyan);
+}
+
+.gadget-property-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.gadget-effects-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.gadget-effect-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.gadget-effect-badge.positive {
+  color: var(--success);
+  background: rgba(0, 255, 136, 0.2);
+}
+
+.gadget-effect-badge.negative {
+  color: var(--warning);
+  background: rgba(255, 170, 0, 0.2);
 }
 
 /* Rock color based on breakability status */

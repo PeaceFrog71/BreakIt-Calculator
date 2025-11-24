@@ -1,6 +1,6 @@
 import './TabNavigation.css';
 
-export type TabType = 'overview' | 'rock' | 'mining';
+export type TabType = 'overview' | 'mining';
 
 interface TabNavigationProps {
   activeTab: TabType;
@@ -15,12 +15,6 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
         onClick={() => onTabChange('overview')}
       >
         Overview
-      </button>
-      <button
-        className={`tab-button ${activeTab === 'rock' ? 'active' : ''}`}
-        onClick={() => onTabChange('rock')}
-      >
-        Rock Config
       </button>
       <button
         className={`tab-button ${activeTab === 'mining' ? 'active' : ''}`}

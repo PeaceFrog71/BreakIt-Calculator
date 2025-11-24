@@ -124,15 +124,6 @@ export default function ResultDisplay({
     ? Math.min(powerPercentage - 100, 100) // Cap at 100% overcharge
     : 0;
 
-  // Calculate rock size category based on mass
-  const getRockSize = () => {
-    if (rock.mass < 15000) return "Tiny";
-    if (rock.mass < 25000) return "Small";
-    if (rock.mass < 50000) return "Medium";
-    if (rock.mass < 100000) return "Large";
-    return "Huge";
-  };
-
   // Get asteroid size multiplier based on rock size (1:1 aspect ratio)
   const getAsteroidSize = () => {
     if (rock.mass < 15000) return { width: 100, height: 100 }; // Tiny (50% smaller)
@@ -158,26 +149,7 @@ export default function ResultDisplay({
 
   return (
     <div className="result-display">
-      <div className="rock-display">
-        {/* Rock stats column on the left */}
-        <div className="rock-stats-sidebar">
-          {rock.name && <div className="rock-title">{rock.name}</div>}
-          <div className="rock-stat-item">
-            <div className="stat-label-top">Mass</div>
-            <div className="stat-value-bottom">{rock.mass.toFixed(0)}</div>
-          </div>
-          <div className="rock-stat-item">
-            <div className="stat-label-top">Size</div>
-            <div className="stat-value-bottom">{getRockSize()}</div>
-          </div>
-          <div className="rock-stat-item">
-            <div className="stat-label-top">Resistance</div>
-            <div className="stat-value-bottom">
-              {rock.resistance.toFixed(1)}%
-            </div>
-          </div>
-        </div>
-
+      <div className="rock-display rock-display-centered">
         <div className="rock-container">
           {/* Single ship positioned to the left */}
           {!miningGroup &&
@@ -658,7 +630,7 @@ export default function ResultDisplay({
             className={`rock-icon ${getStatusClass()} ${
               hasExcessiveOvercharge ? "overcharge-warning" : ""
             }`}
-            style={{ position: "relative", top: "-15%" }}>
+            style={{ position: "relative" }}>
             <div className="rock-symbol">
               <img
                 src={asteroidImage}
@@ -678,19 +650,27 @@ export default function ResultDisplay({
                     const isEnabled = gadgetEnabled
                       ? gadgetEnabled[index] !== false
                       : true;
+                    // Build tooltip with all effects
+                    const formatEffect = (value: number | undefined, label: string) => {
+                      if (value === undefined || value === 1) return null;
+                      const pct = value > 1 ? `+${Math.round((value - 1) * 100)}%` : `-${Math.round((1 - value) * 100)}%`;
+                      return `${label}: ${pct}`;
+                    };
+                    const effects = [
+                      formatEffect(gadget.resistModifier, 'Resist'),
+                      formatEffect(gadget.instabilityModifier, 'Instability'),
+                      formatEffect(gadget.chargeWindowModifier, 'Charge Window'),
+                      formatEffect(gadget.chargeRateModifier, 'Charge Rate'),
+                      formatEffect(gadget.clusterModifier, 'Clustering'),
+                    ].filter(Boolean);
+                    const tooltipText = `${gadget.name}\n${effects.join('\n')}`;
                     return (
                       <span
                         key={index}
                         className={`gadget-symbol-small ${
                           !isEnabled ? "disabled" : ""
                         } ${onToggleGadget ? "clickable" : ""}`}
-                        title={`${gadget.name}${
-                          onToggleGadget
-                            ? isEnabled
-                              ? " (click to disable)"
-                              : " (click to enable)"
-                            : ""
-                        }`}
+                        title={tooltipText}
                         onClick={() => onToggleGadget && onToggleGadget(index)}>
                         {getGadgetSymbol(gadget.id)}
                       </span>
@@ -701,6 +681,7 @@ export default function ResultDisplay({
             </div>
           </div>
         </div>
+
       </div>
 
       <div

@@ -12,15 +12,29 @@ export interface LaserHead {
 export interface Module {
   id: string;
   name: string;
-  powerModifier: number; // Multiplier for laser power (1.25 = +25% power)
-  resistModifier: number; // Effect on rock resistance
-  category: 'power' | 'resist' | 'stability' | 'utility';
+  powerModifier: number; // Mining Laser Power multiplier (1.35 = +35%)
+  resistModifier: number; // Resistance modifier (1.15 = +15%, 0.85 = -15%)
+  instabilityModifier?: number; // Laser Instability modifier (0.8 = -20%, 1.1 = +10%)
+  chargeWindowModifier?: number; // Optimal Charge Window (1.3 = +30%)
+  chargeRateModifier?: number; // Optimal Charge Rate (1.3 = +30%)
+  overchargeRateModifier?: number; // Overcharge Rate (0.4 = -60%)
+  shatterDamageModifier?: number; // Shatter Damage (0.7 = -30%)
+  extractionPowerModifier?: number; // Extraction Laser Power (1.5 = +50%)
+  inertMaterialsModifier?: number; // Inert Materials (0.8 = -20%)
+  clusterModifier?: number; // Cluster Modifier (1.3 = +30%)
+  category: 'active' | 'passive';
+  duration?: string; // Duration for active modules (e.g., "60s")
+  uses?: number; // Number of uses for active modules
 }
 
 export interface Gadget {
   id: string;
   name: string;
-  resistModifier: number; // Effect on rock resistance
+  resistModifier: number; // Effect on rock resistance (1.1 = +10%, 0.5 = -50%)
+  instabilityModifier?: number; // Effect on instability (0.65 = -35%, 1.15 = +15%)
+  chargeWindowModifier?: number; // Effect on optimal charge window (1.5 = +50%, 0.7 = -30%)
+  chargeRateModifier?: number; // Effect on charge rate (1.5 = +50%, 0.7 = -30%)
+  clusterModifier?: number; // Effect on clustering (1.6 = +60%, 0.8 = -20%)
   description: string;
 }
 
@@ -99,46 +113,48 @@ export const LASER_HEADS: LaserHead[] = [
   { id: 'lancet-mh2', name: 'Lancet MH2', maxPower: 3600, resistModifier: 1.0, size: 2, moduleSlots: 2 },
 ];
 
-// Modules database
+// Modules database - values from RedMonsterSC's Mining Cheatsheet
 export const MODULES: Module[] = [
-  { id: 'none', name: '---', powerModifier: 1, resistModifier: 1, category: 'utility' },
-  { id: 'brandt', name: 'Brandt', powerModifier: 1.35, resistModifier: 1.15, category: 'power' },
-  { id: 'forel', name: 'Forel', powerModifier: 1.0, resistModifier: 1.15, category: 'resist' },
-  { id: 'lifeline', name: 'Lifeline', powerModifier: 1.0, resistModifier: 0.85, category: 'resist' },
-  { id: 'optimum', name: 'Optimum', powerModifier: 0.85, resistModifier: 1.0, category: 'stability' },
-  { id: 'rime', name: 'Rime', powerModifier: 0.85, resistModifier: 0.75, category: 'stability' },
-  { id: 'stampede', name: 'Stampede', powerModifier: 1.35, resistModifier: 1.0, category: 'power' },
-  { id: 'surge', name: 'Surge', powerModifier: 1.5, resistModifier: 0.85, category: 'power' },
-  { id: 'torpid', name: 'Torpid', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'fltr', name: 'FLTR', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'fltr-l', name: 'FLTR-L', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'fltr-xl', name: 'FLTR-XL', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'focus', name: 'Focus', powerModifier: 0.85, resistModifier: 1.0, category: 'stability' },
-  { id: 'focus-2', name: 'Focus II', powerModifier: 0.9, resistModifier: 1.0, category: 'stability' },
-  { id: 'focus-3', name: 'Focus III', powerModifier: 0.95, resistModifier: 1.0, category: 'stability' },
-  { id: 'rieger', name: 'Rieger', powerModifier: 1.15, resistModifier: 1.0, category: 'power' },
-  { id: 'rieger-c2', name: 'Rieger-C2', powerModifier: 1.2, resistModifier: 1.0, category: 'power' },
-  { id: 'rieger-c3', name: 'Rieger-C3', powerModifier: 1.25, resistModifier: 1.0, category: 'power' },
-  { id: 'torrent', name: 'Torrent', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'torrent-2', name: 'Torrent II', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'torrent-3', name: 'Torrent III', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'vaux', name: 'Vaux', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'vaux-c2', name: 'Vaux-C2', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'vaux-c3', name: 'Vaux-C3', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'xtr', name: 'XTR', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'xtr-l', name: 'XTR-L', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
-  { id: 'xtr-xl', name: 'XTR-XL', powerModifier: 1.0, resistModifier: 1.0, category: 'utility' },
+  { id: 'none', name: '---', powerModifier: 1, resistModifier: 1, category: 'passive' },
+  // Active Modules
+  { id: 'brandt', name: 'Brandt', powerModifier: 1.35, resistModifier: 1.15, shatterDamageModifier: 0.7, category: 'active', duration: '60s', uses: 5 },
+  { id: 'forel', name: 'Forel', powerModifier: 1.0, resistModifier: 1.15, overchargeRateModifier: 0.4, extractionPowerModifier: 1.5, category: 'active', duration: '60s', uses: 6 },
+  { id: 'lifeline', name: 'Lifeline', powerModifier: 1.0, resistModifier: 0.85, instabilityModifier: 0.8, overchargeRateModifier: 1.6, category: 'active', duration: '15s', uses: 3 },
+  { id: 'optimum', name: 'Optimum', powerModifier: 0.85, resistModifier: 1.0, instabilityModifier: 0.9, overchargeRateModifier: 0.2, category: 'active', duration: '60s', uses: 5 },
+  { id: 'rime', name: 'Rime', powerModifier: 0.85, resistModifier: 0.75, shatterDamageModifier: 0.9, category: 'active', duration: '20s', uses: 10 },
+  { id: 'stampede', name: 'Stampede', powerModifier: 1.35, resistModifier: 1.0, instabilityModifier: 0.9, shatterDamageModifier: 0.9, extractionPowerModifier: 0.85, category: 'active', duration: '30s', uses: 6 },
+  { id: 'surge', name: 'Surge', powerModifier: 1.5, resistModifier: 0.85, instabilityModifier: 1.1, category: 'active', duration: '15s', uses: 7 },
+  { id: 'torpid', name: 'Torpid', powerModifier: 1.0, resistModifier: 1.0, chargeRateModifier: 1.6, overchargeRateModifier: 0.4, shatterDamageModifier: 1.4, category: 'active', duration: '60s', uses: 5 },
+  // Passive Modules
+  { id: 'fltr', name: 'FLTR', powerModifier: 1.0, resistModifier: 1.0, extractionPowerModifier: 0.85, inertMaterialsModifier: 0.8, category: 'passive' },
+  { id: 'fltr-l', name: 'FLTR-L', powerModifier: 1.0, resistModifier: 1.0, extractionPowerModifier: 0.9, inertMaterialsModifier: 0.77, category: 'passive' },
+  { id: 'fltr-xl', name: 'FLTR-XL', powerModifier: 1.0, resistModifier: 1.0, extractionPowerModifier: 0.95, inertMaterialsModifier: 0.76, category: 'passive' },
+  { id: 'focus', name: 'Focus', powerModifier: 0.85, resistModifier: 1.0, chargeWindowModifier: 1.3, category: 'passive' },
+  { id: 'focus-2', name: 'Focus II', powerModifier: 0.9, resistModifier: 1.0, chargeWindowModifier: 1.37, category: 'passive' },
+  { id: 'focus-3', name: 'Focus III', powerModifier: 0.95, resistModifier: 1.0, chargeWindowModifier: 1.4, category: 'passive' },
+  { id: 'rieger', name: 'Rieger', powerModifier: 1.15, resistModifier: 1.0, chargeWindowModifier: 0.9, category: 'passive' },
+  { id: 'rieger-c2', name: 'Rieger-C2', powerModifier: 1.2, resistModifier: 1.0, chargeWindowModifier: 0.97, category: 'passive' },
+  { id: 'rieger-c3', name: 'Rieger-C3', powerModifier: 1.25, resistModifier: 1.0, chargeWindowModifier: 0.99, category: 'passive' },
+  { id: 'torrent', name: 'Torrent', powerModifier: 1.0, resistModifier: 1.0, chargeWindowModifier: 0.9, chargeRateModifier: 1.3, category: 'passive' },
+  { id: 'torrent-2', name: 'Torrent II', powerModifier: 1.0, resistModifier: 1.0, chargeWindowModifier: 0.97, chargeRateModifier: 1.35, category: 'passive' },
+  { id: 'torrent-3', name: 'Torrent III', powerModifier: 1.0, resistModifier: 1.0, chargeWindowModifier: 0.99, chargeRateModifier: 1.4, category: 'passive' },
+  { id: 'vaux', name: 'Vaux', powerModifier: 1.0, resistModifier: 1.0, chargeRateModifier: 0.8, extractionPowerModifier: 1.15, category: 'passive' },
+  { id: 'vaux-c2', name: 'Vaux-C2', powerModifier: 1.0, resistModifier: 1.0, chargeRateModifier: 0.85, extractionPowerModifier: 1.2, category: 'passive' },
+  { id: 'vaux-c3', name: 'Vaux-C3', powerModifier: 1.0, resistModifier: 1.0, chargeRateModifier: 0.95, extractionPowerModifier: 1.25, category: 'passive' },
+  { id: 'xtr', name: 'XTR', powerModifier: 1.0, resistModifier: 1.0, chargeWindowModifier: 1.15, extractionPowerModifier: 0.85, inertMaterialsModifier: 0.95, category: 'passive' },
+  { id: 'xtr-l', name: 'XTR-L', powerModifier: 1.0, resistModifier: 1.0, chargeWindowModifier: 1.22, extractionPowerModifier: 0.9, inertMaterialsModifier: 0.94, category: 'passive' },
+  { id: 'xtr-xl', name: 'XTR-XL', powerModifier: 1.0, resistModifier: 1.0, chargeWindowModifier: 1.25, extractionPowerModifier: 0.95, inertMaterialsModifier: 0.94, category: 'passive' },
 ];
 
-// Gadgets database
+// Gadgets database - values from RedMonsterSC's Mining Cheatsheet
 export const GADGETS: Gadget[] = [
   { id: 'none', name: '---', resistModifier: 1, description: 'No gadget' },
-  { id: 'boremax', name: 'BoreMax', resistModifier: 1.1, description: 'Increases resistance (10% harder). Benefit: Increases mineral yield by making the rock more stable during extraction.' },
-  { id: 'okunis', name: 'Okunis', resistModifier: 1.0, description: 'Neutral resistance effect. Benefit: Reduces overcharge window, allowing finer laser power control.' },
-  { id: 'optimax', name: 'OptiMax', resistModifier: 0.7, description: 'Reduces resistance by 30%. Benefit: Increases optimal charge window for easier rock breaking.' },
-  { id: 'sabir', name: 'Sabir', resistModifier: 0.5, description: 'Reduces resistance by 50%. Benefit: Significantly extends optimal charge window, making difficult rocks much easier to break.' },
-  { id: 'stalwart', name: 'Stalwart', resistModifier: 1.0, description: 'Neutral resistance effect. Benefit: Reduces rock instability, preventing premature fracturing.' },
-  { id: 'waveshift', name: 'Waveshift', resistModifier: 1.0, description: 'Neutral resistance effect. Benefit: Increases inert material percentage, making the rock more stable overall.' },
+  { id: 'boremax', name: 'BoreMax', resistModifier: 1.1, instabilityModifier: 0.3, clusterModifier: 1.3, description: 'Reduces instability significantly. Increases clustering.' },
+  { id: 'okunis', name: 'Okunis', resistModifier: 1.5, chargeWindowModifier: 2.0, clusterModifier: 0.8, description: 'Doubles charge window. Reduces clustering.' },
+  { id: 'optimax', name: 'OptiMax', resistModifier: 0.7, instabilityModifier: 0.7, clusterModifier: 1.6, description: 'Reduces resistance and instability. Increases clustering significantly.' },
+  { id: 'sabir', name: 'Sabir', resistModifier: 0.5, instabilityModifier: 1.15, chargeWindowModifier: 1.5, description: 'Best resistance reduction. Slightly increases instability.' },
+  { id: 'stalwart', name: 'Stalwart', resistModifier: 1.0, instabilityModifier: 0.65, chargeWindowModifier: 0.7, chargeRateModifier: 1.5, clusterModifier: 1.3, description: 'Reduces instability. Increases charge rate and clustering.' },
+  { id: 'waveshift', name: 'Waveshift', resistModifier: 1.0, instabilityModifier: 0.65, chargeWindowModifier: 2.0, chargeRateModifier: 0.7, description: 'Doubles charge window. Reduces instability and charge rate.' },
 ];
 
 // Helper function to get gadget symbol
