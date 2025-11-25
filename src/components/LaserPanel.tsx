@@ -171,9 +171,10 @@ export default function LaserPanel({ laserIndex, laser, selectedShip, onChange, 
               <span className="component-power">{laser.laserHead.maxPower} → {calculateLaserPower(laser).toFixed(0)}</span>
             </div>
             <div className="component-effects-inline">
+              <span className="effect-badge neutral">Size: {laser.laserHead.size}</span>
               {laser.laserHead.resistModifier !== 1 && (
                 <span className={`effect-badge ${laser.laserHead.resistModifier < 1 ? 'positive' : 'negative'}`}>
-                  Resist {formatPct(laser.laserHead.resistModifier)}
+                  Res {formatPct(laser.laserHead.resistModifier)}
                 </span>
               )}
               <span className="effect-badge neutral">Slots: {laser.laserHead.moduleSlots}</span>
