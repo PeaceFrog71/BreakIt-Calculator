@@ -90,13 +90,13 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
         title: 'Casual User - Single Ship Quick Check',
         subtitle: 'Quick check if your ship can break a rock',
         steps: [
-          { title: 'Launch Application', desc: 'Application loads with Overview tab active' },
-          { title: 'Configure Ship (if needed)', desc: 'Click "Mining Config" tab, select ship type, configure lasers and modules' },
-          { title: 'Return to Overview', desc: 'Click "Overview" tab' },
+          { title: 'Launch Application', desc: 'Application loads with Results tab active' },
+          { title: 'Configure Ship (if needed)', desc: 'Click "Ship Setup" tab, select ship type, configure lasers and modules' },
+          { title: 'Return to Results', desc: 'Click "Results" tab' },
           { title: 'Enter Rock Properties', desc: 'In left sidebar: enter Mass, Resistance, and optionally Instability' },
           { title: 'Add Gadgets (optional)', desc: 'In right sidebar: select up to 3 gadgets, toggle on/off as needed' },
           { title: 'Review Results', desc: 'Center display shows: Green "CAN BREAK" (>20% margin), Yellow "LOW MARGIN BREAK" (<20% margin), or Red "CANNOT BREAK"' },
-          { title: 'Adjust if Needed', desc: 'Return to Mining Config to modify equipment if needed' },
+          { title: 'Adjust if Needed', desc: 'Return to Ship Setup to modify equipment if needed' },
         ]
       },
       'casual-group': {
@@ -104,9 +104,9 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
         subtitle: 'Check combined group mining power',
         steps: [
           { title: 'Launch Application', desc: 'Open Rock Breaker Calculator' },
-          { title: 'Switch to Group Mode', desc: 'Mining Config tab → Click "Mining Group" button' },
+          { title: 'Switch to Group Mode', desc: 'Ship Setup tab → Click "Mining Group" button' },
           { title: 'Add Ships to Group', desc: 'Click "Add Ship from Pool", configure each ship\'s equipment' },
-          { title: 'Return to Overview', desc: 'Click "Overview" tab to see all ships' },
+          { title: 'Return to Results', desc: 'Click "Results" tab to see all ships' },
           { title: 'Enter Rock Properties', desc: 'Enter Mass and Resistance in left sidebar' },
           { title: 'Configure Gadgets', desc: 'Add all gadgets owned by group members in right sidebar' },
           { title: 'Review Combined Results', desc: 'See overall breaking power and individual contributions' },
@@ -118,11 +118,11 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
         subtitle: 'Quickly load your standard ship setup',
         steps: [
           { title: 'Launch Application', desc: 'Last configuration loads automatically' },
-          { title: 'Load Saved Config (if needed)', desc: 'Mining Config tab → Saved Configurations → Click ↻ to load' },
-          { title: 'Navigate to Overview', desc: 'Click "Overview" tab' },
+          { title: 'Load Saved Config (if needed)', desc: 'Ship Setup tab → Saved Configurations → Click ↻ to load' },
+          { title: 'Navigate to Results', desc: 'Click "Results" tab' },
           { title: 'Enter Rock Properties', desc: 'Enter Mass and Resistance in left sidebar' },
           { title: 'Review Results', desc: 'Check breaking capability in center display' },
-          { title: 'Save New Config (optional)', desc: 'Mining Config → "💾 Save Current" to save modifications' },
+          { title: 'Save New Config (optional)', desc: 'Ship Setup → "💾 Save Current" to save modifications' },
           { title: 'Export Config (optional)', desc: 'Click 📤 next to configuration to share or backup' },
         ]
       },
@@ -131,9 +131,9 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
         subtitle: 'Load saved mining group configuration',
         steps: [
           { title: 'Launch Application', desc: 'Open Rock Breaker Calculator' },
-          { title: 'Switch to Group Mode', desc: 'Mining Config tab → "Mining Group" button' },
+          { title: 'Switch to Group Mode', desc: 'Ship Setup tab → "Mining Group" button' },
           { title: 'Load Saved Group', desc: 'Saved Mining Groups section → Click ↻ to load' },
-          { title: 'Navigate to Overview', desc: 'All group ships displayed in center view' },
+          { title: 'Navigate to Results', desc: 'All group ships displayed in center view' },
           { title: 'Enter Rock Properties', desc: 'Enter Mass and Resistance in left sidebar' },
           { title: 'Adjust Active Ships', desc: 'Toggle ships/lasers based on crew availability' },
           { title: 'Check Gadgets', desc: 'Toggle gadgets on/off based on what crew brought' },
@@ -144,8 +144,8 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
         title: 'Trainer Mode - Single Ship Educational',
         subtitle: 'Teach mining mechanics and equipment effects',
         steps: [
-          { title: 'Set Up Demo', desc: 'Mining Config → Single Ship → Choose Prospector for demonstration' },
-          { title: 'Show Baseline', desc: 'Overview tab → Enter sample rock (Mass: 25000, Resistance: 30)' },
+          { title: 'Set Up Demo', desc: 'Ship Setup → Single Ship → Choose Prospector for demonstration' },
+          { title: 'Show Baseline', desc: 'Results tab → Enter sample rock (Mass: 25000, Resistance: 30)' },
           { title: 'Teach Laser Heads', desc: 'Change laser heads one by one, explain resistance modifiers (Klein-S1 = 0.55x, Helix = 0.7x)' },
           { title: 'Teach Modules', desc: 'Add modules (Surge, Stampede, Rieger), show real-time calculation updates' },
           { title: 'Teach Gadgets', desc: 'Add OptiMax (-30% resistance), Sabir (-50%), demonstrate toggling' },
@@ -158,7 +158,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
         title: 'Trainer Mode - Multi-Ship Educational',
         subtitle: 'Demonstrate group mining and coordination',
         steps: [
-          { title: 'Switch to Group Mode', desc: 'Mining Config → "Mining Group" button' },
+          { title: 'Switch to Group Mode', desc: 'Ship Setup → "Mining Group" button' },
           { title: 'Build Demo Group', desc: 'Add first ship, show insufficient power for high-resistance rock' },
           { title: 'Demo Group Synergy', desc: 'Add second ship, show combined power exceeds threshold' },
           { title: 'Teach Role Specialization', desc: 'Configure different roles: Power Ships (Helix+Surge), Resistance Ships (Klein-S1), Balanced Ships' },
