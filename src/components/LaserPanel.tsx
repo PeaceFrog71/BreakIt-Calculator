@@ -184,12 +184,16 @@ export default function LaserPanel({ laserIndex, laser, selectedShip, onChange, 
           {laser.modules.map((module, idx) => {
             if (!module || module.id === 'none') return null;
 
-            // Check if module has any effects
+            // Check if module has any effects (defined AND not equal to 1)
             const hasEffects = module.powerModifier !== 1 || module.resistModifier !== 1 ||
-              module.instabilityModifier !== undefined || module.chargeWindowModifier !== undefined ||
-              module.chargeRateModifier !== undefined || module.overchargeRateModifier !== undefined ||
-              module.shatterDamageModifier !== undefined || module.extractionPowerModifier !== undefined ||
-              module.inertMaterialsModifier !== undefined || module.clusterModifier !== undefined;
+              (module.instabilityModifier !== undefined && module.instabilityModifier !== 1) ||
+              (module.chargeWindowModifier !== undefined && module.chargeWindowModifier !== 1) ||
+              (module.chargeRateModifier !== undefined && module.chargeRateModifier !== 1) ||
+              (module.overchargeRateModifier !== undefined && module.overchargeRateModifier !== 1) ||
+              (module.shatterDamageModifier !== undefined && module.shatterDamageModifier !== 1) ||
+              (module.extractionPowerModifier !== undefined && module.extractionPowerModifier !== 1) ||
+              (module.inertMaterialsModifier !== undefined && module.inertMaterialsModifier !== 1) ||
+              (module.clusterModifier !== undefined && module.clusterModifier !== 1);
 
             // Helper to determine if effect is positive (beneficial)
             // For Power, Window, Rate, Extraction, Cluster: higher is better
