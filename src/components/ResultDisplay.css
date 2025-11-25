@@ -625,11 +625,11 @@
   border-left: 3px solid var(--warning);
   border-radius: 4px;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 400;
   color: var(--text-primary);
-  line-height: 1.5;
-  white-space: nowrap;
+  line-height: 1.4;
+  max-width: 100%;
 }
 
 .distance-tip strong {
