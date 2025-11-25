@@ -185,6 +185,29 @@ export default function ResultDisplay({
     return { width: 400, height: 400 }; // Huge
   };
 
+  // Calculate rock vertical offset for smaller rocks
+  // Ships are positioned as if for a 25000 mass rock, so smaller rocks need to shift down
+  // This makes the laser visually hit the rock center
+  const getRockVerticalOffset = () => {
+    if (rock.mass < 50000) {
+      const asteroidSize = getAsteroidSize();
+      const asteroidRadius = asteroidSize.width / 2;
+      const positioningRadius = 87.5; // 25000 mass rock radius
+      const tinyRockSize = 100; // Tiny rock diameter
+
+      // For tiny rocks, shift down by positioning difference PLUS full diameter
+      if (rock.mass < 15000) {
+        return positioningRadius - asteroidRadius + tinyRockSize;
+      }
+      // For small and medium rocks, shift down so center matches tiny rock center
+      // Tiny rock center is at: original + (37.5 + 100) = original + 137.5
+      // Rock needs to shift down by: 137.5 - (difference in radii)
+      return positioningRadius - asteroidRadius + tinyRockSize - (asteroidRadius - tinyRockSize / 2);
+    }
+    return 0;
+  };
+  const rockVerticalOffset = getRockVerticalOffset();
+
   // Get ship icon based on ship type
   const getShipIcon = (shipId: string) => {
     switch (shipId) {
@@ -236,15 +259,13 @@ export default function ResultDisplay({
               const shipWidth = selectedShip.id === 'mole' ? 135 : selectedShip.id === 'prospector' ? 90 : 60;
 
               // Adjust radius multiplier based on rock size
-              // For tiny rocks, use the same positioning as small rocks (radius 87.5 * 1.6 = 140)
+              // For all rocks under 50000 mass, use the same positioning as 25000 mass rock (radius 87.5)
               let radiusMultiplier = 1.1;
               let positioningRadius = asteroidRadius; // Default: use actual asteroid radius
-              if (rock.mass < 15000) {
-                // Tiny rocks - use small rock positioning (87.5 radius)
+
+              if (rock.mass < 50000) {
+                // All rocks under 50000 - use 25000 mass rock positioning (radius 87.5)
                 positioningRadius = 87.5;
-                radiusMultiplier = 1.6;
-              } else if (rock.mass < 25000) {
-                // Small rocks
                 radiusMultiplier = 1.6;
               } else if (rock.mass >= 100000) {
                 // Huge rocks - use same positioning as large rocks
@@ -268,14 +289,16 @@ export default function ResultDisplay({
               // Laser starts at ship position (center of ship image)
               const laserStartX = center + shipX;
               const laserStartY = center + shipY - 10;
-              // Laser ends at rock surface (80% of radius from center, toward ship)
-              const distance = Math.sqrt(shipX * shipX + shipY * shipY);
-              const directionX = -shipX / distance; // Normalized direction from ship to center
-              const directionY = -shipY / distance;
-              const stopDistance = asteroidRadius * 0.8; // Stop at 80% of radius (on rock surface)
-              // Endpoint is at center minus direction (toward ship) times stopDistance
-              const laserEndX = center - directionX * stopDistance;
-              const laserEndY = center - directionY * stopDistance;
+              // Rock visual center - the rock is shifted down by marginTop in the DOM,
+              // Calculate where the laser should hit based on rock size
+              let rockVisualCenterY = center + (rockVerticalOffset / 2);
+              // For rocks under 50000, adjust to hit the visual center of the shifted rock
+              if (rock.mass < 50000) {
+                rockVisualCenterY -= asteroidSize.width / 16; // Move up by sixteenth diameter
+              }
+              // Laser ends at rock visual center
+              const laserEndX = center;
+              const laserEndY = rockVisualCenterY;
 
               // Check if this is a MOLE and count manned lasers (with laser heads configured)
               const isMole = selectedShip.id === "mole";
@@ -290,34 +313,30 @@ export default function ResultDisplay({
                   {(() => {
                     // For MOLE, only render lasers if there are manned lasers
                     if (isMole && numMannedLasers > 0) {
-                      // Calculate angle spread for up to 3 lasers
+                      // Calculate angle spread for up to 3 lasers (2 degrees apart)
                       const angleOffsets =
                         numMannedLasers === 1
                           ? [0]
                           : numMannedLasers === 2
-                          ? [-20, 20]
-                          : [-20, 0, 20];
+                          ? [-2, 2]
+                          : [-2, 0, 2];
 
                       return (
                         <>
                           {angleOffsets.map((angleOffset, laserIndex) => {
-                            // Convert angle offset to radians
+                            // Convert angle to Y offset at the rock center
+                            // For small angles, tan(angle) ≈ angle in radians
                             const angleRad = (angleOffset * Math.PI) / 180;
+                            // Distance from ship to rock center
+                            const laserLength = Math.abs(laserEndX - laserStartX);
+                            // Y offset based on angle
+                            const yOffset = Math.tan(angleRad) * laserLength;
 
-                            // Rotate the end point around the center
-                            const dx = laserEndX - center;
-                            const dy = laserEndY - center;
-                            const rotatedEndX =
-                              center +
-                              dx * Math.cos(angleRad) -
-                              dy * Math.sin(angleRad);
-                            const rotatedEndY =
-                              center +
-                              dx * Math.sin(angleRad) +
-                              dy * Math.cos(angleRad);
+                            const offsetEndX = laserEndX;
+                            const offsetEndY = laserEndY + yOffset;
 
                             // Add random variation to endpoint (unique seed per laser)
-                            const variedEnd = addLaserVariation(rotatedEndX, rotatedEndY, asteroidRadius, (laserIndex + 1) * 137);
+                            const variedEnd = addLaserVariation(offsetEndX, offsetEndY, asteroidRadius, (laserIndex + 1) * 137);
 
                             return (
                               <LaserBeam
@@ -480,18 +499,30 @@ export default function ResultDisplay({
                 const asteroidRadius = asteroidSize.width / 2;
                 // Adjust spacing based on rock size
                 let radiusMultiplier = 1.35;
-                if (rock.mass < 15000) radiusMultiplier = 1.85; // Tiny - more space
-                else if (rock.mass < 25000) radiusMultiplier = 1.55; // Small - more space
-                else if (rock.mass >= 100000) radiusMultiplier = 1.1 * (325 / 400); // Huge - same as large
-                else if (rock.mass >= 50000) radiusMultiplier = 1.1; // Large - bring closer
-                const radius = asteroidRadius * radiusMultiplier;
+                let positioningRadius = asteroidRadius; // Default: use actual asteroid radius
+
+                if (rock.mass < 50000) {
+                  // All rocks under 50000 - use 25000 mass rock positioning (radius 87.5)
+                  positioningRadius = 87.5;
+                  radiusMultiplier = 1.6; // Same as single-ship mode
+                } else if (rock.mass >= 100000) {
+                  radiusMultiplier = 1.1 * (325 / 400); // Huge - same as large
+                } else if (rock.mass >= 50000) {
+                  radiusMultiplier = 1.1; // Large - bring closer
+                }
+                const radius = positioningRadius * radiusMultiplier;
                 // Subtract 90° to make 0° point to top instead of right
                 const adjustedAngle = angle - 90;
                 const x = Math.cos((adjustedAngle * Math.PI) / 180) * radius;
-                // Move ships down by 12.5% of asteroid height
-                const y =
-                  Math.sin((adjustedAngle * Math.PI) / 180) * radius +
-                  asteroidSize.height * 0.125;
+                // Move ships down - for rocks under 50000, use consistent offset
+                let yOffset;
+                if (rock.mass < 50000) {
+                  // Use small rock height for base offset, plus 50px for positioning
+                  yOffset = (175 * 0.125) + 50; // 21.875 + 50 = 71.875px
+                } else {
+                  yOffset = asteroidSize.height * 0.125;
+                }
+                const y = Math.sin((adjustedAngle * Math.PI) / 180) * radius + yOffset;
                 const isActive = shipInstance.isActive !== false;
 
                 // Check if this ship has any manned lasers (with laser heads configured)
@@ -512,13 +543,14 @@ export default function ResultDisplay({
                         // Laser starts at ship position (center of ship image)
                         const laserStartX = center + x;
                         const laserStartY = center + y - 10;
-                        // Laser ends 5% short of asteroid center
-                        const distance = Math.sqrt(x * x + y * y);
-                        const directionX = -x / distance; // Normalized direction from ship to center
-                        const directionY = -y / distance;
-                        const shortfall = (asteroidSize.width / 2) * 0.25; // 5% of radius
-                        const laserEndX = center - directionX * shortfall;
-                        const laserEndY = center - directionY * shortfall;
+                        // Calculate rock visual center (accounting for rock offset)
+                        let rockVisualCenterY = center + (rockVerticalOffset / 2);
+                        if (rock.mass < 50000) {
+                          rockVisualCenterY -= asteroidSize.width / 16; // Move up by sixteenth diameter for rocks under 50000
+                        }
+                        // Laser ends at rock visual center
+                        const laserEndX = center;
+                        const laserEndY = rockVisualCenterY;
 
                         // For MOLE, render multiple lasers with slight angle variations
                         if (isMole) {
@@ -727,7 +759,7 @@ export default function ResultDisplay({
             className={`rock-icon ${getStatusClass()} ${
               hasExcessiveOvercharge ? "overcharge-warning" : ""
             }`}
-            style={{ position: "relative" }}>
+            style={{ position: "relative", marginTop: rockVerticalOffset > 0 ? `${rockVerticalOffset}px` : undefined }}>
             <div className="rock-symbol">
               <img
                 src={asteroidImage}
