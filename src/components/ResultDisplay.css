@@ -143,12 +143,14 @@
   width: 100%;
   height: 100%;
   z-index: 10; /* Above rock (z-index: 5) so lasers render on top */
+  pointer-events: none; /* Don't block clicks - only children should capture */
 }
 
 .ship-icon {
   text-align: center;
   z-index: 10;
   transition: all 0.3s ease;
+  pointer-events: auto; /* Re-enable clicks for ship icons */
 }
 
 .ship-icon.clickable {
@@ -394,7 +396,7 @@
   grid-template-columns: repeat(3, auto);
   gap: 0.3rem;
   z-index: 100;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .gadget-symbol-small {
