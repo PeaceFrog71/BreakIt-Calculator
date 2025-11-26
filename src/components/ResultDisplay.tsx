@@ -1133,20 +1133,21 @@ export default function ResultDisplay({
           <span>Your Power: {formatPower(result.totalLaserPower)}</span>
           <span>Required: {formatPower(result.adjustedLPNeeded)}</span>
         </div>
+
+        {/* Tip messages at bottom of power bar frame */}
         {hasExcessiveOvercharge && (
           <div className="overcharge-warning">
-            <strong>WARNING!</strong> Excessive overcharge capability detected.
+            <strong>Tip:</strong> Excessive overcharge capability detected.
             Rock overcharge and premature fracture could easily occur. Approach
             with caution or reduce the number of lasers used.
           </div>
         )}
 
-        {/* Tip message moved to bottom inside graphic */}
         {((result.powerMarginPercent >= -10 && result.powerMarginPercent < 0) ||
           (result.powerMarginPercent > 0 &&
             result.powerMarginPercent <= 10)) && (
           <div
-            className="distance-tip distance-tip-bottom"
+            className="distance-tip"
             onClick={(e) => e.stopPropagation()}>
             <strong>Tip:</strong> Reducing laser distance may increase chances
             of a successful break.
