@@ -332,7 +332,7 @@ export default function ResultDisplay({
               if (rock.mass < 50000) {
                 // All rocks under 50000 - use 25000 mass rock positioning (radius 87.5)
                 positioningRadius = 87.5;
-                radiusMultiplier = 1.6;
+                radiusMultiplier = 1.3; // Reduced from 1.6 to bring ship closer
               } else if (rock.mass >= 100000) {
                 // Huge rocks - use same positioning as large rocks
                 radiusMultiplier = 0.9 * (325 / 400); // Scale down proportionally
@@ -533,7 +533,7 @@ export default function ResultDisplay({
                         style={{
                           position: "absolute",
                           top: `calc(50% + ${shipY}px)`,
-                          left: `calc(50% + ${shipX - 20}px)`,
+                          left: `calc(50% + ${shipX - 50}px)`,
                           transform: "translateY(-50%)",
                           display: "flex",
                           flexDirection: "column",
