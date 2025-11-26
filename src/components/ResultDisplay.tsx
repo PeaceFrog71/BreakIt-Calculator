@@ -1023,12 +1023,7 @@ export default function ResultDisplay({
                 rockVerticalOffset > 0 ? `${rockVerticalOffset}px` : undefined,
             }}
             onClick={(e) => e.stopPropagation()}>
-            <div
-              className="rock-symbol"
-              onClick={(e) => {
-                // Don't stop propagation - let child gadget clicks bubble up
-                console.log('Rock symbol clicked, target:', e.target);
-              }}>
+            <div className="rock-symbol">
               <img
                 src={asteroidImage}
                 alt="Asteroid"
