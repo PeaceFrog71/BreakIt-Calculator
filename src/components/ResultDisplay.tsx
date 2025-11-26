@@ -531,19 +531,53 @@ export default function ResultDisplay({
                           const tooltipText = `${laserName} - ${
                             isLaserManned ? "MANNED" : "UNMANNED"
                           } (click to toggle)`;
+
+                          // Get active modules for this laser
+                          const laser = config.lasers[laserIndex];
+                          const activeModules = laser?.modules
+                            ?.map((module, moduleIndex) => {
+                              if (module && module.category === 'active' && module.id !== 'none') {
+                                const isActive = laser.moduleActive ? laser.moduleActive[moduleIndex] !== false : true;
+                                return { module, moduleIndex, isActive };
+                              }
+                              return null;
+                            })
+                            .filter(Boolean) as Array<{ module: Module; moduleIndex: number; isActive: boolean }>;
+
                           return (
-                            <button
-                              key={laserIndex}
-                              className={`laser-button ${
-                                isLaserManned ? "manned" : "unmanned"
-                              }`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onSingleShipToggleLaser(laserIndex);
-                              }}
-                              title={tooltipText}>
-                              L{laserIndex + 1}
-                            </button>
+                            <div key={laserIndex} style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+                              <button
+                                className={`laser-button ${
+                                  isLaserManned ? "manned" : "unmanned"
+                                }`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onSingleShipToggleLaser(laserIndex);
+                                }}
+                                title={tooltipText}>
+                                L{laserIndex + 1}
+                              </button>
+                              {/* Module buttons next to laser button */}
+                              {activeModules && activeModules.length > 0 && (
+                                <div style={{ display: 'flex', gap: '0.25rem' }}>
+                                  {activeModules.map((item) => (
+                                    <span
+                                      key={item.moduleIndex}
+                                      className={`module-icon ${item.isActive ? 'active' : 'inactive'}`}
+                                      title={`${item.module.name} (Active Module) - Click to toggle`}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (onToggleModule) {
+                                          onToggleModule(laserIndex, item.moduleIndex);
+                                        }
+                                      }}
+                                      style={{ cursor: onToggleModule ? 'pointer' : 'default' }}>
+                                      {getModuleSymbol(item.module.id)}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
@@ -823,19 +857,53 @@ export default function ResultDisplay({
                           const tooltipText = `${laserName} - ${
                             isLaserManned ? "MANNED" : "UNMANNED"
                           } (click to toggle)`;
+
+                          // Get active modules for this laser
+                          const laser = shipInstance.config.lasers[laserIndex];
+                          const activeModules = laser?.modules
+                            ?.map((module, moduleIndex) => {
+                              if (module && module.category === 'active' && module.id !== 'none') {
+                                const isActive = laser.moduleActive ? laser.moduleActive[moduleIndex] !== false : true;
+                                return { module, moduleIndex, isActive };
+                              }
+                              return null;
+                            })
+                            .filter(Boolean) as Array<{ module: Module; moduleIndex: number; isActive: boolean }>;
+
                           return (
-                            <button
-                              key={laserIndex}
-                              className={`laser-button ${
-                                isLaserManned ? "manned" : "unmanned"
-                              }`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onToggleLaser(shipInstance.id, laserIndex);
-                              }}
-                              title={tooltipText}>
-                              L{laserIndex + 1}
-                            </button>
+                            <div key={laserIndex} style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+                              <button
+                                className={`laser-button ${
+                                  isLaserManned ? "manned" : "unmanned"
+                                }`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onToggleLaser(shipInstance.id, laserIndex);
+                                }}
+                                title={tooltipText}>
+                                L{laserIndex + 1}
+                              </button>
+                              {/* Module buttons next to laser button */}
+                              {activeModules && activeModules.length > 0 && (
+                                <div style={{ display: 'flex', gap: '0.25rem' }}>
+                                  {activeModules.map((item) => (
+                                    <span
+                                      key={item.moduleIndex}
+                                      className={`module-icon ${item.isActive ? 'active' : 'inactive'}`}
+                                      title={`${item.module.name} (Active Module) - Click to toggle`}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (onGroupToggleModule) {
+                                          onGroupToggleModule(shipInstance.id, laserIndex, item.moduleIndex);
+                                        }
+                                      }}
+                                      style={{ cursor: onGroupToggleModule ? 'pointer' : 'default' }}>
+                                      {getModuleSymbol(item.module.id)}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
