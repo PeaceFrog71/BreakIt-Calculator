@@ -373,6 +373,11 @@
   position: relative;
   display: inline-block;
   isolation: isolate;
+  pointer-events: none;
+}
+
+.rock-symbol > * {
+  pointer-events: auto;
 }
 
 .asteroid-image {
