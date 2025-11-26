@@ -348,6 +348,22 @@ function App() {
                       ].filter(Boolean);
                       return `${gadget.name}: ${effects.join(', ')}`;
                     };
+                    const gadget = gadgets[index];
+                    const isEnabled = gadgetEnabled[index] !== false;
+                    const formatEffect = (value: number | undefined, label: string) => {
+                      if (value === undefined || value === 1) return null;
+                      const pct = value > 1 ? `+${Math.round((value - 1) * 100)}%` : `-${Math.round((1 - value) * 100)}%`;
+                      const isPositive = (label === 'Resist' || label === 'Instability') ? value < 1 : value > 1;
+                      return { label, pct, isPositive };
+                    };
+                    const effects = gadget && gadget.id !== 'none' ? [
+                      formatEffect(gadget.resistModifier, 'Resist'),
+                      formatEffect(gadget.instabilityModifier, 'Instability'),
+                      formatEffect(gadget.chargeWindowModifier, 'Window'),
+                      formatEffect(gadget.chargeRateModifier, 'Rate'),
+                      formatEffect(gadget.clusterModifier, 'Cluster'),
+                    ].filter(Boolean) as { label: string; pct: string; isPositive: boolean }[] : [];
+
                     return (
                     <div key={index} className="compact-form-group gadget-select-wrapper">
                       <label>Gadget {index + 1}</label>
@@ -372,46 +388,24 @@ function App() {
                           </option>
                         ))}
                       </select>
+
+                      {/* Gadget Info Box - directly below selector */}
+                      {gadget && gadget.id !== 'none' && effects.length > 0 && (
+                        <div
+                          className={`gadget-info-item ${!isEnabled ? 'disabled' : ''}`}
+                          onClick={() => handleToggleGadget(index)}
+                        >
+                          <div className="gadget-info-effects">
+                            {effects.map((effect, i) => (
+                              <span key={i} className={`gadget-effect ${effect.isPositive ? 'positive' : 'negative'}`}>
+                                {effect.label}: {effect.pct}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );})}
-
-                  {/* Gadget Info Boxes - stacked vertically */}
-                  {gadgets.filter(g => g && g.id !== 'none').length > 0 && (
-                    <div className="gadget-info-list">
-                      {gadgets.map((gadget, index) => {
-                        if (!gadget || gadget.id === 'none') return null;
-                        const isEnabled = gadgetEnabled[index] !== false;
-                        const formatEffect = (value: number | undefined, label: string) => {
-                          if (value === undefined || value === 1) return null;
-                          const pct = value > 1 ? `+${Math.round((value - 1) * 100)}%` : `-${Math.round((1 - value) * 100)}%`;
-                          const isPositive = (label === 'Resist' || label === 'Instability') ? value < 1 : value > 1;
-                          return { label, pct, isPositive };
-                        };
-                        const effects = [
-                          formatEffect(gadget.resistModifier, 'Resist'),
-                          formatEffect(gadget.instabilityModifier, 'Instability'),
-                          formatEffect(gadget.chargeWindowModifier, 'Window'),
-                          formatEffect(gadget.chargeRateModifier, 'Rate'),
-                          formatEffect(gadget.clusterModifier, 'Cluster'),
-                        ].filter(Boolean) as { label: string; pct: string; isPositive: boolean }[];
-                        return (
-                          <div
-                            key={index}
-                            className={`gadget-info-item ${!isEnabled ? 'disabled' : ''}`}
-                            onClick={() => handleToggleGadget(index)}
-                          >
-                            <div className="gadget-info-effects">
-                              {effects.map((effect, i) => (
-                                <span key={i} className={`gadget-effect ${effect.isPositive ? 'positive' : 'negative'}`}>
-                                  {effect.label}: {effect.pct}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
