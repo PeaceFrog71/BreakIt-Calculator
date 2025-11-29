@@ -569,35 +569,35 @@ export default function ResultDisplay({
                       {selectedShip.name.split(" ").slice(1).join(" ")}
                     </div>
 
-                    {/* Scanning sensor for Prospector/GOLEM (single-laser ships) */}
-                    {onSetScanningShip &&
-                     rock.resistanceMode === 'modified' &&
-                     (selectedShip.id === 'prospector' || selectedShip.id === 'golem') &&
-                     config &&
-                     config.lasers[0]?.laserHead &&
-                     config.lasers[0].laserHead.id !== 'none' && (
-                      <span
-                        className={`scanning-sensor ${
-                          rock.scannedByShipId === selectedShip.id && rock.scannedByLaserIndex === 0
-                            ? 'selected' : ''
-                        }`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSetScanningShip(selectedShip.id, 0);
-                        }}
-                        title="Click to mark as scanning ship"
-                        style={{
-                          position: "absolute",
-                          bottom: "100%",
-                          left: "50%",
-                          transform: "translateX(-50%)",
-                          cursor: "pointer",
-                          fontSize: "1.5rem"
-                        }}>
-                        📡
-                      </span>
-                    )}
                   </div>
+
+                  {/* Scanning sensor for Prospector/GOLEM (single-laser ships) - positioned to the left (outside) */}
+                  {onSetScanningShip &&
+                   rock.resistanceMode === 'modified' &&
+                   (selectedShip.id === 'prospector' || selectedShip.id === 'golem') &&
+                   config &&
+                   config.lasers[0]?.laserHead &&
+                   config.lasers[0].laserHead.id !== 'none' && (
+                    <span
+                      className={`scanning-sensor ${
+                        rock.scannedByShipId === selectedShip.id && rock.scannedByLaserIndex === 0
+                          ? 'selected' : ''
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSetScanningShip(selectedShip.id, 0);
+                      }}
+                      title="Click to mark as scanning ship"
+                      style={{
+                        position: "absolute",
+                        top: `calc(50% + ${shipY}px)`,
+                        left: `calc(50% + ${shipX - 80}px)`,
+                        transform: "translateY(-50%)",
+                        cursor: "pointer"
+                      }}>
+                      📡
+                    </span>
+                  )}
 
                   {/* Laser controls for MOLE */}
                   {selectedShip.id === "mole" &&
@@ -987,34 +987,36 @@ export default function ResultDisplay({
                       })()}
                       <div className="ship-label">{shipInstance.name}</div>
 
-                      {/* Scanning sensor for Prospector/GOLEM (single-laser ships) in multi-ship mode */}
-                      {onSetScanningShip &&
-                       rock.resistanceMode === 'modified' &&
-                       (shipInstance.ship.id === 'prospector' || shipInstance.ship.id === 'golem') &&
-                       shipInstance.config.lasers[0]?.laserHead &&
-                       shipInstance.config.lasers[0].laserHead.id !== 'none' && (
-                        <span
-                          className={`scanning-sensor ${
-                            rock.scannedByShipId === shipInstance.id && rock.scannedByLaserIndex === 0
-                              ? 'selected' : ''
-                          }`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSetScanningShip(shipInstance.id, 0);
-                          }}
-                          title="Click to mark as scanning ship"
-                          style={{
-                            position: "absolute",
-                            bottom: "100%",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            cursor: "pointer",
-                            fontSize: "1.5rem"
-                          }}>
-                          📡
-                        </span>
-                      )}
                     </div>
+
+                    {/* Scanning sensor for Prospector/GOLEM (single-laser ships) in multi-ship mode */}
+                    {onSetScanningShip &&
+                     rock.resistanceMode === 'modified' &&
+                     (shipInstance.ship.id === 'prospector' || shipInstance.ship.id === 'golem') &&
+                     shipInstance.config.lasers[0]?.laserHead &&
+                     shipInstance.config.lasers[0].laserHead.id !== 'none' && (
+                      <span
+                        className={`scanning-sensor ${
+                          rock.scannedByShipId === shipInstance.id && rock.scannedByLaserIndex === 0
+                            ? 'selected' : ''
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSetScanningShip(shipInstance.id, 0);
+                        }}
+                        title="Click to mark as scanning ship"
+                        style={{
+                          position: "absolute",
+                          top: `calc(50% + ${y}px)`,
+                          left: x < 0
+                            ? `calc(50% + ${x - 80}px)`
+                            : `calc(50% + ${x + 80}px)`,
+                          transform: "translateY(-50%)",
+                          cursor: "pointer"
+                        }}>
+                        📡
+                      </span>
+                    )}
 
                     {/* Laser control buttons for MOLE ships */}
                     {shipInstance.ship.id === "mole" && onToggleLaser && (
