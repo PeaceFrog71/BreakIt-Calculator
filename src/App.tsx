@@ -355,7 +355,7 @@ function App() {
                   config={!useMiningGroup ? config : undefined}
                   onToggleShip={useMiningGroup ? handleToggleShip : undefined}
                   onToggleLaser={useMiningGroup ? handleToggleLaser : undefined}
-                  onSetScanningShip={useMiningGroup && rock.resistanceMode === 'modified' ? handleSetScanningShip : undefined}
+                  onSetScanningShip={rock.resistanceMode === 'modified' ? handleSetScanningShip : undefined}
                   onSingleShipToggleLaser={!useMiningGroup && selectedShip.id === 'mole' ? handleSingleShipToggleLaser : undefined}
                   onToggleModule={!useMiningGroup ? handleToggleModule : undefined}
                   onGroupToggleModule={useMiningGroup ? handleGroupToggleModule : undefined}

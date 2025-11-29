@@ -568,6 +568,35 @@ export default function ResultDisplay({
                     <div className="ship-label">
                       {selectedShip.name.split(" ").slice(1).join(" ")}
                     </div>
+
+                    {/* Scanning sensor for Prospector/GOLEM (single-laser ships) */}
+                    {onSetScanningShip &&
+                     rock.resistanceMode === 'modified' &&
+                     (selectedShip.id === 'prospector' || selectedShip.id === 'golem') &&
+                     config &&
+                     config.lasers[0]?.laserHead &&
+                     config.lasers[0].laserHead.id !== 'none' && (
+                      <span
+                        className={`scanning-sensor ${
+                          rock.scannedByShipId === selectedShip.id && rock.scannedByLaserIndex === 0
+                            ? 'selected' : ''
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSetScanningShip(selectedShip.id, 0);
+                        }}
+                        title="Click to mark as scanning ship"
+                        style={{
+                          position: "absolute",
+                          bottom: "100%",
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                          cursor: "pointer",
+                          fontSize: "1.5rem"
+                        }}>
+                        📡
+                      </span>
+                    )}
                   </div>
 
                   {/* Laser controls for MOLE */}
@@ -658,17 +687,41 @@ export default function ResultDisplay({
                                   ))}
                                 </div>
                               )}
-                              <button
-                                className={`laser-button ${
-                                  isLaserManned ? "manned" : "unmanned"
-                                }`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onSingleShipToggleLaser(laserIndex);
-                                }}
-                                title={tooltipText}>
-                                L{laserIndex + 1}
-                              </button>
+                              <div style={{ position: "relative", display: "inline-block" }}>
+                                <button
+                                  className={`laser-button ${
+                                    isLaserManned ? "manned" : "unmanned"
+                                  }`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onSingleShipToggleLaser(laserIndex);
+                                  }}
+                                  title={tooltipText}>
+                                  L{laserIndex + 1}
+                                </button>
+                                {/* Scanning sensor icon - only show in modified resistance mode */}
+                                {onSetScanningShip && rock.resistanceMode === 'modified' && laserHead && laserHead.id !== 'none' && (
+                                  <span
+                                    className={`scanning-sensor ${
+                                      rock.scannedByShipId === selectedShip.id &&
+                                      rock.scannedByLaserIndex === laserIndex
+                                        ? 'selected' : ''
+                                    }`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onSetScanningShip(selectedShip.id, laserIndex);
+                                    }}
+                                    title={`Click to mark L${laserIndex + 1} as scanning laser`}
+                                    style={{
+                                      position: "absolute",
+                                      top: "-8px",
+                                      right: "-8px",
+                                      cursor: "pointer"
+                                    }}>
+                                    📡
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           );
                         })}
@@ -937,6 +990,34 @@ export default function ResultDisplay({
                         }
                       })()}
                       <div className="ship-label">{shipInstance.name}</div>
+
+                      {/* Scanning sensor for Prospector/GOLEM (single-laser ships) in multi-ship mode */}
+                      {onSetScanningShip &&
+                       rock.resistanceMode === 'modified' &&
+                       (shipInstance.ship.id === 'prospector' || shipInstance.ship.id === 'golem') &&
+                       shipInstance.config.lasers[0]?.laserHead &&
+                       shipInstance.config.lasers[0].laserHead.id !== 'none' && (
+                        <span
+                          className={`scanning-sensor ${
+                            rock.scannedByShipId === shipInstance.id && rock.scannedByLaserIndex === 0
+                              ? 'selected' : ''
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSetScanningShip(shipInstance.id, 0);
+                          }}
+                          title="Click to mark as scanning ship"
+                          style={{
+                            position: "absolute",
+                            bottom: "100%",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            cursor: "pointer",
+                            fontSize: "1.5rem"
+                          }}>
+                          📡
+                        </span>
+                      )}
                     </div>
 
                     {/* Laser control buttons for MOLE ships */}
@@ -1037,17 +1118,41 @@ export default function ResultDisplay({
                                     ))}
                                   </div>
                                 )}
-                              <button
-                                className={`laser-button ${
-                                  isLaserManned ? "manned" : "unmanned"
-                                }`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onToggleLaser(shipInstance.id, laserIndex);
-                                }}
-                                title={tooltipText}>
-                                L{laserIndex + 1}
-                              </button>
+                              <div style={{ position: "relative", display: "inline-block" }}>
+                                <button
+                                  className={`laser-button ${
+                                    isLaserManned ? "manned" : "unmanned"
+                                  }`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onToggleLaser(shipInstance.id, laserIndex);
+                                  }}
+                                  title={tooltipText}>
+                                  L{laserIndex + 1}
+                                </button>
+                                {/* Scanning sensor icon - only show in modified resistance mode */}
+                                {onSetScanningShip && rock.resistanceMode === 'modified' && laserHead && laserHead.id !== 'none' && (
+                                  <span
+                                    className={`scanning-sensor ${
+                                      rock.scannedByShipId === shipInstance.id &&
+                                      rock.scannedByLaserIndex === laserIndex
+                                        ? 'selected' : ''
+                                    }`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onSetScanningShip(shipInstance.id, laserIndex);
+                                    }}
+                                    title={`Click to mark L${laserIndex + 1} as scanning laser`}
+                                    style={{
+                                      position: "absolute",
+                                      top: "-8px",
+                                      right: "-8px",
+                                      cursor: "pointer"
+                                    }}>
+                                    📡
+                                  </span>
+                                )}
+                              </div>
                               {/* Module buttons - on right for right-side ships */}
                               {!isLeftSide &&
                                 activeModules &&
@@ -1299,39 +1404,6 @@ export default function ResultDisplay({
           </div>
         </div>
       </div>
-
-      {/* Scanning Ship Selector - only show in multi-ship mode with modified resistance */}
-      {miningGroup && onSetScanningShip && rock.resistanceMode === 'modified' && (
-        <div className="scanning-ship-selector">
-          <h3>Which ship scanned this rock?</h3>
-          <p className="selector-hint">Select the ship and laser used to scan the resistance value</p>
-          <div className="scanning-ship-options">
-            {miningGroup.ships.map((shipInstance) => (
-              <div key={shipInstance.id} className="scanning-ship-option">
-                <div className="ship-info">
-                  <strong>{shipInstance.name}</strong> ({shipInstance.ship.name})
-                </div>
-                <div className="laser-buttons">
-                  {shipInstance.config.lasers.map((laser, laserIndex) => {
-                    if (!laser.laserHead || laser.laserHead.id === 'none') return null;
-                    const isSelected = rock.scannedByShipId === shipInstance.id && rock.scannedByLaserIndex === laserIndex;
-                    return (
-                      <button
-                        key={laserIndex}
-                        className={`laser-select-btn ${isSelected ? 'selected' : ''}`}
-                        onClick={() => onSetScanningShip(shipInstance.id, laserIndex)}
-                        title={`${laser.laserHead.name} - ${laser.laserHead.resistModifier}x modifier`}
-                      >
-                        L{laserIndex + 1}: {laser.laserHead.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="calculation-details">
         <h3>Calculation Details</h3>
