@@ -46,26 +46,27 @@ button, .btn-primary, .btn-secondary {
 
 .app-header {
   background: linear-gradient(135deg, var(--bg-medium) 0%, var(--bg-dark) 100%);
-  padding: 2rem 2rem;
+  padding: 1.7rem 2rem;
   border-bottom: 2px solid var(--accent-blue);
   box-shadow: 0 4px 20px rgba(0, 217, 255, 0.1);
   position: relative;
   display: grid;
-  grid-template-columns: 120px 1fr 44px;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 0.25rem;
+  gap: 2rem;
 }
 
 .app-header a {
   display: block;
   line-height: 0;
+  justify-self: end;
 }
 
 .header-logo {
   width: 120px;
   height: 120px;
   object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.3));
+  filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.6)) drop-shadow(0 0 30px rgba(0, 217, 255, 0.4));
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -106,6 +107,8 @@ button, .btn-primary, .btn-secondary {
   color: var(--accent-cyan);
   width: 44px;
   height: 44px;
+  min-width: 44px;
+  max-width: 44px;
   border-radius: 50%;
   font-size: 1.5rem;
   font-weight: bold;
@@ -114,10 +117,11 @@ button, .btn-primary, .btn-secondary {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.5), 0 0 30px rgba(0, 217, 255, 0.3);
   animation: helpButtonAttention 8s ease-in-out infinite;
   grid-column: 3;
-  justify-self: end;
+  justify-self: start;
+  flex-shrink: 0;
 }
 
 .help-button:hover {

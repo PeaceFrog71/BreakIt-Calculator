@@ -193,6 +193,9 @@
   border-radius: 3px;
   white-space: nowrap;
   display: inline-block;
+  max-width: 148.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Active modules display */
@@ -939,4 +942,94 @@
 .detail-row span:last-child {
   color: var(--text-primary);
   font-weight: 600;
+}
+
+/* Scanning Sensor Icon */
+.scanning-sensor {
+  display: inline-block;
+  font-size: 1.2rem;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  filter: grayscale(0.5);
+  transform-origin: center center;
+}
+
+.scanning-sensor:hover {
+  opacity: 1;
+  filter: grayscale(0);
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.scanning-sensor.selected {
+  opacity: 1;
+  filter: brightness(1.8) hue-rotate(90deg) drop-shadow(0 0 8px rgba(0, 255, 136, 1)) drop-shadow(0 0 12px rgba(0, 255, 136, 1)) drop-shadow(0 0 16px rgba(0, 255, 136, 0.9));
+  animation: scanningPulse 2s ease-in-out infinite;
+}
+
+@keyframes scanningPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: brightness(1.8) hue-rotate(90deg) drop-shadow(0 0 8px rgba(0, 255, 136, 1)) drop-shadow(0 0 12px rgba(0, 255, 136, 1)) drop-shadow(0 0 16px rgba(0, 255, 136, 0.9));
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+    filter: brightness(2) hue-rotate(90deg) drop-shadow(0 0 10px rgba(0, 255, 136, 1)) drop-shadow(0 0 16px rgba(0, 255, 136, 1)) drop-shadow(0 0 20px rgba(0, 255, 136, 0.9));
+  }
+}
+
+/* MOLE scanning sensor icon */
+.scanning-sensor-mole {
+  display: inline-block;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+/* Scanning ship selection message */
+.scanning-ship-message {
+  background: rgba(0, 217, 255, 0.1);
+  border: 2px solid var(--accent-cyan);
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: messagePulse 2s ease-in-out infinite;
+}
+
+.scanning-ship-message .message-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 204, 0.6));
+  animation: iconRotate 3s linear infinite;
+}
+
+.scanning-ship-message .message-text {
+  color: var(--accent-cyan);
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@keyframes messagePulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+    border-color: var(--accent-cyan);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+    border-color: var(--accent-blue);
+  }
+}
+
+@keyframes iconRotate {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "./App.css";
 import type { MiningConfiguration, Ship, Rock, MiningGroup, Gadget } from "./types";
 import { SHIPS, LASER_HEADS, GADGETS } from "./types";
@@ -18,6 +18,7 @@ import ConfigManager from "./components/ConfigManager";
 import ShipPoolManager from "./components/ShipPoolManager";
 import TabNavigation, { type TabType } from "./components/TabNavigation";
 import HelpModal from "./components/HelpModal";
+import ResistanceModeSelector from "./components/ResistanceModeSelector";
 import pfLogo from "./assets/PFlogo.png";
 
 function App() {
@@ -33,6 +34,8 @@ function App() {
     mass: 25000,
     resistance: 30,
     name: "The Rock",
+    resistanceMode: 'base',
+    includeGadgetsInScan: false,
   });
   const [miningGroup, setMiningGroup] = useState<MiningGroup>({
     ships: [],
@@ -61,6 +64,77 @@ function App() {
   useEffect(() => {
     saveCurrentConfiguration(selectedShip, config);
   }, [selectedShip, config]);
+
+  // Smart hint detection: Show hint if resistance is low and equipment modifiers exist
+  const showResistanceHint = useMemo(() => {
+    if (rock.resistance === 0 || rock.resistance >= 20) return false;
+
+    // Check if any equipment has resistance modifiers
+    const hasEquipmentModifiers = config.lasers.some(laser =>
+      laser.laserHead && laser.laserHead.resistModifier !== 1
+    );
+
+    return hasEquipmentModifiers;
+  }, [rock.resistance, config.lasers]);
+
+  // Resistance mode handlers
+  const handleResistanceModeToggle = () => {
+    setRock({
+      ...rock,
+      resistanceMode: rock.resistanceMode === 'base' ? 'modified' : 'base',
+    });
+  };
+
+  const handleResistanceChange = (value: number) => {
+    setRock({ ...rock, resistance: value });
+  };
+
+  const handleGadgetInclusionToggle = () => {
+    setRock({
+      ...rock,
+      includeGadgetsInScan: !rock.includeGadgetsInScan,
+    });
+  };
+
+  const handleSetScanningShip = (shipId: string, laserIndex: number) => {
+    setRock({
+      ...rock,
+      scannedByShipId: shipId,
+      scannedByLaserIndex: laserIndex,
+    });
+  };
+
+  // Auto-clear scanning ship when switching to base mode
+  // Auto-select single ship when switching to modified mode (for Prospector/GOLEM)
+  useEffect(() => {
+    if (rock.resistanceMode === 'base') {
+      setRock(prev => ({
+        ...prev,
+        scannedByShipId: undefined,
+        scannedByLaserIndex: undefined,
+      }));
+    } else if (rock.resistanceMode === 'modified' && !useMiningGroup && !rock.scannedByShipId) {
+      // Auto-select for single-laser ships (Prospector/GOLEM)
+      if (selectedShip.id === 'prospector' || selectedShip.id === 'golem') {
+        setRock(prev => ({
+          ...prev,
+          scannedByShipId: selectedShip.id,
+          scannedByLaserIndex: 0,
+        }));
+      }
+    }
+  }, [rock.resistanceMode, useMiningGroup, selectedShip.id, rock.scannedByShipId]);
+
+  // Clear scanning ship when config changes in modified mode (except for initial auto-selection)
+  useEffect(() => {
+    if (rock.resistanceMode === 'modified' && rock.scannedByShipId) {
+      setRock(prev => ({
+        ...prev,
+        scannedByShipId: undefined,
+        scannedByLaserIndex: undefined,
+      }));
+    }
+  }, [config]);
 
   // Filter gadgets to only include enabled ones
   const enabledGadgets = gadgets.map((gadget, index) =>
@@ -267,16 +341,15 @@ function App() {
                       step="0.1"
                     />
                   </div>
-                  <div className="compact-form-group">
-                    <label>Resistance</label>
-                    <input
-                      type="number"
-                      value={rock.resistance === 0 ? '' : rock.resistance}
-                      onChange={(e) => setRock({ ...rock, resistance: e.target.value === '' ? 0 : parseFloat(e.target.value) })}
-                      min="0"
-                      step="0.1"
-                    />
-                  </div>
+                  <ResistanceModeSelector
+                    value={rock.resistance}
+                    mode={rock.resistanceMode || 'base'}
+                    includeGadgets={rock.includeGadgetsInScan || false}
+                    showHint={showResistanceHint}
+                    onChange={handleResistanceChange}
+                    onModeToggle={handleResistanceModeToggle}
+                    onGadgetToggle={handleGadgetInclusionToggle}
+                  />
                   <div className="compact-form-group">
                     <label>Instability</label>
                     <input
@@ -303,6 +376,7 @@ function App() {
                   config={!useMiningGroup ? config : undefined}
                   onToggleShip={useMiningGroup ? handleToggleShip : undefined}
                   onToggleLaser={useMiningGroup ? handleToggleLaser : undefined}
+                  onSetScanningShip={rock.resistanceMode === 'modified' ? handleSetScanningShip : undefined}
                   onSingleShipToggleLaser={!useMiningGroup && selectedShip.id === 'mole' ? handleSingleShipToggleLaser : undefined}
                   onToggleModule={!useMiningGroup ? handleToggleModule : undefined}
                   onGroupToggleModule={useMiningGroup ? handleGroupToggleModule : undefined}
