@@ -91,10 +91,10 @@ Default: Base mode when uncertain`;
 
         {showHint && mode === 'base' && (
           <div className="resistance-hint">
-            <span className="hint-icon">💡</span>
-            <span className="hint-text">
-              Low resistance + equipment modifiers detected. Scanned with laser?
-            </span>
+            <div className="hint-text">
+              <span className="hint-icon">💡</span>
+              <span>Low resistance + equipment modifiers detected. Scanned with laser?</span>
+            </div>
             <button
               className="hint-btn"
               onClick={onModeToggle}

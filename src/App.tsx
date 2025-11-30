@@ -105,6 +105,7 @@ function App() {
   };
 
   // Auto-clear scanning ship when switching to base mode
+  // Auto-select single ship when switching to modified mode (for Prospector/GOLEM)
   useEffect(() => {
     if (rock.resistanceMode === 'base') {
       setRock(prev => ({
@@ -112,8 +113,28 @@ function App() {
         scannedByShipId: undefined,
         scannedByLaserIndex: undefined,
       }));
+    } else if (rock.resistanceMode === 'modified' && !useMiningGroup && !rock.scannedByShipId) {
+      // Auto-select for single-laser ships (Prospector/GOLEM)
+      if (selectedShip.id === 'prospector' || selectedShip.id === 'golem') {
+        setRock(prev => ({
+          ...prev,
+          scannedByShipId: selectedShip.id,
+          scannedByLaserIndex: 0,
+        }));
+      }
     }
-  }, [rock.resistanceMode]);
+  }, [rock.resistanceMode, useMiningGroup, selectedShip.id, rock.scannedByShipId]);
+
+  // Clear scanning ship when config changes in modified mode (except for initial auto-selection)
+  useEffect(() => {
+    if (rock.resistanceMode === 'modified' && rock.scannedByShipId) {
+      setRock(prev => ({
+        ...prev,
+        scannedByShipId: undefined,
+        scannedByLaserIndex: undefined,
+      }));
+    }
+  }, [config]);
 
   // Filter gadgets to only include enabled ones
   const enabledGadgets = gadgets.map((gadget, index) =>

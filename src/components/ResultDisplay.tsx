@@ -585,15 +585,18 @@ export default function ResultDisplay({
                       }`}
                       onClick={(e) => {
                         e.stopPropagation();
+                        e.preventDefault();
                         onSetScanningShip(selectedShip.id, 0);
                       }}
                       title="Click to mark as scanning ship"
                       style={{
                         position: "absolute",
-                        top: `calc(50% + ${shipY}px)`,
-                        left: `calc(50% + ${shipX - 80}px)`,
-                        transform: "translateY(-50%)",
-                        cursor: "pointer"
+                        top: `calc(50% + ${shipY - 10}px)`,
+                        left: `calc(50% + ${shipX - 50}px)`,
+                        transform: "translate(-50%, -50%)",
+                        cursor: "pointer",
+                        pointerEvents: "auto",
+                        zIndex: 10
                       }}>
                       📡
                     </span>
@@ -608,119 +611,153 @@ export default function ResultDisplay({
                         style={{
                           position: "absolute",
                           top: `calc(50% + ${shipY}px)`,
-                          left: `calc(50% + ${shipX - shipWidth}px)`,
+                          left: `calc(50% + ${shipX - shipWidth / 2 - 50}px)`,
                           transform: "translateY(-50%)",
                           display: "flex",
                           flexDirection: "column",
-                          gap: "0.5rem",
+                          gap: "0.25rem",
                           pointerEvents: "auto",
                           alignItems: "flex-end",
                         }}
                         onClick={(e) => e.stopPropagation()}>
-                        {[0, 1, 2].map((laserIndex) => {
-                          const isLaserManned =
-                            config.lasers[laserIndex]?.isManned !== false;
-                          const laserHead =
-                            config.lasers[laserIndex]?.laserHead;
-                          const laserName = laserHead?.name || "No Laser";
-                          const tooltipText = `${laserName} - ${
-                            isLaserManned ? "MANNED" : "UNMANNED"
-                          }`;
-
-                          // Get active modules for this laser
-                          const laser = config.lasers[laserIndex];
-                          const activeModules = laser?.modules
-                            ?.map((module, moduleIndex) => {
-                              if (
-                                module &&
-                                module.category === "active" &&
-                                module.id !== "none"
-                              ) {
-                                const isActive = laser.moduleActive
-                                  ? laser.moduleActive[moduleIndex] !== false
-                                  : true;
-                                return { module, moduleIndex, isActive };
-                              }
-                              return null;
-                            })
-                            .filter(Boolean) as Array<{
-                            module: Module;
-                            moduleIndex: number;
-                            isActive: boolean;
-                          }>;
-
+                        {/* Single sensor icon above all laser buttons - positioned absolutely */}
+                        {onSetScanningShip && rock.resistanceMode === 'modified' && (() => {
+                          const isSelected = rock.scannedByShipId === selectedShip.id;
                           return (
-                            <div
-                              key={laserIndex}
+                            <span
+                              className={`scanning-sensor-mole ${isSelected ? 'selected' : ''}`}
                               style={{
-                                display: "flex",
-                                gap: "0.25rem",
-                                alignItems: "center",
-                              }}>
-                              {/* Module buttons to the left for left-side ship */}
-                              {activeModules && activeModules.length > 0 && (
-                                <div
-                                  style={{ display: "flex", gap: "0.25rem" }}>
-                                  {activeModules.map((item) => (
+                                position: "absolute",
+                                top: "-2rem",
+                                right: "0",
+                                fontSize: "1.5rem",
+                                opacity: isSelected ? 1 : 0.8,
+                                filter: isSelected
+                                  ? "brightness(1.8) hue-rotate(90deg) drop-shadow(0 0 8px rgba(0, 255, 136, 1)) drop-shadow(0 0 12px rgba(0, 255, 136, 1)) drop-shadow(0 0 16px rgba(0, 255, 136, 0.9))"
+                                  : "drop-shadow(0 0 4px rgba(0, 255, 204, 0.6))",
+                                pointerEvents: "auto",
+                              }}
+                              title={isSelected ? "This ship scanned the rock" : "Click a laser's radio button to select scanning laser"}>
+                              📡
+                            </span>
+                          );
+                        })()}
+                        {/* Vertical stack of laser buttons */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                          {[0, 1, 2].map((laserIndex) => {
+                            const isLaserManned =
+                              config.lasers[laserIndex]?.isManned !== false;
+                            const laserHead =
+                              config.lasers[laserIndex]?.laserHead;
+                            const laserName = laserHead?.name || "No Laser";
+                            const tooltipText = `${laserName} - ${
+                              isLaserManned ? "MANNED" : "UNMANNED"
+                            }`;
+
+                            // Get active modules for this laser
+                            const laser = config.lasers[laserIndex];
+                            const activeModules = laser?.modules
+                              ?.map((module, moduleIndex) => {
+                                if (
+                                  module &&
+                                  module.category === "active" &&
+                                  module.id !== "none"
+                                ) {
+                                  const isActive = laser.moduleActive
+                                    ? laser.moduleActive[moduleIndex] !== false
+                                    : true;
+                                  return { module, moduleIndex, isActive };
+                                }
+                                return null;
+                              })
+                              .filter(Boolean) as Array<{
+                              module: Module;
+                              moduleIndex: number;
+                              isActive: boolean;
+                            }>;
+
+                            const isScanning = rock.scannedByShipId === selectedShip.id && rock.scannedByLaserIndex === laserIndex;
+
+                            return (
+                              <div
+                                key={laserIndex}
+                                style={{
+                                  display: "flex",
+                                  gap: "0.25rem",
+                                  alignItems: "center",
+                                  justifyContent: "flex-end",
+                                }}>
+                                {/* Laser button with radio indicator - positioned first to keep it fixed */}
+                                <div style={{ position: "relative", order: 2 }}>
+                                  <button
+                                    className={`laser-button ${
+                                      isLaserManned ? "manned" : "unmanned"
+                                    }`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onSingleShipToggleLaser(laserIndex);
+                                    }}
+                                    title={tooltipText}>
+                                    L{laserIndex + 1}
+                                  </button>
+                                  {/* Radio button indicator for scanning ship */}
+                                  {onSetScanningShip && rock.resistanceMode === 'modified' && laserHead && laserHead.id !== 'none' && (
                                     <span
-                                      key={item.moduleIndex}
-                                      className={`module-icon ${
-                                        item.isActive ? "active" : "inactive"
-                                      }`}
-                                      title={`${item.module.name} (Active Module)`}
+                                      className={`scanning-radio ${isScanning ? 'selected' : ''}`}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        if (onToggleModule) {
-                                          onToggleModule(
-                                            laserIndex,
-                                            item.moduleIndex
-                                          );
-                                        }
+                                        onSetScanningShip(selectedShip.id, laserIndex);
                                       }}
+                                      title={isScanning ? "This laser scanned the rock" : "Click to select as scanning laser"}
                                       style={{
-                                        cursor: onToggleModule
-                                          ? "pointer"
-                                          : "default",
+                                        position: "absolute",
+                                        bottom: "-4px",
+                                        right: "-4px",
+                                        width: "12px",
+                                        height: "12px",
+                                        borderRadius: "50%",
+                                        border: "2px solid var(--accent-cyan)",
+                                        backgroundColor: isScanning ? "var(--accent-cyan)" : "#000",
+                                        cursor: "pointer",
+                                        boxShadow: isScanning ? "0 0 8px rgba(0, 255, 204, 0.8)" : "none"
                                       }}>
-                                      {getModuleSymbol(item.module.id)}
                                     </span>
-                                  ))}
+                                  )}
                                 </div>
-                              )}
-                              {/* Scanning sensor icon - on the left (outside) for left-side ship */}
-                              {onSetScanningShip && rock.resistanceMode === 'modified' && laserHead && laserHead.id !== 'none' && (
-                                <span
-                                  className={`scanning-sensor ${
-                                    rock.scannedByShipId === selectedShip.id &&
-                                    rock.scannedByLaserIndex === laserIndex
-                                      ? 'selected' : ''
-                                  }`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    onSetScanningShip(selectedShip.id, laserIndex);
-                                  }}
-                                  title={`Click to mark L${laserIndex + 1} as scanning laser`}
-                                  style={{
-                                    cursor: "pointer",
-                                    marginRight: "0.5rem"
-                                  }}>
-                                  📡
-                                </span>
-                              )}
-                              <button
-                                className={`laser-button ${
-                                  isLaserManned ? "manned" : "unmanned"
-                                }`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onSingleShipToggleLaser(laserIndex);
-                                }}
-                                title={tooltipText}>
-                                L{laserIndex + 1}
-                              </button>
-                            </div>
-                          );
-                        })}
+                                {/* Module buttons to the left - will stack left when added */}
+                                {activeModules && activeModules.length > 0 && (
+                                  <div
+                                    style={{ display: "flex", gap: "0.25rem", order: 1 }}>
+                                    {activeModules.map((item) => (
+                                      <span
+                                        key={item.moduleIndex}
+                                        className={`module-icon ${
+                                          item.isActive ? "active" : "inactive"
+                                        }`}
+                                        title={`${item.module.name} (Active Module)`}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          if (onToggleModule) {
+                                            onToggleModule(
+                                              laserIndex,
+                                              item.moduleIndex
+                                            );
+                                          }
+                                        }}
+                                        style={{
+                                          cursor: onToggleModule
+                                            ? "pointer"
+                                            : "default",
+                                        }}>
+                                        {getModuleSymbol(item.module.id)}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     )}
                 </div>
@@ -1002,17 +1039,20 @@ export default function ResultDisplay({
                         }`}
                         onClick={(e) => {
                           e.stopPropagation();
+                          e.preventDefault();
                           onSetScanningShip(shipInstance.id, 0);
                         }}
                         title="Click to mark as scanning ship"
                         style={{
                           position: "absolute",
-                          top: `calc(50% + ${y}px)`,
+                          top: `calc(50% + ${y - 10}px)`,
                           left: x < 0
-                            ? `calc(50% + ${x - 80}px)`
-                            : `calc(50% + ${x + 80}px)`,
-                          transform: "translateY(-50%)",
-                          cursor: "pointer"
+                            ? `calc(50% + ${x - 50}px)`
+                            : `calc(50% + ${x + 50}px)`,
+                          transform: "translate(-50%, -50%)",
+                          cursor: "pointer",
+                          pointerEvents: "auto",
+                          zIndex: 10
                         }}>
                         📡
                       </span>
@@ -1027,182 +1067,162 @@ export default function ResultDisplay({
                           top: `calc(50% + ${y}px)`,
                           left:
                             x < 0
-                              ? `calc(50% + ${x - 120}px)` // Left side: buttons on the left
-                              : `calc(50% + ${x + 120}px)`, // Right side: buttons on the right
+                              ? `calc(50% + ${x - 110}px)` // Left side: buttons on the left
+                              : `calc(50% + ${x + 110}px)`, // Right side: buttons on the right
                           transform: "translate(-50%, -50%)",
                           display: "flex",
                           flexDirection: "column",
-                          gap: "4px",
+                          gap: "0.25rem",
                           pointerEvents: "auto",
+                          alignItems: x < 0 ? "flex-end" : "flex-start",
                         }}
                         onClick={(e) => e.stopPropagation()}>
-                        {[0, 1, 2].map((laserIndex) => {
-                          const isLaserManned =
-                            shipInstance.config.lasers[laserIndex]?.isManned !==
-                            false;
-                          const laserHead =
-                            shipInstance.config.lasers[laserIndex]?.laserHead;
-                          const laserName = laserHead?.name || "No Laser";
-                          const tooltipText = `${laserName} - ${
-                            isLaserManned ? "MANNED" : "UNMANNED"
-                          }`;
-
-                          // Get active modules for this laser
-                          const laser = shipInstance.config.lasers[laserIndex];
-                          const activeModules = laser?.modules
-                            ?.map((module, moduleIndex) => {
-                              if (
-                                module &&
-                                module.category === "active" &&
-                                module.id !== "none"
-                              ) {
-                                const isActive = laser.moduleActive
-                                  ? laser.moduleActive[moduleIndex] !== false
-                                  : true;
-                                return { module, moduleIndex, isActive };
-                              }
-                              return null;
-                            })
-                            .filter(Boolean) as Array<{
-                            module: Module;
-                            moduleIndex: number;
-                            isActive: boolean;
-                          }>;
-
-                          // Determine if ship is on left or right side
-                          const isLeftSide = x < 0;
-
+                        {/* Single sensor icon above all laser buttons - positioned absolutely */}
+                        {onSetScanningShip && rock.resistanceMode === 'modified' && (() => {
+                          const isSelected = rock.scannedByShipId === shipInstance.id;
                           return (
-                            <div
-                              key={laserIndex}
+                            <span
+                              className={`scanning-sensor-mole ${isSelected ? 'selected' : ''}`}
                               style={{
-                                display: "flex",
-                                gap: "0.25rem",
-                                alignItems: "center",
-                                justifyContent: isLeftSide
-                                  ? "flex-end"
-                                  : "flex-start", // Right-align for left-side ships
-                              }}>
-                              {/* Module buttons - on left for left-side ships */}
-                              {isLeftSide &&
-                                activeModules &&
-                                activeModules.length > 0 && (
-                                  <div
-                                    style={{ display: "flex", gap: "0.25rem" }}>
-                                    {activeModules.map((item) => (
-                                      <span
-                                        key={item.moduleIndex}
-                                        className={`module-icon ${
-                                          item.isActive ? "active" : "inactive"
-                                        }`}
-                                        title={`${item.module.name} (Active Module)`}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          if (onGroupToggleModule) {
-                                            onGroupToggleModule(
-                                              shipInstance.id,
-                                              laserIndex,
-                                              item.moduleIndex
-                                            );
-                                          }
-                                        }}
-                                        style={{
-                                          cursor: onGroupToggleModule
-                                            ? "pointer"
-                                            : "default",
-                                        }}>
-                                        {getModuleSymbol(item.module.id)}
-                                      </span>
-                                    ))}
-                                  </div>
-                                )}
-                              {/* Scanning sensor icon - on the outside (left for left-side ships, right for right-side ships) */}
-                              {isLeftSide && onSetScanningShip && rock.resistanceMode === 'modified' && laserHead && laserHead.id !== 'none' && (
-                                <span
-                                  className={`scanning-sensor ${
-                                    rock.scannedByShipId === shipInstance.id &&
-                                    rock.scannedByLaserIndex === laserIndex
-                                      ? 'selected' : ''
-                                  }`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    onSetScanningShip(shipInstance.id, laserIndex);
-                                  }}
-                                  title={`Click to mark L${laserIndex + 1} as scanning laser`}
-                                  style={{
-                                    cursor: "pointer",
-                                    marginRight: "0.5rem"
-                                  }}>
-                                  📡
-                                </span>
-                              )}
-                              <button
-                                className={`laser-button ${
-                                  isLaserManned ? "manned" : "unmanned"
-                                }`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onToggleLaser(shipInstance.id, laserIndex);
-                                }}
-                                title={tooltipText}>
-                                L{laserIndex + 1}
-                              </button>
-                              {/* Scanning sensor icon on the right for right-side ships */}
-                              {!isLeftSide && onSetScanningShip && rock.resistanceMode === 'modified' && laserHead && laserHead.id !== 'none' && (
-                                <span
-                                  className={`scanning-sensor ${
-                                    rock.scannedByShipId === shipInstance.id &&
-                                    rock.scannedByLaserIndex === laserIndex
-                                      ? 'selected' : ''
-                                  }`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    onSetScanningShip(shipInstance.id, laserIndex);
-                                  }}
-                                  title={`Click to mark L${laserIndex + 1} as scanning laser`}
-                                  style={{
-                                    cursor: "pointer",
-                                    marginLeft: "0.5rem"
-                                  }}>
-                                  📡
-                                </span>
-                              )}
-                              {/* Module buttons - on right for right-side ships */}
-                              {!isLeftSide &&
-                                activeModules &&
-                                activeModules.length > 0 && (
-                                  <div
-                                    style={{ display: "flex", gap: "0.25rem" }}>
-                                    {activeModules.map((item) => (
-                                      <span
-                                        key={item.moduleIndex}
-                                        className={`module-icon ${
-                                          item.isActive ? "active" : "inactive"
-                                        }`}
-                                        title={`${item.module.name} (Active Module)`}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          if (onGroupToggleModule) {
-                                            onGroupToggleModule(
-                                              shipInstance.id,
-                                              laserIndex,
-                                              item.moduleIndex
-                                            );
-                                          }
-                                        }}
-                                        style={{
-                                          cursor: onGroupToggleModule
-                                            ? "pointer"
-                                            : "default",
-                                        }}>
-                                        {getModuleSymbol(item.module.id)}
-                                      </span>
-                                    ))}
-                                  </div>
-                                )}
-                            </div>
+                                position: "absolute",
+                                top: "-2rem",
+                                right: x < 0 ? "0" : undefined,
+                                left: x < 0 ? undefined : "0",
+                                fontSize: "1.5rem",
+                                opacity: isSelected ? 1 : 0.8,
+                                filter: isSelected
+                                  ? "brightness(1.8) hue-rotate(90deg) drop-shadow(0 0 8px rgba(0, 255, 136, 1)) drop-shadow(0 0 12px rgba(0, 255, 136, 1)) drop-shadow(0 0 16px rgba(0, 255, 136, 0.9))"
+                                  : "drop-shadow(0 0 4px rgba(0, 255, 204, 0.6))",
+                                pointerEvents: "auto",
+                              }}
+                              title={isSelected ? "This ship scanned the rock" : "Click a laser's radio button to select scanning laser"}>
+                              📡
+                            </span>
                           );
-                        })}
+                        })()}
+                        {/* Vertical stack of laser buttons */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                          {[0, 1, 2].map((laserIndex) => {
+                            const isLaserManned =
+                              shipInstance.config.lasers[laserIndex]?.isManned !==
+                              false;
+                            const laserHead =
+                              shipInstance.config.lasers[laserIndex]?.laserHead;
+                            const laserName = laserHead?.name || "No Laser";
+                            const tooltipText = `${laserName} - ${
+                              isLaserManned ? "MANNED" : "UNMANNED"
+                            }`;
+
+                            // Get active modules for this laser
+                            const laser = shipInstance.config.lasers[laserIndex];
+                            const activeModules = laser?.modules
+                              ?.map((module, moduleIndex) => {
+                                if (
+                                  module &&
+                                  module.category === "active" &&
+                                  module.id !== "none"
+                                ) {
+                                  const isActive = laser.moduleActive
+                                    ? laser.moduleActive[moduleIndex] !== false
+                                    : true;
+                                  return { module, moduleIndex, isActive };
+                                }
+                                return null;
+                              })
+                              .filter(Boolean) as Array<{
+                              module: Module;
+                              moduleIndex: number;
+                              isActive: boolean;
+                            }>;
+
+                            // Determine if ship is on left or right side
+                            const isLeftSide = x < 0;
+
+                            const isScanning = rock.scannedByShipId === shipInstance.id && rock.scannedByLaserIndex === laserIndex;
+
+                            return (
+                              <div
+                                key={laserIndex}
+                                style={{
+                                  display: "flex",
+                                  gap: "0.25rem",
+                                  alignItems: "center",
+                                  justifyContent: isLeftSide
+                                    ? "flex-end"
+                                    : "flex-start",
+                                }}>
+                                {/* Laser button with radio indicator - order keeps it fixed */}
+                                <div style={{ position: "relative", order: isLeftSide ? 2 : 1 }}>
+                                  <button
+                                    className={`laser-button ${
+                                      isLaserManned ? "manned" : "unmanned"
+                                    }`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onToggleLaser(shipInstance.id, laserIndex);
+                                    }}
+                                    title={tooltipText}>
+                                    L{laserIndex + 1}
+                                  </button>
+                                  {/* Radio button indicator */}
+                                  {onSetScanningShip && rock.resistanceMode === 'modified' && laserHead && laserHead.id !== 'none' && (
+                                    <span
+                                      className={`scanning-radio ${isScanning ? 'selected' : ''}`}
+                                      style={{
+                                        position: "absolute",
+                                        bottom: "-4px",
+                                        right: "-4px",
+                                        width: "12px",
+                                        height: "12px",
+                                        borderRadius: "50%",
+                                        border: "2px solid var(--accent-cyan)",
+                                        backgroundColor: isScanning ? "var(--accent-cyan)" : "#000",
+                                        cursor: "pointer",
+                                        boxShadow: isScanning ? "0 0 8px rgba(0, 255, 204, 0.8)" : "none"
+                                      }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onSetScanningShip(shipInstance.id, laserIndex);
+                                      }}>
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Module buttons - stack away from ship using flex order */}
+                                {activeModules && activeModules.length > 0 && (
+                                  <div
+                                    style={{ display: "flex", gap: "0.25rem", order: isLeftSide ? 1 : 2 }}>
+                                    {activeModules.map((item) => (
+                                      <span
+                                        key={item.moduleIndex}
+                                        className={`module-icon ${
+                                          item.isActive ? "active" : "inactive"
+                                        }`}
+                                        title={`${item.module.name} (Active Module)`}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          if (onGroupToggleModule) {
+                                            onGroupToggleModule(
+                                              shipInstance.id,
+                                              laserIndex,
+                                              item.moduleIndex
+                                            );
+                                          }
+                                        }}
+                                        style={{
+                                          cursor: onGroupToggleModule
+                                            ? "pointer"
+                                            : "default",
+                                        }}>
+                                        {getModuleSymbol(item.module.id)}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1301,6 +1321,16 @@ export default function ResultDisplay({
           </div>
         </div>
       </div>
+
+      {/* Scanning ship selection message */}
+      {onSetScanningShip && rock.resistanceMode === 'modified' && !rock.scannedByShipId && (
+        <div className="scanning-ship-message">
+          <span className="message-icon">📡</span>
+          <span className="message-text">
+            Select which ship/laser scanned this rock<br />by activating a sensor icon or laser radio button
+          </span>
+        </div>
+      )}
 
       <div className="power-bar-container" onClick={(e) => e.stopPropagation()}>
         <div className="power-bar">
