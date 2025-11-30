@@ -12,6 +12,8 @@ dist
 dist-ssr
 dist-electron
 *.local
+*.local.*
+.claude/settings.local.json
 
 # Editor directories and files
 .vscode/*
