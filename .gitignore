@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 dist-electron
+.vite
 *.local
 *.local.*
 .claude/settings.local.json
