@@ -602,6 +602,66 @@ export default function ResultDisplay({
                     </span>
                   )}
 
+                  {/* Active module controls for Prospector/GOLEM (single-laser ships) */}
+                  {(selectedShip.id === 'prospector' || selectedShip.id === 'golem') &&
+                    config &&
+                    onToggleModule &&
+                    (() => {
+                      const laser = config.lasers[0];
+                      const activeModules = laser?.modules
+                        ?.map((module, moduleIndex) => {
+                          if (
+                            module &&
+                            module.category === "active" &&
+                            module.id !== "none"
+                          ) {
+                            const isActive = laser.moduleActive
+                              ? laser.moduleActive[moduleIndex] !== false
+                              : true;
+                            return { module, moduleIndex, isActive };
+                          }
+                          return null;
+                        })
+                        .filter(Boolean) as Array<{
+                        module: Module;
+                        moduleIndex: number;
+                        isActive: boolean;
+                      }>;
+
+                      if (!activeModules || activeModules.length === 0) return null;
+
+                      return (
+                        <div
+                          className="laser-controls"
+                          style={{
+                            position: "absolute",
+                            top: `calc(50% + ${shipY + 35}px)`,
+                            left: `calc(50% + ${shipX}px)`,
+                            transform: "translateX(-50%)",
+                            display: "flex",
+                            gap: "0.25rem",
+                            pointerEvents: "auto",
+                          }}
+                          onClick={(e) => e.stopPropagation()}>
+                          {activeModules.map((item) => (
+                            <span
+                              key={item.moduleIndex}
+                              className={`module-icon ${
+                                item.isActive ? "active" : "inactive"
+                              }`}
+                              title={`${item.module.name} (Active Module) - Click to toggle`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleModule(0, item.moduleIndex);
+                              }}
+                              style={{ cursor: "pointer" }}>
+                              {getModuleSymbol(item.module.id)}
+                            </span>
+                          ))}
+                        </div>
+                      );
+                    })()}
+
                   {/* Laser controls for MOLE */}
                   {selectedShip.id === "mole" &&
                     onSingleShipToggleLaser &&
@@ -1057,6 +1117,65 @@ export default function ResultDisplay({
                         📡
                       </span>
                     )}
+
+                    {/* Active module controls for Prospector/GOLEM in multi-ship mode */}
+                    {(shipInstance.ship.id === 'prospector' || shipInstance.ship.id === 'golem') &&
+                      onGroupToggleModule &&
+                      (() => {
+                        const laser = shipInstance.config.lasers[0];
+                        const activeModules = laser?.modules
+                          ?.map((module, moduleIndex) => {
+                            if (
+                              module &&
+                              module.category === "active" &&
+                              module.id !== "none"
+                            ) {
+                              const isActive = laser.moduleActive
+                                ? laser.moduleActive[moduleIndex] !== false
+                                : true;
+                              return { module, moduleIndex, isActive };
+                            }
+                            return null;
+                          })
+                          .filter(Boolean) as Array<{
+                          module: Module;
+                          moduleIndex: number;
+                          isActive: boolean;
+                        }>;
+
+                        if (!activeModules || activeModules.length === 0) return null;
+
+                        return (
+                          <div
+                            className="laser-controls"
+                            style={{
+                              position: "absolute",
+                              top: `calc(50% + ${y + 30}px)`,
+                              left: `calc(50% + ${x}px)`,
+                              transform: "translateX(-50%)",
+                              display: "flex",
+                              gap: "0.25rem",
+                              pointerEvents: "auto",
+                            }}
+                            onClick={(e) => e.stopPropagation()}>
+                            {activeModules.map((item) => (
+                              <span
+                                key={item.moduleIndex}
+                                className={`module-icon ${
+                                  item.isActive ? "active" : "inactive"
+                                }`}
+                                title={`${item.module.name} (Active Module) - Click to toggle`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onGroupToggleModule(shipInstance.id, 0, item.moduleIndex);
+                                }}
+                                style={{ cursor: "pointer" }}>
+                                {getModuleSymbol(item.module.id)}
+                              </span>
+                            ))}
+                          </div>
+                        );
+                      })()}
 
                     {/* Laser control buttons for MOLE ships */}
                     {shipInstance.ship.id === "mole" && onToggleLaser && (
