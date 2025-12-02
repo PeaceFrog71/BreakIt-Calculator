@@ -77,8 +77,9 @@ describe('Mining Calculator - Core Formulas', () => {
       const rock: Rock = { mass: 11187, resistance: 17 };
       const result = calculateBreakability(config, rock, gadgets);
 
-      // Total Laser Power = 3360 * 1.25 * 0.95 = 3990
-      expect(result.totalLaserPower).toBeCloseTo(3990, 0);
+      // Total Laser Power = 3360 × (1 + 0.25 + (-0.05)) = 3360 × 1.20 = 4032
+      // Module power percentages ADD: +25% + (-5%) = +20%
+      expect(result.totalLaserPower).toBeCloseTo(4032, 0);
 
       // Total Resist Modifier = 0.7 * 1.0 * 1.0 = 0.7
       expect(result.totalResistModifier).toBeCloseTo(0.7, 2);
@@ -89,11 +90,11 @@ describe('Mining Calculator - Core Formulas', () => {
       // Adjusted LP Needed = (11187 / (1 - (11.9 * 0.01))) / 5 = 2539.6141
       expect(result.adjustedLPNeeded).toBeCloseTo(2539.6141, 2);
 
-      // Can Break? 3990 >= 2539.6141 = Yes
+      // Can Break? 4032 >= 2539.6141 = Yes
       expect(result.canBreak).toBe(true);
 
-      // Power Margin = 3990 - 2539.6141 = 1450.3859
-      expect(result.powerMargin).toBeCloseTo(1450.3859, 2);
+      // Power Margin = 4032 - 2539.6141 = 1492.3859
+      expect(result.powerMargin).toBeCloseTo(1492.3859, 2);
     });
   });
 
@@ -184,10 +185,10 @@ describe('Mining Calculator - Core Formulas', () => {
       expect(result.totalLaserPower).toBeCloseTo(4725, 0);
     });
 
-    it('should multiply multiple module power modifiers', () => {
+    it('should ADD multiple module power modifiers (not multiply)', () => {
       const pitman = LASER_HEADS.find(l => l.id === 'pitman')!;
-      const stampede = MODULES.find(m => m.id === 'stampede')!; // 1.35
-      const riegerC3 = MODULES.find(m => m.id === 'rieger-c3')!; // 1.25
+      const stampede = MODULES.find(m => m.id === 'stampede')!; // 1.35 → +35%
+      const riegerC3 = MODULES.find(m => m.id === 'rieger-c3')!; // 1.25 → +25%
 
       const config: MiningConfiguration = {
         lasers: [{
@@ -199,8 +200,9 @@ describe('Mining Calculator - Core Formulas', () => {
       const rock: Rock = { mass: 1000, resistance: 10 };
       const result = calculateBreakability(config, rock, gadgets);
 
-      // 3150 * 1.35 * 1.25 = 5315.625
-      expect(result.totalLaserPower).toBeCloseTo(5315.625, 1);
+      // Module power percentages ADD: +35% + 25% = +60% → 1.60 multiplier
+      // 3150 × 1.60 = 5040
+      expect(result.totalLaserPower).toBeCloseTo(5040, 0);
     });
   });
 
@@ -271,10 +273,10 @@ describe('Mining Calculator - Core Formulas', () => {
       expect(result.adjustedResistance).toBeCloseTo(18.75, 2);
     });
 
-    it('should multiply multiple module resistance modifiers', () => {
+    it('should ADD multiple module resistance modifiers (not multiply)', () => {
       const helixI = LASER_HEADS.find(l => l.id === 'helix-1')!; // resist = 0.7
-      const lifeline = MODULES.find(m => m.id === 'lifeline')!; // resist = 0.85
-      const rime = MODULES.find(m => m.id === 'rime')!; // resist = 0.75
+      const lifeline = MODULES.find(m => m.id === 'lifeline')!; // resist = 0.85 → -15%
+      const rime = MODULES.find(m => m.id === 'rime')!; // resist = 0.75 → -25%
 
       const config: MiningConfiguration = {
         lasers: [{
@@ -286,10 +288,181 @@ describe('Mining Calculator - Core Formulas', () => {
       const rock: Rock = { mass: 1000, resistance: 20 };
       const result = calculateBreakability(config, rock, gadgets);
 
-      // Total Resist Modifier = 0.7 * 0.85 * 0.75 = 0.44625
-      // Adjusted Resistance = 20 * 0.44625 = 8.925
-      expect(result.totalResistModifier).toBeCloseTo(0.44625, 5);
-      expect(result.adjustedResistance).toBeCloseTo(8.925, 3);
+      // Module percentages ADD: (-0.15) + (-0.25) = -0.40 → combined module modifier = 0.60
+      // Total Resist Modifier = 0.7 (laser) * 0.60 (modules) = 0.42
+      // Adjusted Resistance = 20 * 0.42 = 8.4
+      expect(result.totalResistModifier).toBeCloseTo(0.42, 5);
+      expect(result.adjustedResistance).toBeCloseTo(8.4, 3);
+    });
+
+    it('should correctly stack: modules ADD percentages, then multiply by laser, then multiply lasers together', () => {
+      // This test validates the complete stacking formula:
+      // 1. Module percentages ADD together within a laser
+      // 2. Combined module modifier MULTIPLIES with laser head modifier
+      // 3. Each laser's combined modifier MULTIPLIES with other lasers
+
+      const helixII = LASER_HEADS.find(l => l.id === 'helix-2')!; // resist = 0.7
+      const brandt = MODULES.find(m => m.id === 'brandt')!; // resist = 1.15 → +15%
+      const forel = MODULES.find(m => m.id === 'forel')!; // resist = 1.15 → +15%
+
+      // MOLE with 2 lasers, each with 2 modules
+      const config: MiningConfiguration = {
+        lasers: [
+          { laserHead: helixII, modules: [brandt, forel, null] }, // Laser 1
+          { laserHead: helixII, modules: [brandt, null, null] },  // Laser 2
+        ],
+      };
+      const gadgets = [null, null, null];
+      const rock: Rock = { mass: 1000, resistance: 20 };
+      const result = calculateBreakability(config, rock, gadgets);
+
+      // Laser 1: modules ADD → +15% + 15% = +30% → 1.30 module modifier
+      //          laser × modules = 0.7 × 1.30 = 0.91
+      // Laser 2: modules ADD → +15% = 1.15 module modifier
+      //          laser × modules = 0.7 × 1.15 = 0.805
+      // Total: lasers MULTIPLY → 0.91 × 0.805 = 0.73255
+      // Adjusted Resistance = 20 × 0.73255 = 14.651
+      expect(result.totalResistModifier).toBeCloseTo(0.73255, 4);
+      expect(result.adjustedResistance).toBeCloseTo(14.651, 2);
+    });
+
+    it('should yield ~0.75 (-25% effective resistance) for MOLE with Arbor/Lancet/Impact config', () => {
+      // Issue #14 test case:
+      // - Arbor MH2 (1.25) + Rime (-25%) + Surge (-15%)
+      // - Lancet MH2 (1.0) + Brandt (+15%) + Brandt (+15%)
+      // - Impact II (1.1) + Surge (-15%) + Surge (-15%)
+
+      const arborMH2 = LASER_HEADS.find(l => l.id === 'arbor-mh2')!;   // resist = 1.25
+      const lancetMH2 = LASER_HEADS.find(l => l.id === 'lancet-mh2')!; // resist = 1.0
+      const impactII = LASER_HEADS.find(l => l.id === 'impact-2')!;    // resist = 1.1
+      const rime = MODULES.find(m => m.id === 'rime')!;       // resist = 0.75 → -25%
+      const surge = MODULES.find(m => m.id === 'surge')!;     // resist = 0.85 → -15%
+      const brandt = MODULES.find(m => m.id === 'brandt')!;   // resist = 1.15 → +15%
+
+      const config: MiningConfiguration = {
+        lasers: [
+          { laserHead: arborMH2, modules: [rime, surge] },      // Laser 1
+          { laserHead: lancetMH2, modules: [brandt, brandt] },  // Laser 2
+          { laserHead: impactII, modules: [surge, surge, null] }, // Laser 3
+        ],
+      };
+      const gadgets = [null, null, null];
+      const rock: Rock = { mass: 1000, resistance: 20 };
+      const result = calculateBreakability(config, rock, gadgets);
+
+      // RESISTANCE:
+      // Laser 1: modules ADD → -25% + -15% = -40% → 0.60
+      //          laser × modules = 1.25 × 0.60 = 0.75
+      // Laser 2: modules ADD → +15% + 15% = +30% → 1.30
+      //          laser × modules = 1.0 × 1.30 = 1.30
+      // Laser 3: modules ADD → -15% + -15% = -30% → 0.70
+      //          laser × modules = 1.1 × 0.70 = 0.77
+      // Total: lasers MULTIPLY → 0.75 × 1.30 × 0.77 = 0.75075
+      // This is approximately -25% effective resistance modifier
+      expect(result.totalResistModifier).toBeCloseTo(0.75075, 4);
+      expect(result.adjustedResistance).toBeCloseTo(15.015, 2); // 20 × 0.75075
+
+      // POWER (module percentages also ADD):
+      // Laser 1: Arbor MH2 (2400) × (1 + (-0.15) + 0.50) = 2400 × 1.35 = 3240
+      // Laser 2: Lancet MH2 (3600) × (1 + 0.35 + 0.35) = 3600 × 1.70 = 6120
+      // Laser 3: Impact II (3360) × (1 + 0.50 + 0.50) = 3360 × 2.00 = 6720
+      // Total: 3240 + 6120 + 6720 = 16080
+      expect(result.totalLaserPower).toBeCloseTo(16080, 0);
+    });
+  });
+
+  describe('Modified Resistance Mode - Scanning Laser (Issue #13)', () => {
+    it('should use only scanning laser modifier to reverse modified resistance in single-ship MOLE mode', () => {
+      // Issue #13: When user scans with one laser but adds other lasers to help mine,
+      // the calculator should use only the scanning laser's modifier to reverse the
+      // modified resistance value, then apply ALL lasers' modifiers to get final result.
+
+      const helixII = LASER_HEADS.find(l => l.id === 'helix-2')!;   // 0.7x resist
+      const impactII = LASER_HEADS.find(l => l.id === 'impact-2')!; // 1.1x resist
+
+      const config: MiningConfiguration = {
+        lasers: [
+          { laserHead: helixII, modules: [null, null, null] },   // Laser 0 - scanning laser
+          { laserHead: impactII, modules: [null, null, null] },  // Laser 1 - helper laser
+        ],
+      };
+
+      // User scanned rock with laser 0 (Helix II, 0.7x)
+      // True base resistance = 20, displayed as 14 (20 × 0.7)
+      const rock: Rock = {
+        mass: 1000,
+        resistance: 14,  // Modified value user sees when scanning with Helix II
+        resistanceMode: 'modified',
+        scannedByLaserIndex: 0,  // Scanned with laser 0
+      };
+
+      const result = calculateBreakability(config, rock, [null, null, null], 'mole');
+
+      // Should reverse using only laser 0's modifier (0.7)
+      // Derived base = 14 / 0.7 = 20
+      expect(result.resistanceContext?.derivedBaseValue).toBeCloseTo(20, 1);
+
+      // Then apply ALL lasers' combined modifier: 0.7 × 1.1 = 0.77
+      // Adjusted resistance = 20 × 0.77 = 15.4
+      expect(result.totalResistModifier).toBeCloseTo(0.77, 2);
+      expect(result.adjustedResistance).toBeCloseTo(15.4, 1);
+    });
+
+    it('should handle modified resistance when scanning laser has modules', () => {
+      const helixII = LASER_HEADS.find(l => l.id === 'helix-2')!;   // 0.7x resist
+      const lancetMH2 = LASER_HEADS.find(l => l.id === 'lancet-mh2')!; // 1.0x resist
+      const surge = MODULES.find(m => m.id === 'surge')!;  // 0.85 resist → -15%
+
+      const config: MiningConfiguration = {
+        lasers: [
+          { laserHead: helixII, modules: [surge, null, null] },   // Laser 0 - scanning laser with module
+          { laserHead: lancetMH2, modules: [null, null] },        // Laser 1 - helper laser
+        ],
+      };
+
+      // Laser 0 with Surge: 0.7 × (1 + (-0.15)) = 0.7 × 0.85 = 0.595
+      // User scanned with this laser, true base = 20, displayed as 11.9 (20 × 0.595)
+      const rock: Rock = {
+        mass: 1000,
+        resistance: 11.9,
+        resistanceMode: 'modified',
+        scannedByLaserIndex: 0,
+      };
+
+      const result = calculateBreakability(config, rock, [null, null, null], 'mole');
+
+      // Derived base = 11.9 / 0.595 = 20
+      expect(result.resistanceContext?.derivedBaseValue).toBeCloseTo(20, 1);
+
+      // Total modifier = 0.595 (laser 0) × 1.0 (laser 1) = 0.595
+      // Adjusted resistance = 20 × 0.595 = 11.9
+      expect(result.adjustedResistance).toBeCloseTo(11.9, 1);
+    });
+
+    it('should fall back to total modifier when scannedByLaserIndex is not set', () => {
+      const helixII = LASER_HEADS.find(l => l.id === 'helix-2')!;
+
+      const config: MiningConfiguration = {
+        lasers: [
+          { laserHead: helixII, modules: [null, null, null] },
+        ],
+      };
+
+      // Modified mode but no scanning laser index specified
+      const rock: Rock = {
+        mass: 1000,
+        resistance: 14,
+        resistanceMode: 'modified',
+        // scannedByLaserIndex not set
+      };
+
+      const result = calculateBreakability(config, rock, [null, null, null]);
+
+      // Should fall back to using total equipment modifier (0.7) for reverse
+      // Derived base = 14 / 0.7 = 20
+      // Adjusted = 20 × 0.7 = 14
+      expect(result.resistanceContext?.derivedBaseValue).toBeCloseTo(20, 1);
+      expect(result.adjustedResistance).toBeCloseTo(14, 1);
     });
   });
 
@@ -499,11 +672,12 @@ describe('Mining Calculator - Core Formulas', () => {
       const rock: Rock = { mass: 11187, resistance: 17 };
       const result = calculateBreakability(config, rock, gadgets);
 
-      // Power Margin = 3990 - 2539.6141 = 1450.3859
-      expect(result.powerMargin).toBeCloseTo(1450.3859, 2);
+      // Power = 4032 (with additive stacking), LP Needed = 2539.6141
+      // Power Margin = 4032 - 2539.6141 = 1492.3859
+      expect(result.powerMargin).toBeCloseTo(1492.3859, 2);
 
-      // Power Margin % = (1450.3859 / 2539.6141) * 100 = 57.11%
-      expect(result.powerMarginPercent).toBeCloseTo(57.11, 1);
+      // Power Margin % = (1492.3859 / 2539.6141) * 100 = 58.76%
+      expect(result.powerMarginPercent).toBeCloseTo(58.76, 1);
     });
 
     it('should calculate negative power margin correctly', () => {
