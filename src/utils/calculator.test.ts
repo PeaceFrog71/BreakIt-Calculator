@@ -797,7 +797,7 @@ describe('Mining Calculator - Group Operations', () => {
       expect(result.totalLaserPower).toBe(6300);
     });
 
-    it('should average resistance modifiers from multiple ships', () => {
+    it('should use best (lowest) resistance modifier from multiple ships', () => {
       const prospector = SHIPS.find(s => s.id === 'prospector')!;
       const helixI = LASER_HEADS.find(l => l.id === 'helix-1')!; // 0.7
       const pitman = LASER_HEADS.find(l => l.id === 'pitman')!; // 1.25
@@ -830,8 +830,8 @@ describe('Mining Calculator - Group Operations', () => {
       const rock: Rock = { mass: 20000, resistance: 30 };
       const result = calculateGroupBreakability(group, rock, gadgets);
 
-      // Average Resist Modifier = (0.7 + 1.25) / 2 = 0.975
-      expect(result.totalResistModifier).toBeCloseTo(0.975, 3);
+      // Multi-ship uses "best of" logic: min(0.7, 1.25) = 0.7
+      expect(result.totalResistModifier).toBeCloseTo(0.7, 3);
     });
 
     it('should only count active ships', () => {
@@ -956,14 +956,14 @@ describe('Mining Calculator - Group Operations', () => {
       const gadgets = [null, null, null];
       const rock: Rock = { mass: 20000, resistance: 30 };
 
-      // All 4 active: average of 4 × 1.25 = 1.25
+      // All 4 active: best of (1.25, 1.25, 1.25, 1.25) = 1.25
       const group4Active: MiningGroup = {
         ships: [ship1, ship2, ship3, ship4],
       };
       const result4 = calculateGroupBreakability(group4Active, rock, gadgets);
       expect(result4.totalResistModifier).toBeCloseTo(1.25, 3);
 
-      // Deactivate ship 4: average of 3 × 1.25 = 1.25 (same, but power should change)
+      // Deactivate ship 4: best of (1.25, 1.25, 1.25) = 1.25 (same, but power should change)
       const group3Active: MiningGroup = {
         ships: [ship1, ship2, ship3, { ...ship4, isActive: false }],
       };
@@ -971,7 +971,7 @@ describe('Mining Calculator - Group Operations', () => {
       expect(result3.totalResistModifier).toBeCloseTo(1.25, 3);
       expect(result3.totalLaserPower).toBeLessThan(result4.totalLaserPower);
 
-      // Deactivate ship 2: average of 2 × 1.25 = 1.25
+      // Deactivate ship 2: best of (1.25, 1.25) = 1.25
       const group2Active: MiningGroup = {
         ships: [ship1, { ...ship2, isActive: false }, ship3, { ...ship4, isActive: false }],
       };

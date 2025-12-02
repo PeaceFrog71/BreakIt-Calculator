@@ -321,10 +321,10 @@ export function calculateGroupBreakability(
     allResistModifiers.push(shipResistMod);
   });
 
-  // Calculate equipment modifier by averaging all active ships' resistance modifiers
-  // This is what gets applied to the rock resistance
+  // Multi-ship mining uses "best of" logic: the most effective (lowest) resistance modifier wins
+  // This matches Star Citizen's actual game behavior where only the best modifier is applied
   const equipmentModifier = allResistModifiers.length > 0
-    ? allResistModifiers.reduce((sum, mod) => sum + mod, 0) / allResistModifiers.length
+    ? Math.min(...allResistModifiers)
     : 1;
 
   // For modified resistance mode, calculate the scanning laser's modifier separately
