@@ -71,13 +71,17 @@ Every fix or feature branch MUST bump the version before committing:
   - Example: `1.2.0` → `1.2.1`
 - `feat/*` branches: Bump MINOR version (`npm version minor --no-git-tag-version`)
   - Example: `1.2.0` → `1.3.0`
+- **Releases to main**: Bump MINOR version before creating the dev → main PR
+  - Example: `1.2.x` → `1.3.0`
+  - This applies even if only bug fixes are included
 - MAJOR version bumps are manual and require explicit discussion
 
 **Before committing, Victor MUST:**
 1. Check current version in `package.json`
 2. Determine appropriate bump based on branch type (`fix/` = patch, `feat/` = minor)
-3. Run the version bump command
-4. Include "Bump version to X.Y.Z" in the commit message
+3. For dev → main PRs: Bump MINOR version
+4. Run the version bump command
+5. Include "Bump version to X.Y.Z" in the commit message
 
 ### Rule 7: Branch Cleanup
 After a PR is merged, clean up the branch:
