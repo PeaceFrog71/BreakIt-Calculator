@@ -49,13 +49,11 @@ jobs:
         run: |
           cd beta
           npm ci
-          # Set base path for beta subdirectory
-          sed -i 's|base: .*|base: "/beta/",|' vite.config.ts || true
-          npm run build
+          # Build with base path for beta subdirectory
+          npx vite build --base=/beta/
           # Move beta build to subfolder
           mkdir -p ../main/dist/beta
           cp -r dist/* ../main/dist/beta/
-        continue-on-error: true
 
       - name: Add CNAME
         run: echo "rockbreaker.peacefroggaming.com" > main/dist/CNAME
