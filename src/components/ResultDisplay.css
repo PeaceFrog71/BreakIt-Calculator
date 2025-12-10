@@ -739,7 +739,7 @@
   margin-top: 0.75rem;
   padding: 0.75rem;
   background: rgba(255, 170, 0, 0.1);
-  border-left: 3px solid var(--warning);
+  border-left: 3px solid #ff8c00;
   border-radius: 4px;
   font-family: inherit;
   font-size: 0.95rem;
