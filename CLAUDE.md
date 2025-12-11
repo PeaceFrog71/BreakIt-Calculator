@@ -60,8 +60,9 @@ src/
 ```
 powerMargin = (totalPower - powerNeeded) / powerNeeded
 ```
-- **CAN BREAK**: margin >= 0%
-- **POSSIBLE BREAK**: margin between -15% and 0%
+- **CAN BREAK**: margin >= 20%
+- **LOW MARGIN BREAK (marginal)**: 0% <= margin < 20%
+- **POSSIBLE BREAK**: -15% <= margin < 0%
 - **CANNOT BREAK**: margin < -15%
 
 ## Version Control
