@@ -21,7 +21,26 @@ This rule applies to:
 
 ```
 feature/fix branch → PR to dev → PR to main (releases only)
+                              ↘ PR to beta (pre-release testing) → PR to main
 ```
+
+## Branch Strategy
+
+| Branch | Purpose | Deploys To |
+|--------|---------|------------|
+| `main` | Production releases | gh-pages (live site) |
+| `dev` | Development integration | Local testing |
+| `beta` | Pre-release testing | Beta testers |
+| `feature/*`, `fix/*`, `chore/*` | Active work | Local only |
+
+### Beta Branch
+
+The `beta` branch is for pre-release testing before production:
+
+- **When to use**: Features that need wider testing before release
+- **Flow**: `dev → beta → main`
+- **Protection**: Same as main - no direct commits, PRs only
+- **Sync**: Keep beta in sync with dev, merge to main when stable
 
 ## Version Control Partner
 
@@ -36,8 +55,9 @@ feature/fix branch → PR to dev → PR to main (releases only)
 
 These operations require explicit user confirmation:
 - `git push origin main`
-- `git commit` while on main branch
-- `git merge` into main
+- `git push origin beta`
+- `git commit` while on main or beta branch
+- `git merge` into main or beta
 - `git push --force` (any branch)
 - Deleting branches without merge verification
 
@@ -47,7 +67,7 @@ These can proceed without extra confirmation:
 - Creating feature/fix branches
 - Committing to feature/fix branches
 - Pushing feature/fix branches
-- Creating PRs to dev
+- Creating PRs to dev or beta
 - Pulling from any branch
 
 ## When in Doubt
