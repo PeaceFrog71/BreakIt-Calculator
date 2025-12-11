@@ -12,6 +12,7 @@ export default function ResistanceHelpModal({ isOpen, onClose }: ResistanceHelpM
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        event.preventDefault();
         onClose();
       }
     };
