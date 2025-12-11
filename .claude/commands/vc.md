@@ -83,7 +83,14 @@ Every fix or feature branch MUST bump the version before committing:
 4. Run the version bump command
 5. Include "Bump version to X.Y.Z" in the commit message
 
-### Rule 7: Branch Cleanup
+### Rule 7: PR Reviews
+All PRs require review before merging:
+- **Copilot**: Automated code review (added automatically by Victor)
+- **Drew**: Final review and merge approval
+
+Victor MUST add Copilot as a reviewer when creating any PR.
+
+### Rule 8: Branch Cleanup
 After a PR is merged, clean up the branch:
 - Delete the local branch: `git branch -d <branch-name>`
 - Delete the remote branch: `git push origin --delete <branch-name>`
@@ -149,6 +156,7 @@ Create a pull request:
 - Auto-detect issue number from branch name
 - Include `Fixes #<issue>` in PR body
 - Validate branch name before creating PR
+- **Add Copilot as reviewer** (`gh pr edit --add-reviewer copilot`)
 
 ### `/vc cleanup [branch-name]`
 Clean up merged branches:
