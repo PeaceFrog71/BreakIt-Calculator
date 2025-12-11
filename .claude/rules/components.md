@@ -29,7 +29,7 @@ export default MyComponent;
 - Avoid prop drilling - consider lifting state to App.tsx
 
 ## Styling
-- Component styles go in `App.css` (single stylesheet)
+- Component styles can go in `App.css` (global styles) or in component-specific CSS files (e.g., `LaserPanel.css`, `ResultDisplay.css`, `ConfigManager.css`)
 - Use descriptive class names: `.laser-panel`, `.result-display`
 - Star Citizen theme: dark backgrounds, cyan/orange accents
 
