@@ -24,7 +24,7 @@ Module resistance percentages ADD, then MULTIPLY by laser head modifier:
 // Laser (0.7x) + Module (+15%) + Module (+15%)
 const moduleSum = 0.15 + 0.15; // = 0.30
 const moduleMultiplier = 1 + moduleSum; // = 1.30
-const laserModifier = 0.7 * moduleMultiplier; // = 0.91
+const combinedModifier = 0.7 * moduleMultiplier; // = 0.91
 ```
 
 **Level 2 - Across multiple lasers** (ship-to-ship or laser-to-laser):
