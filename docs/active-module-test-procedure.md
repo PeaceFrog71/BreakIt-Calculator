@@ -251,7 +251,7 @@ After testing, classify each module:
 ### Instant Modules (can stack with each other)
 
 - [x] Surge + Stampede confirmed stackable
-- [ ] Other combinations: Surge Surge Surge, Surge Surge, Surge Any ACtive, Any active on its own. All passives work with active.
+- [ ] Other combinations: Surge Surge Surge, Surge Surge, Surge Any Active, Any active on its own. All passives work with active.
 
 ---
 
