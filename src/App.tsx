@@ -352,6 +352,14 @@ function App() {
         <div className="header-title">
           <h1>PeaceFrog's Rock Breaker</h1>
           <span className="version-tag">v{version}</span>
+          <a
+            href="https://forms.gle/GziNwLBcwaWpZVNy5"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="feedback-link"
+          >
+            Report Bugs / Request Features / Provide Feedback
+          </a>
         </div>
         <button
           className="help-button"
