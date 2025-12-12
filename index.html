@@ -44,28 +44,19 @@
       });
     </script>
     <style>
-      /* Move Ko-fi's widget to lower left and stretch it, match background */
+      /* Move Ko-fi's widget to lower left, stretch it, and clip overflow */
       .floatingchat-container-wrap,
       .floatingchat-container-wrap-mobi,
-      [class*="floatingchat-container-wrap"],
-      [id*="kofi"] {
+      [class*="floatingchat-container-wrap"] {
         bottom: 10px !important;
         top: auto !important;
         left: 10px !important;
         right: auto !important;
         transform: scaleX(1.65) !important;
         transform-origin: left center !important;
-      }
-      /* Match Ko-fi background to app background (exclude our overlay) */
-      .floatingchat-container-wrap *,
-      .floatingchat-container-wrap-mobi *,
-      [class*="floatingchat-container-wrap"] *,
-      [id*="kofi"] * {
-        background: #0a0e27 !important;
-        background-color: #0a0e27 !important;
-        border-color: #0a0e27 !important;
-        color: #0a0e27 !important;
-        box-shadow: none !important;
+        max-width: 200px !important;
+        max-height: 50px !important;
+        overflow: hidden !important;
       }
       /* Our styled overlay button in lower left - nice oval shape */
       .kofi-overlay-btn {
