@@ -301,9 +301,22 @@ function App() {
       currentLaser.moduleActive = currentLaser.modules.map(() => false);
     }
 
+    const targetModule = currentLaser.modules[moduleIndex];
+    const isActivating = !currentLaser.moduleActive[moduleIndex];
+
     // Toggle the module active state
     const updatedModuleActive = [...currentLaser.moduleActive];
-    updatedModuleActive[moduleIndex] = !updatedModuleActive[moduleIndex];
+
+    // If activating a sustained module, deactivate other sustained modules (Surge can stack)
+    if (isActivating && targetModule?.category === 'active' && targetModule.activationType === 'sustained') {
+      currentLaser.modules.forEach((mod, idx) => {
+        if (mod && mod.category === 'active' && mod.activationType === 'sustained' && idx !== moduleIndex) {
+          updatedModuleActive[idx] = false;
+        }
+      });
+    }
+
+    updatedModuleActive[moduleIndex] = isActivating;
 
     updatedLasers[laserIndex] = {
       ...currentLaser,
@@ -324,9 +337,22 @@ function App() {
           currentLaser.moduleActive = currentLaser.modules.map(() => false);
         }
 
+        const targetModule = currentLaser.modules[moduleIndex];
+        const isActivating = !currentLaser.moduleActive[moduleIndex];
+
         // Toggle the module active state
         const updatedModuleActive = [...currentLaser.moduleActive];
-        updatedModuleActive[moduleIndex] = !updatedModuleActive[moduleIndex];
+
+        // If activating a sustained module, deactivate other sustained modules (Surge can stack)
+        if (isActivating && targetModule?.category === 'active' && targetModule.activationType === 'sustained') {
+          currentLaser.modules.forEach((mod, idx) => {
+            if (mod && mod.category === 'active' && mod.activationType === 'sustained' && idx !== moduleIndex) {
+              updatedModuleActive[idx] = false;
+            }
+          });
+        }
+
+        updatedModuleActive[moduleIndex] = isActivating;
 
         updatedLasers[laserIndex] = {
           ...currentLaser,
