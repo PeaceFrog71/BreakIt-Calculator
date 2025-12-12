@@ -153,6 +153,13 @@
   white-space: nowrap;
 }
 
+.btn-load {
+  font-size: 1.25rem;
+  font-weight: 700;
+  min-width: 40px;
+  min-height: 34px;
+}
+
 .btn-load:hover,
 .btn-load:active {
   background: var(--accent-cyan);
