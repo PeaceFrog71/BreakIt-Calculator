@@ -154,11 +154,6 @@
   border-color: var(--accent-cyan);
 }
 
-.config-box.module-box {
-  border-color: var(--accent-purple);
-  font-weight: 500;
-}
-
 .config-box.stats-box {
   border-color: var(--accent-gold);
   color: var(--accent-gold);
@@ -168,16 +163,8 @@
   color: var(--success);
 }
 
-.config-ship-entry {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--border);
-}
-
-.config-ship-entry:first-of-type {
-  margin-top: 0.25rem;
-  padding-top: 0;
-  border-top: none;
+.config-box .module-count {
+  opacity: 0.7;
 }
 
 .config-date {

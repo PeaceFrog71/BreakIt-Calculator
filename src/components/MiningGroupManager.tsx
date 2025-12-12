@@ -143,7 +143,7 @@ export default function MiningGroupManager({
                     return (
                       <span key={shipIdx} className="config-box laser-box">
                         {shipInstance.ship.name}
-                        {totalModules > 0 && <span style={{ opacity: 0.7 }}>+{totalModules}</span>}
+                        {totalModules > 0 && <span className="module-count">+{totalModules}</span>}
                         <span className="power">{shipPower.toFixed(0)}</span>
                       </span>
                     );
