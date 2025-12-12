@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './HelpModal.css';
+import ResistanceHelpContent from './ResistanceHelpContent';
 
 type UserMode = 'casual-single' | 'casual-group' | 'return-single' | 'return-group' | 'trainer-single' | 'trainer-group' | null;
 
@@ -202,6 +203,12 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
             <li><strong>Toggle Functionality:</strong> Click gadgets, ships, and lasers to toggle on/off for "what if" scenarios</li>
             <li><strong>Color-Coded Results:</strong> Green (CAN BREAK, &gt;20% margin), Yellow (LOW MARGIN BREAK, &lt;20% margin), Red (CANNOT BREAK)</li>
           </ul>
+
+          <h3>Resistance Scanning Setup</h3>
+          <ResistanceHelpContent 
+            headingLevel="h4"
+            introText="The calculator needs to know how you scanned the rock's resistance to give accurate results. Choose the correct mode in the Resistance Mode selector above the resistance input."
+          />
         </div>
       </div>
     );
