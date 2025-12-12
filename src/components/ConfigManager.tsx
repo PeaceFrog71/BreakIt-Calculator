@@ -159,7 +159,7 @@ export default function ConfigManager({
                   className="btn-load"
                   title="Load"
                 >
-                  ↑
+                  ▲
                 </button>
                 <button
                   onClick={() => handleExport(config)}

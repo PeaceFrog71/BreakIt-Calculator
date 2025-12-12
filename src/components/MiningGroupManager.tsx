@@ -141,7 +141,7 @@ export default function MiningGroupManager({
                   className="btn-load"
                   title="Load"
                 >
-                  ↑
+                  ▲
                 </button>
                 <button
                   onClick={() => handleDelete(group.id, group.name)}
