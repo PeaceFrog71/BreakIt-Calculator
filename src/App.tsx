@@ -230,6 +230,7 @@ function App() {
     setSelectedShip(ship);
     const newConfig = initializeDefaultLasersForShip(ship);
     setConfig(newConfig);
+    setCurrentConfigName(undefined); // Clear config name when switching ships
   };
 
   const handleLoadConfiguration = (
@@ -566,6 +567,7 @@ function App() {
                   <ShipSelector
                     selectedShip={selectedShip}
                     onShipChange={handleShipChange}
+                    configName={currentConfigName}
                   />
 
                   <div className="lasers-container">

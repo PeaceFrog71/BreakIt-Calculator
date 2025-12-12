@@ -51,6 +51,9 @@ export default function ConfigManager({
       saveShipConfig(trimmedName, currentShip, currentConfig);
     }
 
+    // Update parent state with the saved name
+    onLoad(currentShip, currentConfig, trimmedName);
+
     setSavedConfigs(getSavedShipConfigs());
     setConfigName('');
     setShowDialog(false);
