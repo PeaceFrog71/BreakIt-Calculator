@@ -11,6 +11,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Electrolize&family=Michroma&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   </head>
   <body>
+    <!-- Portrait mode overlay - dismissible prompt to rotate to landscape -->
+    <div id="rotate-overlay">
+      <div class="rotate-content">
+        <div class="rotate-icon">📱↻</div>
+        <h2>Please Rotate Your Device</h2>
+        <p>This app works best in landscape mode</p>
+        <button id="rotate-dismiss">Got it</button>
+      </div>
+    </div>
+    <script>
+      // Dismiss rotate overlay and remember for this session
+      document.getElementById('rotate-dismiss').addEventListener('click', function() {
+        document.getElementById('rotate-overlay').style.display = 'none';
+        sessionStorage.setItem('rotateDismissed', 'true');
+      });
+      // Hide if already dismissed this session
+      if (sessionStorage.getItem('rotateDismissed')) {
+        document.getElementById('rotate-overlay').style.display = 'none';
+      }
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
