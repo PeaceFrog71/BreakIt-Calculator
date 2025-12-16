@@ -54,7 +54,7 @@ button, .btn-primary, .btn-secondary {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 2rem;
-  min-width: 1050px; /* Match content width for consistent scrolling */
+  min-width: 900px; /* Match content width for consistent scrolling */
 }
 
 .app-header a {
@@ -190,7 +190,7 @@ button, .btn-primary, .btn-secondary {
   max-width: 1190px;
   margin: 0 auto;
   width: 100%;
-  min-width: 1050px; /* Match overview-tab min-width for consistent scrolling */
+  min-width: 900px; /* Match overview-tab min-width for consistent scrolling */
 }
 
 .tab-content {
@@ -202,7 +202,7 @@ button, .btn-primary, .btn-secondary {
   grid-template-columns: 200px 1fr 200px;
   gap: 1.5rem;
   animation: fadeIn 0.3s ease-in-out;
-  min-width: 1050px; /* Prevent columns from overlapping on narrow screens */
+  min-width: 900px; /* Prevent columns from overlapping on narrow screens */
 }
 
 .mining-config-tab {
@@ -705,68 +705,40 @@ button, .btn-primary, .btn-secondary {
   background: var(--accent-cyan);
 }
 
-/* Portrait mode overlay - hidden by default */
-#rotate-overlay {
+/* Mobile Ko-fi inline link - hidden on desktop */
+.kofi-mobile-inline {
   display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--bg-dark);
-  z-index: 99999;
-  justify-content: center;
-  align-items: center;
 }
 
-.rotate-content {
-  text-align: center;
-  padding: 2rem;
-}
-
-.rotate-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  animation: rotateHint 2s ease-in-out infinite;
-}
-
-@keyframes rotateHint {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(90deg); }
-}
-
-.rotate-content h2 {
-  color: var(--accent-cyan);
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
-}
-
-.rotate-content p {
-  color: var(--text-secondary);
-  font-size: 1rem;
-}
-
-#rotate-dismiss {
-  margin-top: 1.5rem;
-  padding: 0.75rem 2rem;
-  background: var(--accent-cyan);
-  color: var(--bg-dark);
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-#rotate-dismiss:hover {
-  background: var(--accent-blue);
-  transform: scale(1.05);
-}
-
-/* Show overlay only on mobile devices in portrait orientation */
-@media screen and (max-width: 1050px) and (orientation: portrait) {
-  #rotate-overlay {
+@media screen and (max-width: 900px) {
+  .kofi-mobile-inline {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.6rem;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, #0d1229 0%, #1a1f3c 100%);
+    color: #00d9ff;
+    font-family: var(--font-heading);
+    font-size: 0.55rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    border: 2px solid #00ff88;
+    border-radius: 8px;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.4),
+      0 0 6px rgba(0, 255, 136, 0.2);
+  }
+  .kofi-mobile-inline img {
+    width: 24px;
+    height: 24px;
+    filter: drop-shadow(0 0 3px rgba(0, 255, 136, 0.5));
+  }
+  .kofi-mobile-inline span {
+    line-height: 1.2;
+    text-align: center;
   }
 }
