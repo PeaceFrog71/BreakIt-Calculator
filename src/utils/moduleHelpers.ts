@@ -16,6 +16,11 @@ export function toggleModuleActive(
   currentActive: boolean[],
   moduleIndex: number
 ): boolean[] {
+  // Bounds check: return unchanged array if index is out of bounds
+  if (moduleIndex < 0 || moduleIndex >= modules.length) {
+    return [...currentActive];
+  }
+
   const targetModule = modules[moduleIndex];
   const isActivating = !currentActive[moduleIndex];
 

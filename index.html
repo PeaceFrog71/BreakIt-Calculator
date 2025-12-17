@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="/peacefrog-favicon.ico" />
-    <meta name="viewport" content="width=800, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta name="viewport" content="width=800, initial-scale=1.0, user-scalable=no" />
     <title>Rock Breaker Calculator - Star Citizen Mining Tool</title>
 
     <!-- Open Graph / Social Media Preview -->
@@ -30,7 +30,7 @@
   </head>
   <body>
     <!-- Portrait mode overlay - dismissible prompt to rotate to landscape -->
-    <!-- Inline styles needed because viewport is fixed at 900px width -->
+    <!-- Inline styles needed because viewport is fixed at 800px width -->
     <style>
       #rotate-overlay {
         display: none;
@@ -88,9 +88,9 @@
         cursor: pointer;
       }
     </style>
-    <div id="rotate-overlay">
+    <div id="rotate-overlay" role="dialog" aria-modal="true" aria-labelledby="rotate-title">
       <div class="rotate-icon" aria-hidden="true"></div>
-      <h2>Please Rotate Your Device</h2>
+      <h2 id="rotate-title">Please Rotate Your Device</h2>
       <p>This app works best in landscape mode</p>
       <button id="rotate-dismiss" aria-label="Dismiss rotation prompt">Got it</button>
     </div>
@@ -153,8 +153,8 @@
 
     <!-- Ko-fi Widget - only load on desktop -->
     <script>
-      // Only load Ko-fi widget on desktop (viewport > 800px)
-      if (window.innerWidth > 800) {
+      // Only load Ko-fi widget on desktop (screen width > 800px)
+      if (screen.width > 800) {
         const kofiScript = document.createElement('script');
         kofiScript.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
         kofiScript.onload = function() {
