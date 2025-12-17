@@ -9,6 +9,7 @@ import {
 import {
   initializeDefaultLasersForShip,
 } from "./utils/shipDefaults";
+import { toggleModuleActive } from "./utils/moduleHelpers";
 import {
   formatGadgetTooltip,
   getGadgetEffects,
@@ -301,9 +302,12 @@ function App() {
       currentLaser.moduleActive = currentLaser.modules.map(() => false);
     }
 
-    // Toggle the module active state
-    const updatedModuleActive = [...currentLaser.moduleActive];
-    updatedModuleActive[moduleIndex] = !updatedModuleActive[moduleIndex];
+    // Use helper to handle stacking rules (sustained modules are mutually exclusive)
+    const updatedModuleActive = toggleModuleActive(
+      currentLaser.modules,
+      currentLaser.moduleActive,
+      moduleIndex
+    );
 
     updatedLasers[laserIndex] = {
       ...currentLaser,
@@ -324,9 +328,12 @@ function App() {
           currentLaser.moduleActive = currentLaser.modules.map(() => false);
         }
 
-        // Toggle the module active state
-        const updatedModuleActive = [...currentLaser.moduleActive];
-        updatedModuleActive[moduleIndex] = !updatedModuleActive[moduleIndex];
+        // Use helper to handle stacking rules (sustained modules are mutually exclusive)
+        const updatedModuleActive = toggleModuleActive(
+          currentLaser.modules,
+          currentLaser.moduleActive,
+          moduleIndex
+        );
 
         updatedLasers[laserIndex] = {
           ...currentLaser,
@@ -394,6 +401,7 @@ function App() {
                     <label>Mass</label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       value={rock.mass === 0 ? '' : rock.mass}
                       onChange={(e) => setRock({ ...rock, mass: e.target.value === '' ? 0 : parseFloat(e.target.value) })}
                       min="0"
@@ -413,6 +421,7 @@ function App() {
                     <label>Instability</label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       value={!rock.instability ? '' : rock.instability}
                       onChange={(e) => setRock({ ...rock, instability: e.target.value === '' ? 0 : parseFloat(e.target.value) })}
                       min="0"
@@ -421,6 +430,16 @@ function App() {
                   </div>
                 </div>
 
+                {/* Mobile Ko-fi link - only visible on mobile */}
+                <a
+                  href="https://ko-fi.com/peacefroggaming"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="kofi-mobile-inline"
+                >
+                  <img src="/rieger-icon.png" alt="Rieger-C3 mining module icon" />
+                  <span>Buy me a Rieger-C3<br />on KO-FI</span>
+                </a>
               </div>
 
               {/* Center - Mining Graphic */}
