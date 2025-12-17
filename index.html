@@ -100,8 +100,15 @@
         let dismissed = sessionStorage.getItem('rotateDismissed') !== null;
 
         function isPortrait() {
-          // Use screen dimensions for actual device orientation
-          // (window dimensions are affected by fixed viewport)
+          // Try screen.orientation API first (most reliable)
+          if (screen.orientation && screen.orientation.type) {
+            return screen.orientation.type.includes('portrait');
+          }
+          // Try matchMedia (works well on iOS)
+          if (window.matchMedia) {
+            return window.matchMedia('(orientation: portrait)').matches;
+          }
+          // Fallback to screen dimensions
           return screen.height > screen.width;
         }
 
@@ -120,13 +127,6 @@
           }
         }
 
-        // Debounce resize events to avoid performance issues
-        let resizeTimeout;
-        function debouncedUpdateOverlay() {
-          clearTimeout(resizeTimeout);
-          resizeTimeout = setTimeout(updateOverlay, 100);
-        }
-
         // Dismiss handler
         document.getElementById('rotate-dismiss').addEventListener('click', function() {
           overlay.style.display = 'none';
@@ -137,12 +137,15 @@
         // Check on load
         updateOverlay();
 
-        // Listen for orientation changes - use debounced for resize
-        window.addEventListener('resize', debouncedUpdateOverlay);
+        // Listen for orientation changes with multiple methods for reliability
         if (screen.orientation && typeof screen.orientation.addEventListener === 'function') {
           screen.orientation.addEventListener('change', updateOverlay);
         }
         window.addEventListener('orientationchange', updateOverlay);
+        // Also listen to matchMedia changes (reliable on iOS)
+        if (window.matchMedia) {
+          window.matchMedia('(orientation: portrait)').addEventListener('change', updateOverlay);
+        }
       })();
     </script>
     <div id="root"></div>
