@@ -16,6 +16,15 @@ Quick reference for in-game data collection.
 | Left | Arbor MH2 | 1.4x | Mid window |
 | Right | Lancet MH2 | 0.4x | Smallest window |
 
+**Modules:** None for baseline tests (establishes clean comparison)
+
+**Optional Modules to Bring** (for Phase 6 tests):
+| Module | Window Mod | Notes |
+|--------|------------|-------|
+| Focus III | 1.4x | Biggest window boost |
+| Rieger-C3 | 0.99x | Slight reduction |
+| Torrent III | 0.99x | Also affects charge rate |
+
 ### Gadgets to Bring
 | Gadget | Qty | Window Mod | Purpose |
 |--------|-----|------------|---------|
