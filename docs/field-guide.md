@@ -4,6 +4,38 @@ Quick reference for in-game data collection.
 
 ---
 
+## Pre-Flight Checklist
+
+### Ship Setup
+**Ship:** MOLE (recommended - more power to break test rocks)
+
+**Laser Loadout:**
+| Slot | Laser | Window Mod | Purpose |
+|------|-------|------------|---------|
+| Top | Hofstede-S2 | 1.6x | Biggest window |
+| Left | Arbor MH2 | 1.4x | Mid window |
+| Right | Lancet MH2 | 0.4x | Smallest window |
+
+### Gadgets to Bring
+| Gadget | Qty | Window Mod | Purpose |
+|--------|-----|------------|---------|
+| Okunis | 3+ | 2.0x | Biggest window boost |
+| Waveshift | 3+ | 2.0x | Alt big window |
+| Stalwart | 3+ | 0.7x | Window reduction |
+
+### Where to Go
+**Target Location:** Lyria or Aberdeen (Tier 2/3 rocks)
+- Look for: Borase, Laranite, Copper, Beryl deposits
+- Avoid: Quantanium (too unstable for controlled tests)
+- Target mass: < 20,000 (easier to break)
+
+### Supplies
+- [ ] Fuel (full)
+- [ ] Repair/Medical supplies
+- [ ] Screenshot key bound (F12 or PrintScreen)
+
+---
+
 ## Priority Tests
 
 ### 1. Find a POSSIBLE Rock First
