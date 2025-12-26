@@ -231,6 +231,15 @@ Two separate rate modifiers exist:
 4. How do these interact with "In Scan" gadget mode?
 5. Are overcharge/undercharge zones affected by the same modifiers as optimal zone?
 
+## Research Resources
+
+| File | Purpose |
+|------|---------|
+| [window-research-protocol.md](window-research-protocol.md) | Data collection mission and test matrices |
+| [window-research-tracker.csv](window-research-tracker.csv) | Spreadsheet for logging test results |
+| [mining-commodities.md](mining-commodities.md) | Mineral instability reference data |
+| [mining-data-template.csv](mining-data-template.csv) | General rock data collection template |
+
 ## Related Issues
 - #11 - Instability modification and warning system
 - #24 - Multi-ship instability calculations
