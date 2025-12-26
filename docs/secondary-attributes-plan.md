@@ -236,7 +236,7 @@ Two separate rate modifiers exist:
 | File | Purpose |
 |------|---------|
 | [field-guide.md](field-guide.md) | **Standalone quick-reference for in-game use** |
-| [data-collection-sheet.md](data-collection-sheet.md) | **Fillable form for recording rock data** |
+| [data-collection-sheet.csv](data-collection-sheet.csv) | **Excel/Sheets fillable data entry form** |
 | [window-research-protocol.md](window-research-protocol.md) | Data collection mission and test matrices |
 | [window-research-tracker.csv](window-research-tracker.csv) | Spreadsheet for logging test results |
 | [mining-commodities.md](mining-commodities.md) | Mineral instability reference data |
