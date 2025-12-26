@@ -1,0 +1,21 @@
+Test ID,Phase,Test Name,Equipment Type,Item Name,Window Modifier,Rock Type,Mass,Resistance %,Instability,Green Zone,Red Zone,Screenshot File,Date,Location,Status,Notes
+G1,5-Gadget,Baseline (No Gadget),Gadget,None,1.0x,,,,,,,,,,pending,
+G2,5-Gadget,Okunis Test,Gadget,Okunis,2.0x,,,,,,,,,,pending,Biggest window modifier
+G3,5-Gadget,Waveshift Test,Gadget,Waveshift,2.0x,,,,,,,,,,pending,Same window as Okunis
+G4,5-Gadget,Sabir Test,Gadget,Sabir,1.5x,,,,,,,,,,pending,
+G5,5-Gadget,Stalwart Test,Gadget,Stalwart,0.7x,,,,,,,,,,pending,Smallest window modifier
+E1,4-Equipment,Arbor Laser,Laser,Arbor MH1,1.4x,,,,,,,,,,pending,
+E2,4-Equipment,Helix Laser,Laser,Helix I,0.6x,,,,,,,,,,pending,
+E3,4-Equipment,Hofstede Laser,Laser,Hofstede-S1,1.6x,,,,,,,,,,pending,Biggest laser window
+E4,4-Equipment,Lancet Laser,Laser,Lancet MH1,0.4x,,,,,,,,,,pending,Smallest laser window
+R1,2-RockType,Igneous Quantanium,Rock Type,Igneous,baseline,Igneous,,,30% Quan,,,igneous_quan_30.png,,,pending,
+R2,2-RockType,Granite Quantanium,Rock Type,Granite,baseline,Granite,,,30% Quan,,,granite_quan_30.png,,,pending,
+R3,2-RockType,Shale Quantanium,Rock Type,Shale,baseline,Shale,,,30% Quan,,,shale_quan_30.png,,,pending,
+R4,2-RockType,Atacamite Riccite,Rock Type,Atacamite,baseline,Atacamite,,,Riccite,,,atacamite_riccite.png,,,pending,
+M1,3-Mineral,Low Quantanium,Mineral %,~20% Quan,baseline,Igneous,,,~20%,,,igneous_quan_20.png,,,pending,
+M2,3-Mineral,Mid Quantanium,Mineral %,~35% Quan,baseline,Igneous,,,~35%,,,igneous_quan_35.png,,,pending,
+M3,3-Mineral,High Quantanium,Mineral %,~50% Quan,baseline,Igneous,,,~50%,,,igneous_quan_50.png,,,pending,
+Mod1,6-Module,No Module,Module,None,1.0x,,,,,,,,,,pending,
+Mod2,6-Module,Focus III Module,Module,Focus III,1.4x,,,,,,,,,,pending,
+Mod3,6-Module,Rieger-C3 Module,Module,Rieger-C3,0.99x,,,,,,,,,,pending,
+Mod4,6-Module,Torrent III Module,Module,Torrent III,0.99x,,,,,,,,,,pending,

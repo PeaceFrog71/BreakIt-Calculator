@@ -2,6 +2,47 @@
 
 Goal: Understand how optimal (green) and overcharge (red) zone sizes are determined, so we can simulate them in the calculator.
 
+---
+
+## 🎯 Data Collection Mission
+
+### Priority 1: Find a POSSIBLE Rock
+All current samples are IMPOSSIBLE - we need active windows to observe.
+- Try **smaller rocks** (< 20k mass)
+- Try **Tier 2/3 minerals** (Borase, Laranite, Copper, Beryl)
+- Use **MOLE with multiple lasers** for more power
+
+### Priority 2: Gadget Before/After (Same Rock)
+Biggest modifiers - will show clearest effect:
+
+| Test | Gadget | Window Mod | Status |
+|------|--------|------------|--------|
+| Baseline | None | 1.0x | [ ] |
+| Test A | Okunis | **2.0x** | [ ] |
+| Test B | Waveshift | **2.0x** | [ ] |
+| Test C | Stalwart | **0.7x** | [ ] |
+
+### Priority 3: Laser Comparison (Same Rock)
+Scan same rock with different lasers:
+
+| Laser | Window Mod | Status |
+|-------|------------|--------|
+| Hofstede | **1.6x** (biggest) | [ ] |
+| Arbor | 1.4x | [ ] |
+| Lancet | **0.4x** (smallest) | [ ] |
+
+### Data to Capture Per Screenshot
+1. Rock type, Mass, Resistance, Instability
+2. Mineral composition (%)
+3. Equipment used (laser, modules, gadget)
+4. **Green zone size** (estimate: Small/Medium/Large or %)
+5. **Red zone size** (estimate: Small/Medium/Large or %)
+
+### Screenshot Location
+Save to: `D:\OneDrive\Documents\Star Citizen\Mining\Rock Info Tool\Training Data`
+
+---
+
 ## Research Questions
 
 1. **What determines base window size?**
