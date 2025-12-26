@@ -1,2 +1,2 @@
-Date,Location,Rock Type,Mass,Resistance %,Instability,Breakability,Total SCU,Mineral 1,Min 1 %,Mineral 2,Min 2 %,Mineral 3,Min 3 %,Mineral 4,Min 4 %,Ship,Laser,Notes
-2025-01-01,Lyria,Igneous Deposit,87564,64,744.80,IMPOSSIBLE,219.80,Quantanium,49.97,Corundum,40.73,Inert Materials,9.28,,,Prospector,Helix I,Example entry
+Date,Location,Rock Type,Mass,Resistance %,Instability,Result,Total SCU,Mineral 1,Min 1 %,Mineral 2,Min 2 %,Mineral 3,Min 3 %,Ship,Laser,Modules,Gadget,Green Zone,Red Zone,Notes
+2025-01-01,Lyria,Igneous,87564,64,744.80,IMPOSSIBLE,219.80,Quantanium,49.97,Corundum,40.73,Inert,9.28,Prospector,Helix I,None,None,Small,Small,Example - high instability rock
