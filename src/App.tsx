@@ -49,7 +49,23 @@ function App() {
     loadedState?.config || initializeDefaultLasersForShip(SHIPS[0])
   );
   const [currentConfigName, setCurrentConfigName] = useState<string | undefined>(undefined);
-  const [rock, setRock] = useState<Rock>({ ...DEFAULT_ROCK });
+  // Load rock from active slot in localStorage (or default if not found)
+  const [rock, setRock] = useState<Rock>(() => {
+    try {
+      const savedSlots = localStorage.getItem('rockbreaker-rock-slots');
+      const savedActiveSlot = localStorage.getItem('rockbreaker-active-rock-slot');
+      if (savedSlots && savedActiveSlot) {
+        const slots = JSON.parse(savedSlots);
+        const activeIndex = parseInt(savedActiveSlot, 10);
+        if (slots[activeIndex]) {
+          return { ...slots[activeIndex] };
+        }
+      }
+      return { ...DEFAULT_ROCK };
+    } catch {
+      return { ...DEFAULT_ROCK };
+    }
+  });
   const [miningGroup, setMiningGroup] = useState<MiningGroup>({
     ships: [],
   });
@@ -127,6 +143,15 @@ function App() {
   useEffect(() => {
     localStorage.setItem('rockbreaker-active-rock-slot', activeRockSlot.toString());
   }, [activeRockSlot]);
+
+  // Auto-save current rock to active slot when rock values change
+  useEffect(() => {
+    setRockSlots(prev => {
+      const newSlots = [...prev];
+      newSlots[activeRockSlot] = { ...rock };
+      return newSlots;
+    });
+  }, [rock, activeRockSlot]);
 
   // Auto-save when config or ship changes
   useEffect(() => {
