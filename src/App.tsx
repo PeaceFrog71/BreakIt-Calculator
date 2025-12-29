@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import "./App.css";
 import type { MiningConfiguration, Ship, Rock, MiningGroup, Gadget } from "./types";
 import { SHIPS, GADGETS } from "./types";
@@ -183,6 +183,9 @@ function App() {
     saveCurrentConfiguration(selectedShip, config);
   }, [selectedShip, config]);
 
+  // Track if this is the initial mount (to skip certain effects on first render)
+  const isInitialMount = useRef(true);
+
   // Smart hint detection: Show hint if resistance is low and modifiers might explain it
   // But don't show if gadgets could explain the low resistance (user should check "Gadgets in scan" instead)
   const showResistanceHint = useMemo(() => {
@@ -323,7 +326,12 @@ function App() {
 
   // Clear scanning ship when equipment config changes in modified mode
   // This should NOT trigger when just toggling laser manned state (isManned)
+  // Skip on initial mount to preserve persisted scanning ship from localStorage
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     if (rock.resistanceMode === 'modified' && rock.scannedByShipId) {
       setRock(prev => ({
         ...prev,
