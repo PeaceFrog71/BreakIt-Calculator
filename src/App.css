@@ -291,6 +291,27 @@ button, .btn-primary, .btn-secondary {
   box-shadow: 0 0 0 2px rgba(0, 217, 255, 0.1);
 }
 
+.clear-rock-button {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-rock-button:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  background: rgba(0, 217, 255, 0.1);
+}
+
 .gadget-header-compact {
   display: flex;
   justify-content: space-between;

@@ -154,6 +154,16 @@ function App() {
     }
   };
 
+  const handleRockClear = () => {
+    setRock({
+      mass: 0,
+      resistance: 0,
+      name: '',
+      resistanceMode: 'base',
+      includeGadgetsInScan: false,
+    });
+  };
+
   // Auto-clear scanning ship when switching to base mode
   // Auto-select single ship when switching to modified mode (for Prospector/GOLEM)
   useEffect(() => {
@@ -428,6 +438,12 @@ function App() {
                       step="0.1"
                     />
                   </div>
+                  <button
+                    className="clear-rock-button"
+                    onClick={handleRockClear}
+                  >
+                    Clear
+                  </button>
                 </div>
 
                 {/* Mobile Ko-fi link - only visible on mobile */}
