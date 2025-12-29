@@ -66,8 +66,13 @@ function App() {
       return { ...DEFAULT_ROCK };
     }
   });
-  const [miningGroup, setMiningGroup] = useState<MiningGroup>({
-    ships: [],
+  const [miningGroup, setMiningGroup] = useState<MiningGroup>(() => {
+    try {
+      const saved = localStorage.getItem('rockbreaker-mining-group');
+      return saved ? JSON.parse(saved) : { ships: [] };
+    } catch {
+      return { ships: [] };
+    }
   });
   const [gadgets, setGadgets] = useState<(Gadget | null)[]>([null, null, null]);
   const [gadgetCount, setGadgetCount] = useState(3);
@@ -104,7 +109,14 @@ function App() {
       return prev;
     });
   }, [gadgetCount]);
-  const [useMiningGroup, setUseMiningGroup] = useState(false);
+  const [useMiningGroup, setUseMiningGroup] = useState(() => {
+    try {
+      const saved = localStorage.getItem('rockbreaker-use-mining-group');
+      return saved === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [backgroundMode, setBackgroundMode] = useState<'starfield' | 'landscape'>('starfield');
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -155,6 +167,16 @@ function App() {
       return newSlots;
     });
   }, [rock, activeRockSlot]);
+
+  // Persist mining group mode to localStorage
+  useEffect(() => {
+    localStorage.setItem('rockbreaker-use-mining-group', useMiningGroup.toString());
+  }, [useMiningGroup]);
+
+  // Persist mining group data to localStorage
+  useEffect(() => {
+    localStorage.setItem('rockbreaker-mining-group', JSON.stringify(miningGroup));
+  }, [miningGroup]);
 
   // Auto-save when config or ship changes
   useEffect(() => {
