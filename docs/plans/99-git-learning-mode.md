@@ -43,7 +43,7 @@ This is a learning exercise - the goal is git fluency, not speed.
 ### Planning Best Practices
 
 When working on tasks that require planning:
-1. **Save plan files** to `docs/plans/` with descriptive names (e.g., `git-learning-mode.md`)
+1. **Save plan files** to `docs/plans/` with descriptive names (e.g., `99-git-learning-mode.md`)
 2. **Keep plans for reference** - they document decisions and can help with similar future tasks
 3. **Include in plan**: Issue number, steps, files to modify, and key decisions made
 

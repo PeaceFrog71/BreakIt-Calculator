@@ -102,6 +102,8 @@ See `.claude/commands/vc.md` for full Victor documentation.
 
 ## Git Learning Mode
 
+**Note**: This section complements Victor (above). Victor enforces *workflow rules* (issue-based workflow, branch naming, PR process). Learning Mode governs *how Claude teaches* - Drew runs commands himself while Claude explains.
+
 **IMPORTANT**: Guide Drew through git commands rather than executing them directly.
 
 When git operations are needed:
