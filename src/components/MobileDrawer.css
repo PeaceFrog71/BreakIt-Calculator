@@ -17,7 +17,6 @@
   top: calc(100vh / 6); /* 1/6 from top */
   bottom: calc(100vh / 6); /* 1/6 from bottom */
   width: 50% !important; /* Half of screen width */
-  min-width: 50% !important;
   background: rgba(13, 18, 41, 0.98);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -218,11 +217,13 @@
   text-orientation: mixed;
 }
 
-/* Right tab - flush right edge, rounded on left side (toward center) */
-/* Note: borders and corners are swapped because of 180deg rotation */
+/* Right tab - flush right edge, rounded on left side (toward center)
+   The 180deg rotation flips the element, so we define pre-rotation borders:
+   - border-left: none removes what becomes the right (screen edge) border after rotation
+   - right-side border-radius become the left (center-facing) corners after rotation */
 .mobile-drawer-tab.right {
   right: 0;
-  border-left: none; /* After rotation, this removes the outside edge border */
+  border-left: none;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
   border-top-left-radius: 0;
@@ -244,7 +245,6 @@
   /* Drawer takes up more width in portrait */
   .mobile-drawer {
     width: 80% !important;
-    min-width: 80% !important;
   }
 
   /* Tabs wider for easier tapping and positioned to align with results display */

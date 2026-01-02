@@ -19,6 +19,7 @@ import {
 import { getShipImageConfig } from "../utils/shipImageMap";
 import { getGadgetSymbol } from "../types";
 import MobileShipControlModal from "./MobileShipControlModal";
+import { useMobileDetection } from "../hooks/useMobileDetection";
 import "./ResultDisplay.css";
 import golemShipImage from "../assets/mining_ship_golem_pixel_120x78.png";
 import moleShipImage from "../assets/mining_ship_mole_pixel_120x78_transparent.png";
@@ -226,36 +227,10 @@ export default function ResultDisplay({
   backgroundMode = "starfield",
   onToggleBackground,
 }: ResultDisplayProps & SingleShipDisplayProps) {
-  // Mobile detection and modal state - device type based approach
-  const checkIsMobile = () => {
-    // Check for mobile device via user agent (most reliable for iOS/Android)
-    const userAgent = navigator.userAgent || '';
-    const isMobileDevice = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
-
-    // Also check screen size as fallback
-    const isSmallViewport = window.innerWidth <= 768 || window.innerHeight <= 500;
-    const hasTouchScreen = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
-
-    return isMobileDevice || (isSmallViewport && hasTouchScreen);
-  };
-
-  const [isMobile, setIsMobile] = useState(checkIsMobile);
+  // Mobile detection via shared hook
+  const isMobile = useMobileDetection();
   const [mobileModalShip, setMobileModalShip] = useState<ShipInstance | null>(null);
   const [showMobileModal, setShowMobileModal] = useState(false);
-
-  // Listen for window resize to update mobile state
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(checkIsMobile());
-    };
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', () => {
-      setTimeout(() => setIsMobile(checkIsMobile()), 100);
-    });
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   // Flying ship easter egg - appears every 5-10 minutes
   const [showFlyingShip, setShowFlyingShip] = useState(false);

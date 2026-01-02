@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import "./App.css";
 import type { MiningConfiguration, Ship, Rock, MiningGroup, Gadget } from "./types";
 import { SHIPS, GADGETS } from "./types";
@@ -27,6 +27,7 @@ import TabNavigation, { type TabType } from "./components/TabNavigation";
 import HelpModal from "./components/HelpModal";
 import ResistanceModeSelector from "./components/ResistanceModeSelector";
 import MobileDrawer from "./components/MobileDrawer";
+import { useMobileDetection } from "./hooks/useMobileDetection";
 import pfLogo from "./assets/PFlogo.png";
 import { version } from "../package.json";
 
@@ -126,55 +127,8 @@ function App() {
   const [rockDrawerOpen, setRockDrawerOpen] = useState(false);
   const [gadgetDrawerOpen, setGadgetDrawerOpen] = useState(false);
 
-  // Mobile detection - device type based approach
-  const checkIsMobile = useCallback(() => {
-    // Check for mobile device via user agent (most reliable for iOS/Android)
-    const userAgent = navigator.userAgent || navigator.vendor || '';
-    const isMobileDevice = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
-
-    // Also check screen size as fallback (for devices not caught by UA)
-    const isSmallViewport = window.innerWidth <= 768 || window.innerHeight <= 500;
-
-    // Check touch capability
-    const hasTouchScreen = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
-
-    // Mobile if: user agent says mobile, OR (small viewport AND touch screen)
-    return isMobileDevice || (isSmallViewport && hasTouchScreen);
-  }, []);
-
-  // Initialize with actual mobile check
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const userAgent = navigator.userAgent || '';
-      const isMobileDevice = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
-      const isSmallViewport = window.innerWidth <= 768 || window.innerHeight <= 500;
-      const hasTouchScreen = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
-      return isMobileDevice || (isSmallViewport && hasTouchScreen);
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    // Re-check on mount and orientation changes
-    setIsMobile(checkIsMobile());
-
-    const handleResize = () => {
-      setIsMobile(checkIsMobile());
-    };
-
-    // Delay check after orientation change since dimensions may not update immediately
-    const handleOrientationChange = () => {
-      setTimeout(() => setIsMobile(checkIsMobile()), 100);
-    };
-
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', handleOrientationChange);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', handleOrientationChange);
-    };
-  }, [checkIsMobile]);
+  // Mobile detection via shared hook
+  const isMobile = useMobileDetection();
 
   // Rock save slots (3 slots for quick save/load, pre-filled with defaults)
   const [rockSlots, setRockSlots] = useState<Rock[]>(() => {

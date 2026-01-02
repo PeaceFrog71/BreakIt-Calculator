@@ -38,6 +38,14 @@ export default function MobileDrawer({
         <div
           className="mobile-drawer-backdrop"
           onClick={onClose}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onClose();
+            }
+          }}
+          role="button"
+          tabIndex={0}
           aria-label="Close drawer"
         />
       )}
