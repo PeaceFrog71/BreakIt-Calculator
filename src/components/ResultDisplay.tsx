@@ -6,6 +6,7 @@ import type {
   Gadget,
   MiningConfiguration,
   Module,
+  ShipInstance,
 } from "../types";
 import { formatPower, formatPercent } from "../utils/calculator";
 import { formatModuleTooltip } from "../utils/formatters";
@@ -17,6 +18,7 @@ import {
 } from "../utils/laserHelpers";
 import { getShipImageConfig } from "../utils/shipImageMap";
 import { getGadgetSymbol } from "../types";
+import MobileShipControlModal from "./MobileShipControlModal";
 import "./ResultDisplay.css";
 import golemShipImage from "../assets/mining_ship_golem_pixel_120x78.png";
 import moleShipImage from "../assets/mining_ship_mole_pixel_120x78_transparent.png";
@@ -224,6 +226,37 @@ export default function ResultDisplay({
   backgroundMode = "starfield",
   onToggleBackground,
 }: ResultDisplayProps & SingleShipDisplayProps) {
+  // Mobile detection and modal state - device type based approach
+  const checkIsMobile = () => {
+    // Check for mobile device via user agent (most reliable for iOS/Android)
+    const userAgent = navigator.userAgent || '';
+    const isMobileDevice = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+
+    // Also check screen size as fallback
+    const isSmallViewport = window.innerWidth <= 768 || window.innerHeight <= 500;
+    const hasTouchScreen = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+
+    return isMobileDevice || (isSmallViewport && hasTouchScreen);
+  };
+
+  const [isMobile, setIsMobile] = useState(checkIsMobile);
+  const [mobileModalShip, setMobileModalShip] = useState<ShipInstance | null>(null);
+  const [showMobileModal, setShowMobileModal] = useState(false);
+
+  // Listen for window resize to update mobile state
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(checkIsMobile());
+    };
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => setIsMobile(checkIsMobile()), 100);
+    });
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   // Flying ship easter egg - appears every 5-10 minutes
   const [showFlyingShip, setShowFlyingShip] = useState(false);
   const [flyingShipTop, setFlyingShipTop] = useState(10); // Random position in top third
@@ -352,6 +385,32 @@ export default function ResultDisplay({
   const getModuleSymbol = (moduleId: string) => {
     if (moduleId === "stampede") return "St";
     return moduleId.charAt(0).toUpperCase();
+  };
+
+  // Handle mobile ship tap - opens the control modal
+  const handleMobileShipTap = (shipInstance: ShipInstance) => {
+    if (isMobile) {
+      setMobileModalShip(shipInstance);
+      setShowMobileModal(true);
+    }
+  };
+
+  // Create a pseudo-ShipInstance for single ship mode
+  const getSingleShipInstance = (): ShipInstance | null => {
+    if (!selectedShip || !config) return null;
+    return {
+      id: selectedShip.id,
+      ship: {
+        id: selectedShip.id,
+        name: selectedShip.name,
+        laserSlots: config.lasers.length,
+        maxLaserSize: selectedShip.id === 'mole' ? 2 : 1,
+        description: ''
+      },
+      name: configName || selectedShip.name,
+      config: config,
+      isActive: true,
+    };
   };
 
   return (
@@ -533,15 +592,23 @@ export default function ResultDisplay({
 
                   {/* Ship icon */}
                   <div
-                    className="ship-icon active"
+                    className={`ship-icon active ${isMobile ? 'mobile-tappable' : ''}`}
                     style={{
                       position: "absolute",
                       top: `calc(50% + ${shipY}px)`,
                       left: `calc(50% + ${shipX}px)`,
                       transform: "translate(-50%, -50%)",
                     }}
-                    onClick={(e) => e.stopPropagation()}
-                    title={selectedShip.name}>
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isMobile) {
+                        const singleShipInstance = getSingleShipInstance();
+                        if (singleShipInstance) {
+                          handleMobileShipTap(singleShipInstance);
+                        }
+                      }
+                    }}
+                    title={isMobile ? "Tap for controls" : selectedShip.name}>
                     {(() => {
                       // Single ship - flipped to face right with 15° upward tilt
                       const shipTransform = "scaleX(-1) rotate(15deg)";
@@ -673,8 +740,9 @@ export default function ResultDisplay({
                       );
                     })()}
 
-                  {/* Laser controls for MOLE */}
-                  {selectedShip.id === "mole" &&
+                  {/* Laser controls for MOLE - hidden on mobile */}
+                  {!isMobile &&
+                    selectedShip.id === "mole" &&
                     onSingleShipToggleLaser &&
                     config && (
                       <div
@@ -969,7 +1037,7 @@ export default function ResultDisplay({
                     <div
                       className={`ship-icon ${
                         isActive ? "active" : "inactive"
-                      } clickable`}
+                      } clickable ${isMobile ? 'mobile-tappable' : ''}`}
                       style={{
                         position: "absolute",
                         top: `calc(50% + ${y}px)`,
@@ -978,9 +1046,13 @@ export default function ResultDisplay({
                       }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        onToggleShip && onToggleShip(shipInstance.id);
+                        if (isMobile) {
+                          handleMobileShipTap(shipInstance);
+                        } else {
+                          onToggleShip && onToggleShip(shipInstance.id);
+                        }
                       }}
-                      title={`${shipInstance.ship.name} - ${isActive ? "ACTIVE" : "INACTIVE"}`}>
+                      title={isMobile ? "Tap for controls" : `${shipInstance.ship.name} - ${isActive ? "ACTIVE" : "INACTIVE"}`}>
                       {(() => {
                         // Calculate ship transform based on position
                         // Left side ships: mirror horizontally to face right
@@ -1146,8 +1218,8 @@ export default function ResultDisplay({
                         );
                       })()}
 
-                    {/* Laser control buttons for MOLE ships */}
-                    {shipInstance.ship.id === "mole" && onToggleLaser && (
+                    {/* Laser control buttons for MOLE ships - hidden on mobile */}
+                    {!isMobile && shipInstance.ship.id === "mole" && onToggleLaser && (
                       <div
                         className="laser-controls"
                         style={{
@@ -1601,6 +1673,45 @@ export default function ResultDisplay({
           <span>(Mass / (1 - (Resist × 0.01))) / 5</span>
         </div>
       </div>
+
+      {/* Mobile Ship Control Modal */}
+      <MobileShipControlModal
+        key={miningGroup
+          ? `group-${mobileModalShip?.id}-${JSON.stringify(miningGroup.ships.find(s => s.id === mobileModalShip?.id)?.config.lasers.map(l => ({ m: l.isManned, a: l.moduleActive })))}`
+          : `single-${JSON.stringify(config?.lasers.map(l => ({ m: l.isManned, a: l.moduleActive })))}`
+        }
+        isOpen={showMobileModal}
+        onClose={() => {
+          setShowMobileModal(false);
+          setMobileModalShip(null);
+        }}
+        shipInstance={miningGroup && mobileModalShip ? miningGroup.ships.find(s => s.id === mobileModalShip.id) : undefined}
+        singleShipConfig={!miningGroup ? config : undefined}
+        shipName={!miningGroup ? (configName || selectedShip?.name) : undefined}
+        shipId={!miningGroup ? selectedShip?.id : undefined}
+        isSingleShipMode={!miningGroup}
+        rock={rock}
+        onToggleShip={onToggleShip}
+        onToggleLaser={(shipIdOrLaserIndex, laserIndex) => {
+          if (!miningGroup) {
+            // Single ship mode
+            onSingleShipToggleLaser?.(shipIdOrLaserIndex as number);
+          } else {
+            // Group mode
+            onToggleLaser?.(shipIdOrLaserIndex as string, laserIndex!);
+          }
+        }}
+        onToggleModule={(shipIdOrLaserIndex, laserIndexOrModuleIndex, moduleIndex) => {
+          if (!miningGroup) {
+            // Single ship mode
+            onToggleModule?.(shipIdOrLaserIndex as number, laserIndexOrModuleIndex);
+          } else {
+            // Group mode
+            onGroupToggleModule?.(shipIdOrLaserIndex as string, laserIndexOrModuleIndex, moduleIndex!);
+          }
+        }}
+        onSetScanningShip={onSetScanningShip}
+      />
     </div>
   );
 }

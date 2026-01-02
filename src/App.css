@@ -2,12 +2,15 @@
   --bg-dark: #0a0e27;
   --bg-medium: #151a35;
   --bg-light: #1f2642;
+  --bg-primary: #0d1229;
+  --bg-secondary: #141a36;
   --accent: #00d9ff;
   --accent-blue: #00d9ff;
   --accent-cyan: #00ffcc;
   --accent-gold: #ffa500;
   --text-primary: #e0e6ed;
   --text-secondary: #a8b5c7;
+  --text: #e0e6ed;
   --success: #00ff88;
   --warning: #ffaa00;
   --danger: #ff3366;
@@ -771,6 +774,189 @@ button, .btn-primary, .btn-secondary {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-cyan);
+}
+
+/* Mobile single-column layout for overview tab */
+.overview-tab.mobile-single-column {
+  display: block !important;
+  grid-template-columns: none !important;
+  min-width: 0 !important;
+  max-width: 100vw;
+  overflow-x: hidden;
+  padding: 0;
+  width: 100%;
+}
+
+.overview-tab.mobile-single-column .overview-center {
+  width: 100% !important;
+  max-width: 100vw;
+  padding: 0;
+  box-sizing: border-box;
+  display: block !important;
+  margin: 0 auto;
+}
+
+/* Mobile responsive overrides - applies to whole app on mobile */
+.overview-tab.mobile-single-column ~ *,
+.overview-tab.mobile-single-column {
+  min-width: 0 !important;
+}
+
+/* Mobile responsive overrides - using multiple detection methods */
+@media (pointer: coarse) and (max-width: 768px),
+       (pointer: coarse) and (max-height: 768px),
+       (hover: none) and (max-width: 768px),
+       (hover: none) and (max-height: 768px),
+       (max-width: 480px) {
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .app {
+    min-width: 0 !important;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .app-header {
+    min-width: 0 !important;
+    padding: 1rem;
+  }
+
+  .content-wrapper {
+    min-width: 0 !important;
+    max-width: 100vw;
+    padding: 0.5rem;
+    overflow-x: hidden;
+  }
+
+  /* Force single-column layout - override grid completely */
+  .overview-tab {
+    display: block !important;
+    grid-template-columns: none !important;
+    min-width: 0 !important;
+    max-width: 100vw;
+    width: 100%;
+  }
+
+  .overview-sidebar {
+    display: none !important;
+  }
+
+  .overview-center {
+    width: 100% !important;
+    max-width: 100vw;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+    text-align: center;
+  }
+
+  .result-display {
+    width: 100%;
+    max-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Ensure rock display fills available space on mobile */
+  .rock-display {
+    width: 100%;
+    max-width: calc(100vw - 1rem);
+    margin: 0 auto;
+  }
+
+  /* Center status indicator on mobile */
+  .status-indicator {
+    width: auto;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  /* Center power bar container */
+  .power-bar-container {
+    width: 100%;
+    max-width: calc(100vw - 1rem);
+    margin: 0 auto;
+  }
+
+  /* Center stats grid on mobile */
+  .stats-grid {
+    width: 100%;
+    max-width: calc(100vw - 1rem);
+    margin: 0 auto;
+  }
+
+  /* Center calculation details */
+  .calculation-details {
+    width: 100%;
+    max-width: calc(100vw - 1rem);
+    margin: 0 auto;
+  }
+}
+
+/* Portrait mode on mobile - force single column centered layout */
+@media (orientation: portrait) and (pointer: coarse),
+       (orientation: portrait) and (max-width: 480px) {
+  /* Nuclear option - force everything full width and centered */
+  .overview-tab,
+  .overview-tab.mobile-single-column {
+    display: block !important;
+    grid-template-columns: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 0.5rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .overview-center {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .result-display {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Center child elements with margin auto */
+  .result-display > * {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .rock-display {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .status-indicator {
+    width: fit-content !important;
+    margin: 0 auto !important;
+  }
+
+  .power-bar-container,
+  .stats-grid,
+  .calculation-details {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0.5rem 0 !important;
+  }
 }
 
 /* Mobile Ko-fi inline link - hidden on desktop */

@@ -1081,3 +1081,154 @@
     transform: rotate(5deg);
   }
 }
+
+/* ====================================
+   MOBILE STYLES
+   Hide desktop controls and show tap indicators
+   Works for both portrait AND landscape on touch devices
+   ==================================== */
+
+@media (pointer: coarse) and (max-width: 768px),
+       (pointer: coarse) and (max-height: 768px) {
+  /* Hide entire laser controls container on mobile */
+  .laser-controls {
+    display: none !important;
+  }
+
+  /* Hide laser manning buttons on mobile (including single-ship mode) */
+  .laser-button {
+    display: none !important;
+  }
+
+  /* Hide module icons on mobile */
+  .module-icon {
+    display: none !important;
+  }
+
+  /* Hide scanning sensor on mobile */
+  .scanning-sensor {
+    display: none !important;
+  }
+
+  .scanning-sensor-mole {
+    display: none !important;
+  }
+
+  /* Mobile tappable ships - cursor only, no TAP label */
+  .ship-icon.mobile-tappable {
+    cursor: pointer;
+  }
+}
+
+/* Portrait mode on mobile - full width content */
+@media (orientation: portrait) and (pointer: coarse) {
+  .result-display {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .result-display > * {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Status indicator full width with centered text */
+  .status-indicator {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 1rem 0 !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+  }
+
+  .rock-display {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 1rem 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .power-bar-container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 1rem 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .stats-grid {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 1rem 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .calculation-details {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Larger power bar for mobile portrait */
+  .power-bar {
+    height: 50px !important;
+    border-radius: 25px !important;
+  }
+
+  .power-fill {
+    border-radius: 23px !important;
+  }
+
+  .power-margin-overlay {
+    font-size: 1.4rem !important;
+  }
+
+  .power-labels {
+    font-size: 1.1rem !important;
+  }
+
+  /* Larger gadget properties for mobile portrait */
+  .gadget-property-symbol {
+    font-size: 1.3rem !important;
+  }
+
+  .gadget-property-name {
+    font-size: 1.3rem !important;
+  }
+
+  .gadget-effect-badge {
+    font-size: 1rem !important;
+  }
+}
+
+/* Landscape mode on mobile - fix status indicator alignment */
+@media (orientation: landscape) and (pointer: coarse) {
+  .status-indicator {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 0.5rem 0 !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+  }
+
+  /* Thicker power bar with larger font */
+  .power-bar {
+    height: 40px !important;
+    border-radius: 20px !important;
+  }
+
+  .power-fill {
+    border-radius: 18px !important;
+  }
+
+  .power-margin-overlay {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+  }
+}

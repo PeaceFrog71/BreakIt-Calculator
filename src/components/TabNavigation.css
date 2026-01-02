@@ -40,3 +40,13 @@
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
   transform: translateY(-1px);
 }
+
+/* Mobile: larger tab fonts */
+@media (pointer: coarse) and (max-width: 768px),
+       (pointer: coarse) and (max-height: 768px) {
+  .tab-button {
+    font-size: 1.5rem;
+    padding: 1rem 1.5rem;
+    min-height: 56px;
+  }
+}
