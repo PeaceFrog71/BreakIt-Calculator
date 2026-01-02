@@ -21,8 +21,8 @@ export interface ShipImageConfig {
  */
 export const SHIP_IMAGE_CONFIG: Record<string, ShipImageConfig> = {
   golem: {
-    width: "84px",
-    height: "33.6px",
+    width: "58.8px",
+    height: "38.22px",
     alt: "GOLEM",
   },
   mole: {
@@ -42,8 +42,8 @@ export const SHIP_IMAGE_CONFIG: Record<string, ShipImageConfig> = {
  */
 export const SHIP_IMAGE_CONFIG_SMALL: Record<string, ShipImageConfig> = {
   golem: {
-    width: "75px",
-    height: "30px",
+    width: "52.5px",
+    height: "34.13px",
     alt: "GOLEM",
   },
   mole: {
