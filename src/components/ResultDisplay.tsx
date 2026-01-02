@@ -80,10 +80,10 @@ const MULTI_SHIP_LASER_OFFSETS: Record<string, Partial<Record<PositionAngle, Mul
     240: { x: 20, y: 0 },   // Lower left
   },
   mole: {
-    60: { x: -10, y: 10 },   // Upper right
-    120: { x: -50, y: -5 },  // Lower right
-    240: { x: 50, y: -10 },  // Lower left
-    300: { x: 15, y: 10 },   // Upper left
+    60: { x: -40, y: 5 },    // Upper right
+    120: { x: -50, y: -17 }, // Lower right
+    240: { x: 50, y: -19 },  // Lower left
+    300: { x: 45, y: 5 },    // Upper left
   },
 };
 
