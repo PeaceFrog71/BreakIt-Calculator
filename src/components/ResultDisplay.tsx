@@ -400,9 +400,14 @@ export default function ResultDisplay({
               const svgSize = 800;
               const center = svgSize / 2;
               // Laser starts at ship position (center of ship image)
-              // GOLEM needs a higher laser start point to match the ship design
-              const laserYOffset = selectedShip.id === "golem" ? -18 : -10;
-              const laserStartX = center + shipX;
+              // Ship-specific laser start offsets
+              let laserXOffset = 0;
+              let laserYOffset = selectedShip.id === "golem" ? -18 : -10;
+              if (selectedShip.id === "mole") {
+                laserXOffset = 60; // Move laser start right for MOLE
+                laserYOffset = 3; // Move laser start down for MOLE
+              }
+              const laserStartX = center + shipX + laserXOffset;
               const laserStartY = center + shipY + laserYOffset;
               // Rock visual center - all rocks centered at same position
               const rockVisualCenterY = center;
