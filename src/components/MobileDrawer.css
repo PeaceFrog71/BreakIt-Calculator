@@ -53,6 +53,26 @@
   transform: translateX(0);
 }
 
+/* Bottom drawer positioning */
+.mobile-drawer.bottom {
+  left: 5%;
+  right: 5%;
+  bottom: 0;
+  top: auto;
+  width: 90% !important;
+  height: 52vh; /* 30% taller than original 40vh */
+  border-bottom: none;
+  border-top: 1px solid var(--accent-cyan);
+  border-radius: 20px 20px 0 0;
+  transform: translateY(calc(100% + 30px));
+  box-shadow: none;
+}
+
+.mobile-drawer.bottom.open {
+  transform: translateY(0);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.8);
+}
+
 /* Drawer header */
 .mobile-drawer-header {
   display: flex;
@@ -117,14 +137,29 @@
 .mobile-drawer-content input,
 .mobile-drawer-content select {
   padding: 1rem 1.25rem;
-  min-height: 60px;
+  min-height: clamp(2.75rem, 8vw, 3.75rem);
   font-size: 3rem;
 }
 
 .mobile-drawer-content button {
-  min-height: 60px;
+  min-height: clamp(2.75rem, 8vw, 3.75rem);
   padding: 1rem 1.5rem;
   font-size: 3rem;
+}
+
+/* Preserve help icon circular shape - override general button styling */
+.mobile-drawer-content .resistance-help-icon,
+.mobile-drawer-content .hint-help-icon {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  min-width: 1.5rem !important;
+  min-height: 1.5rem !important;
+  max-width: 1.5rem !important;
+  max-height: 1.5rem !important;
+  padding: 0 !important;
+  font-size: 0.8rem !important;
+  aspect-ratio: 1 !important;
+  flex-shrink: 0 !important;
 }
 
 /* Rock slots spread out in mobile drawer */
@@ -136,8 +171,8 @@
 }
 
 .mobile-drawer-content .rock-slot-button {
-  width: 60px;
-  height: 60px;
+  width: clamp(2.75rem, 10vw, 3.75rem);
+  height: clamp(2.75rem, 10vw, 3.75rem);
   font-size: 2rem;
   flex: 1;
 }
@@ -168,10 +203,10 @@
 }
 
 .mobile-drawer-content .stepper-btn {
-  width: 70px;
-  height: 70px;
+  width: clamp(2.75rem, 12vw, 4.375rem);
+  height: clamp(2.75rem, 12vw, 4.375rem);
   font-size: 2.5rem;
-  min-height: 70px;
+  min-height: clamp(2.75rem, 12vw, 4.375rem);
 }
 
 .mobile-drawer-content .stepper-value {
@@ -233,6 +268,25 @@
   transform: translateY(-50%) rotate(180deg);
 }
 
+/* Bottom tab - centered at bottom edge, width matches side tabs' height visually */
+.mobile-drawer-tab.bottom {
+  bottom: 0 !important;
+  top: auto !important;
+  left: 50%;
+  transform: translateX(-50%);
+  writing-mode: horizontal-tb;
+  text-orientation: initial;
+  height: auto;
+  width: 33vw !important; /* Use vw for width to match side tabs' vh for height */
+  max-width: 33vw !important;
+  margin: 0 !important;
+  padding: 0.75rem 0.5rem;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
 .mobile-drawer-tab-text {
   font-size: 1.1rem;
   font-weight: 600;
@@ -240,17 +294,18 @@
   text-transform: uppercase;
 }
 
-/* Portrait mode - wider drawers and larger tabs for phone use */
+/* Portrait mode - wider drawers and slimmer tabs for phone use */
 @media (orientation: portrait) {
   /* Drawer takes up more width in portrait */
   .mobile-drawer {
-    width: 80% !important;
+    width: 85% !important;
   }
 
-  /* Tabs wider for easier tapping and positioned to align with results display */
+  /* Slimmer tabs to save horizontal space */
   .mobile-drawer-tab {
-    padding: 1.5rem 1.5rem;
-    top: 35%;
+    padding: 0.8rem 0.5rem;
+    top: 45%;
+    height: 30vh;
   }
 
   /* Right tab needs adjusted transform since it has rotation */
@@ -258,8 +313,83 @@
     transform: translateY(-50%) rotate(180deg);
   }
 
+  /* Bottom tab - use vw for width */
+  .mobile-drawer-tab.bottom {
+    width: 50vw !important;
+    max-width: 50vw !important;
+    padding: 0.5rem 1rem;
+  }
+
   .mobile-drawer-tab-text {
-    font-size: 1.4rem;
+    font-size: 1rem;
+  }
+
+  /* Smaller fonts for portrait drawer content */
+  .mobile-drawer-header h3 {
+    font-size: 1.5rem;
+  }
+
+  .mobile-drawer-close {
+    font-size: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .mobile-drawer-content input,
+  .mobile-drawer-content select,
+  .mobile-drawer-content label,
+  .mobile-drawer-content button,
+  .mobile-drawer-content h2,
+  .mobile-drawer-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .mobile-drawer-content input,
+  .mobile-drawer-content select {
+    padding: 0.6rem 0.8rem;
+    min-height: clamp(2.5rem, 7vw, 2.75rem);
+    font-size: 1.3rem;
+  }
+
+  .mobile-drawer-content button {
+    min-height: clamp(2.5rem, 7vw, 2.75rem);
+    padding: 0.6rem 1rem;
+    font-size: 1.3rem;
+  }
+
+  .mobile-drawer-content .rock-slot-button {
+    width: clamp(2.5rem, 8vw, 2.75rem);
+    height: clamp(2.5rem, 8vw, 2.75rem);
+    font-size: 1.2rem;
+  }
+
+  .mobile-drawer-content .gadget-effect {
+    font-size: 1.1rem;
+  }
+
+  .mobile-drawer-content .gadget-label-row {
+    font-size: 1.1rem;
+  }
+
+  .mobile-drawer-content .gadget-label-row label {
+    font-size: 1.1rem;
+  }
+
+  .mobile-drawer-content .stepper-btn {
+    width: clamp(2.5rem, 9vw, 3.125rem);
+    height: clamp(2.5rem, 9vw, 3.125rem);
+    font-size: 1.5rem;
+    min-height: clamp(2.5rem, 9vw, 3.125rem);
+  }
+
+  .mobile-drawer-content .stepper-value {
+    font-size: 1.6rem;
+    min-width: 2rem;
+  }
+
+  .mobile-drawer-content .gadget-count-stepper {
+    gap: 1rem;
+    justify-content: center;
   }
 }
 
@@ -269,6 +399,16 @@
   .mobile-drawer {
     top: 0.5rem;
     bottom: 0.5rem;
+  }
+
+  /* Slimmer tabs in landscape to save horizontal space */
+  .mobile-drawer-tab {
+    padding: 0.5rem 0.4rem;
+    height: 40vh;
+  }
+
+  .mobile-drawer-tab-text {
+    font-size: 0.9rem;
   }
 
   .mobile-drawer-header h3 {
@@ -293,19 +433,19 @@
   .mobile-drawer-content input,
   .mobile-drawer-content select {
     padding: 0.5rem 0.75rem;
-    min-height: 40px;
+    min-height: clamp(2.25rem, 5vh, 2.5rem);
     font-size: 1.5rem;
   }
 
   .mobile-drawer-content button {
-    min-height: 40px;
+    min-height: clamp(2.25rem, 5vh, 2.5rem);
     padding: 0.5rem 1rem;
     font-size: 1.5rem;
   }
 
   .mobile-drawer-content .rock-slot-button {
-    width: 40px;
-    height: 40px;
+    width: clamp(2.25rem, 8vw, 2.5rem);
+    height: clamp(2.25rem, 8vw, 2.5rem);
     font-size: 1.2rem;
   }
 
@@ -322,10 +462,10 @@
   }
 
   .mobile-drawer-content .stepper-btn {
-    width: 50px;
-    height: 50px;
+    width: clamp(2.5rem, 10vw, 3.125rem);
+    height: clamp(2.5rem, 10vw, 3.125rem);
     font-size: 1.5rem;
-    min-height: 50px;
+    min-height: clamp(2.5rem, 10vw, 3.125rem);
   }
 
   .mobile-drawer-content .stepper-value {
@@ -336,6 +476,76 @@
   .mobile-drawer-content .gadget-count-stepper {
     gap: 1rem;
   }
+}
+
+/* Stats grid inside mobile drawer */
+.mobile-drawer-stats {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  padding: 0.5rem;
+}
+
+.mobile-drawer-stats .stat-card {
+  padding: 0.75rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.mobile-drawer-stats .stat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.mobile-drawer-stats .stat-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.mobile-drawer-stats .stat-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+/* Calculation details inside mobile drawer */
+.mobile-drawer-details {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.mobile-drawer-details h3 {
+  font-size: 1rem !important;
+  color: var(--accent-cyan);
+  margin-bottom: 0.75rem;
+}
+
+.mobile-drawer-details .detail-row {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.25rem;
+  padding: 0.4rem 0;
+  font-size: 0.8rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.mobile-drawer-details .detail-row:last-child {
+  border-bottom: none;
+}
+
+.mobile-drawer-details .detail-row span:first-child {
+  color: var(--text-secondary);
+}
+
+.mobile-drawer-details .detail-row span:last-child {
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 /* Note: Visibility is controlled by React (isMobile state) not CSS media queries */

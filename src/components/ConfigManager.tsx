@@ -140,7 +140,7 @@ export default function ConfigManager({
 
       <div className="configs-list">
         {savedConfigs.length === 0 ? (
-          <p className="empty-message">No saved configurations yet</p>
+          <p className="empty-message">No saved configurations</p>
         ) : (
           savedConfigs.sort((a, b) => a.name.localeCompare(b.name)).map((config) => (
             <div key={config.id} className="config-item">

@@ -144,6 +144,14 @@ When working on tasks that require planning:
 - Test files co-located: `calculator.test.ts` next to `calculator.ts`
 - Focus on calculation accuracy - verify against in-game values
 
+### Mobile CSS Guidelines
+- **NEVER use fixed pixel values** (px) for sizing in mobile contexts
+- Use `clamp(min, preferred, max)` for touch targets that scale with viewport
+- Use `%` or `vw/vh` for transforms and positional offsets
+- Use `min(viewport, fixed)` for max-width/height constraints
+- Touch targets minimum: `2.5rem` (~40px) to meet accessibility guidelines
+- Preferred pattern: `clamp(2.5rem, 8vw, 3.5rem)` scales 40-56px across devices
+
 ## Data Source
 
 Equipment data is based on **Star Citizen v4.3.1** from community mining spreadsheets and in-game testing. Data may need updates with new game patches.

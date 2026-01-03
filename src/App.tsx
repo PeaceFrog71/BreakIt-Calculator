@@ -520,16 +520,19 @@ function App() {
           <img src={pfLogo} alt="Peacefrog Gaming" className="header-logo" />
         </a>
         <div className="header-title">
-          <h1>PeaceFrog's Rock Breaker</h1>
-          <span className="version-tag">v{version}</span>
+          <h1>
+            <span className="title-line">PEACEFROG'S</span>
+            <span className="title-line">ROCK BREAKER</span>
+          </h1>
           <a
             href="https://forms.gle/GziNwLBcwaWpZVNy5"
             target="_blank"
             rel="noopener noreferrer"
             className="feedback-link"
           >
-            Report Bugs / Request Features / Provide Feedback
+            FEEDBACK LINK
           </a>
+          <span className="version-tag">v{version}</span>
         </div>
         <button
           className="help-button"

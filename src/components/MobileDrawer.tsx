@@ -5,7 +5,7 @@ interface MobileDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onOpen: () => void;
-  side: 'left' | 'right';
+  side: 'left' | 'right' | 'bottom';
   title: string;
   tabLabel: string;
   children: ReactNode;
