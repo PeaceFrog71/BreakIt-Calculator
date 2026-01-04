@@ -39,11 +39,17 @@
         const kofiScript = document.createElement('script');
         kofiScript.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
         kofiScript.onload = function() {
+          // Detect tablet landscape: touch screen + landscape + tall enough viewport
+          const isTabletLandscape = 'ontouchstart' in window &&
+            window.innerWidth > window.innerHeight &&
+            window.innerHeight >= 600;
+
           kofiWidgetOverlay.draw('peacefroggaming', {
             'type': 'floating-chat',
             'floating-chat.donateButton.text': 'Support',
             'floating-chat.donateButton.background-color': '#00ff88',
-            'floating-chat.donateButton.text-color': '#0a0e27'
+            'floating-chat.donateButton.text-color': '#0a0e27',
+            'floating-chat.position': isTabletLandscape ? 'Right' : 'Left'
           });
         };
         document.body.appendChild(kofiScript);
@@ -130,13 +136,13 @@
           left: auto !important;
           right: 10px !important;
           transform: scaleX(1.65) scale(0.9) !important;
-          transform-origin: right bottom !important;
+          transform-origin: right center !important;
         }
         .kofi-overlay-btn {
           left: auto !important;
           right: 10px !important;
           transform: scale(0.9) !important;
-          transform-origin: bottom right !important;
+          transform-origin: right bottom !important;
         }
       }
     </style>
