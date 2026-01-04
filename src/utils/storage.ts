@@ -236,15 +236,22 @@ export function loadCurrentConfiguration(): { ship: Ship; config: MiningConfigur
 
 /**
  * Export ship configuration as JSON file
+ * Filename format: shipname_shipmodel_datetime.json
  */
 export function exportShipConfig(savedConfig: SavedShipConfig): void {
   const dataStr = JSON.stringify(savedConfig, null, 2);
   const dataBlob = new Blob([dataStr], { type: 'application/json' });
   const url = URL.createObjectURL(dataBlob);
 
+  // Format: shipname_shipmodel_YYYY-MM-DD_HH-MM-SS.json
+  const safeName = savedConfig.name.replace(/[^a-z0-9]/gi, '_');
+  const safeShipName = savedConfig.ship.name.replace(/[^a-z0-9]/gi, '_');
+  const now = new Date();
+  const datetime = now.toISOString().slice(0, 19).replace(/[T:]/g, '-');
+
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${savedConfig.name.replace(/[^a-z0-9]/gi, '_')}.json`;
+  link.download = `${safeName}_${safeShipName}_${datetime}.json`;
   link.click();
 
   URL.revokeObjectURL(url);
@@ -372,15 +379,21 @@ export function loadMiningGroup(id: string): SavedMiningGroup | null {
 
 /**
  * Export mining group as JSON file download
+ * Filename format: groupname_group_datetime.json
  */
 export function exportMiningGroup(savedGroup: SavedMiningGroup): void {
   const dataStr = JSON.stringify(savedGroup, null, 2);
   const dataBlob = new Blob([dataStr], { type: 'application/json' });
   const url = URL.createObjectURL(dataBlob);
 
+  // Format: groupname_group_YYYY-MM-DD_HH-MM-SS.json
+  const safeName = savedGroup.name.replace(/[^a-z0-9]/gi, '_');
+  const now = new Date();
+  const datetime = now.toISOString().slice(0, 19).replace(/[T:]/g, '-');
+
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${savedGroup.name.replace(/[^a-z0-9]/gi, '_')}_group.json`;
+  link.download = `${safeName}_group_${datetime}.json`;
   link.click();
 
   URL.revokeObjectURL(url);

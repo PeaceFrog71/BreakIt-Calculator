@@ -69,6 +69,9 @@ export default function ConfigManager({
     setSavedConfigs(getSavedShipConfigs());
     setConfigName('');
     setShowDialog(false);
+
+    // Close drawer after save (same callback as after load)
+    onAfterLoad?.();
   };
 
   const handleLoad = (id: string) => {
