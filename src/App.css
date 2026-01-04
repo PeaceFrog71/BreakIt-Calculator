@@ -1216,10 +1216,10 @@ button, .btn-primary, .btn-secondary {
     right: 10px !important;
   }
 
-  /* Rock Properties labels - smaller, consistent font */
+  /* Rock Properties labels - slightly smaller, consistent font */
   .compact-form-group label,
   .resistance-input-group label {
-    font-size: 0.65rem !important;
+    font-size: 0.7rem !important;
     font-family: inherit !important;
   }
 
