@@ -2,6 +2,14 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  position: relative;
+}
+
+.lasers-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .lasers-setup h2 {
@@ -13,16 +21,20 @@
 
 .lasers-setup .expand-indicator {
   color: var(--accent-cyan);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   opacity: 0.8;
-  transition: transform 0.2s ease;
 }
 
 .lasers-setup .laser-summary {
   font-size: 0.85rem;
   font-weight: normal;
   color: var(--accent-gold);
-  margin-left: auto;
+  text-align: center;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .lasers-content {
@@ -32,12 +44,12 @@
 }
 
 /* Mobile styles */
-.lasers-setup.mobile h2 {
+.lasers-setup.mobile .lasers-header {
   cursor: pointer;
   user-select: none;
 }
 
-.lasers-setup.mobile h2:active {
+.lasers-setup.mobile .lasers-header:active {
   opacity: 0.8;
 }
 

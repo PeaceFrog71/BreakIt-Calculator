@@ -504,33 +504,43 @@ export default function ResultDisplay({
         <div
           className="rock-container"
           onClick={(e) => e.stopPropagation()}
-          style={!miningGroup ? { transform: "translateX(36vw)" } : undefined}>
+          style={!miningGroup && isMobile ? { transform: "translateX(36vw)" } : undefined}>
           {/* Single ship positioned to the left */}
           {!miningGroup &&
             selectedShip &&
             (() => {
-              // Fixed ship position for all rock sizes (same for all ships)
-              // Position ship on left side, centered vertically
-              const shipX = -220;
-              const shipY = 0;
-
-              const asteroidSize = getAsteroidSize();
-              const asteroidRadius = asteroidSize.width / 2;
-
               const svgSize = 800;
               const center = svgSize / 2;
-              // Laser starts at ship position with ship-specific offsets
+              const asteroidSize = getAsteroidSize();
+              const asteroidRadius = asteroidSize.width / 2;
               const shipOffsets = SHIP_OFFSETS[selectedShip.id] || SHIP_OFFSETS.prospector;
-              // Mobile adjustments for MOLE: move laser left 25, up 10
-              const mobileAdjustX = isMobile && selectedShip.id === "mole" ? -25 : 0;
-              const mobileAdjustY = isMobile && selectedShip.id === "mole" ? -10 : 0;
-              const laserStartX = center + shipX + shipOffsets.laser.x + mobileAdjustX;
-              const laserStartY = center + shipY + shipOffsets.laser.y + mobileAdjustY;
-              // Rock visual center - all rocks centered at same position
-              const rockVisualCenterY = center;
-              // Mobile portrait: rock is shifted left 55px (~55% of rock width), adjust laser endpoint
               const isPortrait = window.matchMedia('(orientation: portrait)').matches;
-              const rockCenterX = center + (isMobile && isPortrait ? -55 : 0);
+
+              // Desktop: ship at 25% from left, rock at 75% from left
+              // Mobile: keep original centered layout
+              let laserStartX: number;
+              let laserStartY: number;
+              let rockCenterX: number;
+              const rockVisualCenterY = center;
+
+              if (isMobile) {
+                // Mobile: original layout with ship offset from center
+                const shipX = -220;
+                const mobileAdjustX = selectedShip.id === "mole" ? -25 : 0;
+                const mobileAdjustY = selectedShip.id === "mole" ? -10 : 0;
+                laserStartX = center + shipX + shipOffsets.laser.x + mobileAdjustX;
+                laserStartY = center + shipOffsets.laser.y + mobileAdjustY;
+                rockCenterX = center + (isPortrait ? -55 : 0);
+              } else {
+                // Desktop: ship at 15% from left + 150px offset, rock at 85% from left
+                const shipPositionX = svgSize * 0.15 + 150; // 120px + 150px = 270px
+                const rockPositionX = svgSize * 0.85; // 680px
+                // GOLEM laser starts a bit further right on desktop
+                const golemDesktopAdjust = selectedShip.id === "golem" ? 20 : 0;
+                laserStartX = shipPositionX + shipOffsets.laser.x + golemDesktopAdjust;
+                laserStartY = center + shipOffsets.laser.y;
+                rockCenterX = rockPositionX;
+              }
               // Laser ends at rock visual center, but shortened by 20% (or lengthened by 2% for tiny rocks)
               const fullDX = rockCenterX - laserStartX;
               const fullDY = rockVisualCenterY - laserStartY;
@@ -613,10 +623,17 @@ export default function ResultDisplay({
                   {/* Ship icon */}
                   <div
                     className={`ship-icon active ship-${selectedShip.id} ${isMobile ? 'mobile-tappable' : ''}`}
-                    style={{
+                    style={isMobile ? {
+                      // Mobile: original centered layout with offset
                       position: "absolute",
-                      top: `calc(50% + ${shipY}px)`,
-                      left: `calc(50% + ${shipX}px)`,
+                      top: "50%",
+                      left: "calc(50% - 220px)",
+                      transform: "translate(-50%, -50%)",
+                    } : {
+                      // Desktop: ship positioned left (moved right 150px)
+                      position: "absolute",
+                      top: "50%",
+                      left: "calc(15% - 130px)",
                       transform: "translate(-50%, -50%)",
                     }}
                     onClick={(e) => {
@@ -667,7 +684,7 @@ export default function ResultDisplay({
 
                   </div>
 
-                  {/* Scanning sensor for Prospector/GOLEM (single-laser ships) - positioned to the left (outside) */}
+                  {/* Scanning sensor for Prospector/GOLEM (single-laser ships) - positioned to the left of ship */}
                   {onSetScanningShip &&
                    rock.resistanceMode === 'modified' &&
                    (selectedShip.id === 'prospector' || selectedShip.id === 'golem') &&
@@ -686,20 +703,20 @@ export default function ResultDisplay({
                       }}
                       title={isMobile ? "Tap to mark as scanning ship" : "Click to mark as scanning ship"}
                       style={isMobile ? {
-                        // Mobile: position above ship, centered on ship's X position
+                        // Mobile: position above ship (original layout)
                         position: "absolute",
-                        top: `calc(50% - 10vh)`,
-                        left: `calc(50% + ${shipX}px)`,
+                        top: "calc(50% - 10vh)",
+                        left: "calc(50% - 220px)",
                         transform: "translate(-50%, 0)",
                         cursor: "pointer",
                         pointerEvents: "auto",
                         zIndex: 10,
                         fontSize: "0.75rem"
                       } : {
-                        // Desktop: position to the left of ship
+                        // Desktop: controls left of ship (moved left 150px)
                         position: "absolute",
-                        top: `calc(50% + ${shipY - 10}px)`,
-                        left: `calc(50% + ${shipX + shipOffsets.scanIcon.x}px)`,
+                        top: "calc(50% - 10px)",
+                        left: "calc(50% - 430px)",
                         transform: "translate(-50%, -50%)",
                         cursor: "pointer",
                         pointerEvents: "auto",
@@ -740,10 +757,22 @@ export default function ResultDisplay({
                       return (
                         <div
                           className="laser-controls"
-                          style={{
+                          style={isMobile ? {
+                            // Mobile: original layout (hidden by CSS anyway)
                             position: "absolute",
-                            top: `calc(50% + ${shipY - 15}px)`,
-                            left: `calc(50% + ${shipX + shipOffsets.moduleButtons.x}px)`,
+                            top: "calc(50% - 15px)",
+                            left: "calc(50% - 220px - 30px)",
+                            transform: "translate(-100%, -50%)",
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: "0.25rem",
+                            pointerEvents: "auto",
+                            alignItems: "center",
+                          } : {
+                            // Desktop: left of ship (moved left 150px)
+                            position: "absolute",
+                            top: "calc(50% - 15px)",
+                            left: "calc(50% - 460px)",
                             transform: "translate(-100%, -50%)",
                             display: "flex",
                             flexDirection: "row",
@@ -779,9 +808,10 @@ export default function ResultDisplay({
                       <div
                         className="laser-controls"
                         style={{
+                          // Desktop only: left of ship (moved left 150px)
                           position: "absolute",
-                          top: `calc(50% + ${shipY}px)`,
-                          left: `calc(50% + ${shipX - 60}px)`,
+                          top: "50%",
+                          left: "calc(15% - 210px)",
                           transform: "translate(-100%, -50%)",
                           display: "flex",
                           flexDirection: "column",
@@ -1584,13 +1614,11 @@ export default function ResultDisplay({
           <div
             className={`rock-icon ${getStatusClass()} ${getRockSizeClass()} ${
               hasExcessiveOvercharge ? "overcharge-warning" : ""
-            }`}
+            } ${!miningGroup && !isMobile ? "desktop-single-ship" : ""}`}
             style={{
-              position: "relative",
               marginTop:
                 rockVerticalOffset > 0 ? `${rockVerticalOffset}px` : undefined,
               // Portrait multi-ship mode: fixed offset for all rock sizes
-              // If centers don't align naturally, we'll tune per-size empirically
               ...(miningGroup && isMobile && window.matchMedia('(orientation: portrait)').matches ? {
                 transform: `translateX(25vw)`,
               } : {}),

@@ -188,7 +188,9 @@
 .config-buttons {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
+  margin-left: 1rem;
+  padding: 0.25rem;
 }
 
 .btn-load,

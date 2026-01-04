@@ -123,7 +123,10 @@ interface LaserPanelProps {
 
 export default function LaserPanel({ laserIndex, laser, selectedShip, onChange, showMannedToggle }: LaserPanelProps) {
   const isMobile = useMobileDetection();
-  const [isEditing, setIsEditing] = useState(true);
+  // Start collapsed if laser setup is already complete (has both laser and module)
+  const hasLaserOnInit = laser.laserHead && laser.laserHead.id !== 'none';
+  const hasModuleOnInit = laser.modules.some(m => m && m.id !== 'none');
+  const [isEditing, setIsEditing] = useState(!hasLaserOnInit || !hasModuleOnInit);
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Collapse dropdowns when clicking outside the panel (mobile only)

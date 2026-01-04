@@ -330,6 +330,14 @@
   z-index: 1; /* Lower than ships-around-rock (z-index: 10) so lasers render on top */
 }
 
+/* Desktop single ship mode: position rock at SVG x=680 (offset from center = +280px) */
+.rock-icon.desktop-single-ship {
+  position: absolute !important;
+  left: calc(50% + 280px) !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
 .rock-stats-sidebar {
   display: flex;
   flex-direction: column;
@@ -661,13 +669,17 @@
 }
 
 .status-indicator {
-  padding: 1.35rem; /* 10% shorter */
+  padding: 1.35rem;
   border-radius: 8px;
   text-align: center;
   border: 2px solid;
   box-shadow: 0 4px 20px;
-  min-width: fit-content;
-  overflow: visible;
+  /* Ensure proper sizing and positioning */
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .status-indicator-bottom {

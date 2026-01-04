@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { MiningConfiguration, Ship } from '../types';
+import type { MiningConfiguration, Ship, ShipInstance } from '../types';
 import type { SavedShipConfig } from '../utils/storage';
 import {
   getSavedShipConfigs,
@@ -9,15 +9,20 @@ import {
   loadShipConfig,
   exportShipConfig,
   importShipConfig,
+  createShipInstanceFromConfig,
 } from '../utils/storage';
 import { calculateLaserPower } from '../utils/calculator';
 import './ConfigManager.css';
 
 interface ConfigManagerProps {
-  currentShip: Ship;
-  currentConfig: MiningConfiguration;
+  currentShip?: Ship;
+  currentConfig?: MiningConfiguration;
   currentConfigName?: string;
-  onLoad: (ship: Ship, config: MiningConfiguration, name: string) => void;
+  onLoad?: (ship: Ship, config: MiningConfiguration, name: string) => void;
+  // For Mining Group mode - adds ship to group instead of replacing
+  onAddToGroup?: (shipInstance: ShipInstance) => void;
+  // Called after a successful load (for closing drawers, etc.)
+  onAfterLoad?: () => void;
 }
 
 export default function ConfigManager({
@@ -25,7 +30,10 @@ export default function ConfigManager({
   currentConfig,
   currentConfigName,
   onLoad,
+  onAddToGroup,
+  onAfterLoad,
 }: ConfigManagerProps) {
+  const isGroupMode = !!onAddToGroup;
   const [savedConfigs, setSavedConfigs] = useState<SavedShipConfig[]>(
     getSavedShipConfigs()
   );
@@ -63,7 +71,16 @@ export default function ConfigManager({
   const handleLoad = (id: string) => {
     const config = loadShipConfig(id);
     if (config) {
-      onLoad(config.ship, config.config, config.name);
+      if (isGroupMode) {
+        // In group mode, create a ship instance and add to group
+        const shipInstance = createShipInstanceFromConfig(config);
+        onAddToGroup!(shipInstance);
+      } else if (onLoad) {
+        // In single ship mode, replace current config
+        onLoad(config.ship, config.config, config.name);
+      }
+      // Call onAfterLoad callback (for closing drawers, etc.)
+      onAfterLoad?.();
     }
   };
 
@@ -98,25 +115,28 @@ export default function ConfigManager({
     <div className="config-manager panel">
       <h2>Ship Library</h2>
 
-      <div className="config-actions">
-        <button className="btn-primary btn-icon-text" onClick={() => {
-          setConfigName(currentConfigName || '');
-          setShowDialog(true);
-        }}>
-          <span className="btn-icon">💾</span>
-          <span className="btn-label">Save Current</span>
-        </button>
-        <label className="btn-secondary btn-icon-text">
-          <span className="btn-icon">📥</span>
-          <span className="btn-label">Import</span>
-          <input
-            type="file"
-            accept=".json"
-            onChange={handleImport}
-            style={{ display: 'none' }}
-          />
-        </label>
-      </div>
+      {/* Only show save/import actions in single ship mode */}
+      {!isGroupMode && currentShip && currentConfig && (
+        <div className="config-actions">
+          <button className="btn-primary btn-icon-text" onClick={() => {
+            setConfigName(currentConfigName || '');
+            setShowDialog(true);
+          }}>
+            <span className="btn-icon">💾</span>
+            <span className="btn-label">Save Current</span>
+          </button>
+          <label className="btn-secondary btn-icon-text">
+            <span className="btn-icon">📥</span>
+            <span className="btn-label">Import</span>
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImport}
+              style={{ display: 'none' }}
+            />
+          </label>
+        </div>
+      )}
 
       {showDialog && (
         <div className="save-dialog">
@@ -179,7 +199,7 @@ export default function ConfigManager({
                 <button
                   onClick={() => handleLoad(config.id)}
                   className="btn-load"
-                  title="Load"
+                  title={isGroupMode ? "Add to Mining Group" : "Load"}
                 >
                   ▲
                 </button>

@@ -32,6 +32,7 @@
 /* Left drawer positioning */
 .mobile-drawer.left {
   left: 0;
+  bottom: 2%;
   border-left: none;
   border-right: 1px solid var(--accent-cyan);
   transform: translateX(-100%);
@@ -44,6 +45,7 @@
 /* Right drawer positioning */
 .mobile-drawer.right {
   right: 0;
+  bottom: 10%;
   border-right: none;
   border-left: 1px solid var(--accent-cyan);
   transform: translateX(100%);
@@ -115,6 +117,27 @@
 /* Hide "Ship Library" h2 in bottom drawer (already shown in header) */
 .mobile-drawer.bottom .config-manager > h2 {
   display: none;
+}
+
+/* Hide h2 in left/right drawers for Ship/Group Library (already shown in header) */
+.mobile-drawer.left .config-manager > h2,
+.mobile-drawer.right .config-manager > h2 {
+  display: none;
+}
+
+/* Make ConfigManager fill the drawer in left/right side drawers */
+.mobile-drawer.left .config-manager,
+.mobile-drawer.right .config-manager {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-drawer.left .configs-list,
+.mobile-drawer.right .configs-list {
+  flex: 1;
+  max-height: none;
+  overflow-y: auto;
 }
 
 /* Ship Library buttons - fill drawer width */

@@ -23,6 +23,7 @@ import LasersSetup from "./components/LasersSetup";
 import ResultDisplay from "./components/ResultDisplay";
 import ConfigManager from "./components/ConfigManager";
 import ShipPoolManager from "./components/ShipPoolManager";
+import MiningGroupManager from "./components/MiningGroupManager";
 import TabNavigation, { type TabType } from "./components/TabNavigation";
 import HelpModal from "./components/HelpModal";
 import ResistanceModeSelector from "./components/ResistanceModeSelector";
@@ -127,6 +128,8 @@ function App() {
   const [rockDrawerOpen, setRockDrawerOpen] = useState(false);
   const [gadgetDrawerOpen, setGadgetDrawerOpen] = useState(false);
   const [libraryDrawerOpen, setLibraryDrawerOpen] = useState(false);
+  const [shipLibraryDrawerOpen, setShipLibraryDrawerOpen] = useState(false);
+  const [groupLibraryDrawerOpen, setGroupLibraryDrawerOpen] = useState(false);
 
   // Mobile detection via shared hook
   const isMobile = useMobileDetection();
@@ -810,8 +813,8 @@ function App() {
           {/* Mining Config Tab */}
           {activeTab === "mining" && (
             <div className="mining-config-tab">
-              {/* Mobile Library Drawer - only on Ship Setup tab */}
-              {isMobile && (
+              {/* Mobile Library Drawer - Single Ship mode only (bottom) */}
+              {isMobile && !useMiningGroup && (
                 <MobileDrawer
                   isOpen={libraryDrawerOpen}
                   onClose={() => setLibraryDrawerOpen(false)}
@@ -825,8 +828,49 @@ function App() {
                     currentConfig={config}
                     currentConfigName={currentConfigName}
                     onLoad={handleLoadConfiguration}
+                    onAfterLoad={() => setLibraryDrawerOpen(false)}
                   />
                 </MobileDrawer>
+              )}
+
+              {/* Mobile Library Drawers - Mining Group mode (left/right) */}
+              {isMobile && useMiningGroup && (
+                <>
+                  <MobileDrawer
+                    isOpen={shipLibraryDrawerOpen}
+                    onClose={() => setShipLibraryDrawerOpen(false)}
+                    onOpen={() => { setGroupLibraryDrawerOpen(false); setShipLibraryDrawerOpen(true); }}
+                    side="left"
+                    title="Ship Library"
+                    tabLabel="Ship Library"
+                  >
+                    <ConfigManager
+                      onAddToGroup={(shipInstance) => {
+                        if (miningGroup.ships.length >= 4) {
+                          alert('Maximum of 4 ships allowed in mining group');
+                          return;
+                        }
+                        shipInstance.isActive = true;
+                        setMiningGroup({ ...miningGroup, ships: [...miningGroup.ships, shipInstance] });
+                      }}
+                      onAfterLoad={() => setShipLibraryDrawerOpen(false)}
+                    />
+                  </MobileDrawer>
+                  <MobileDrawer
+                    isOpen={groupLibraryDrawerOpen}
+                    onClose={() => setGroupLibraryDrawerOpen(false)}
+                    onOpen={() => { setShipLibraryDrawerOpen(false); setGroupLibraryDrawerOpen(true); }}
+                    side="right"
+                    title="Group Library"
+                    tabLabel="Group Library"
+                  >
+                    <MiningGroupManager
+                      currentMiningGroup={miningGroup}
+                      onLoad={setMiningGroup}
+                      onAfterLoad={() => setGroupLibraryDrawerOpen(false)}
+                    />
+                  </MobileDrawer>
+                </>
               )}
 
               {/* Mode toggle */}
@@ -844,10 +888,25 @@ function App() {
               </div>
 
               {useMiningGroup ? (
-                <ShipPoolManager
-                  miningGroup={miningGroup}
-                  onChange={setMiningGroup}
-                />
+                <>
+                  <ShipPoolManager
+                    miningGroup={miningGroup}
+                    onChange={setMiningGroup}
+                  />
+                  {/* Ship Library for Mining Group - desktop only (mobile uses drawer) */}
+                  {!isMobile && (
+                    <ConfigManager
+                      onAddToGroup={(shipInstance) => {
+                        if (miningGroup.ships.length >= 4) {
+                          alert('Maximum of 4 ships allowed in mining group');
+                          return;
+                        }
+                        shipInstance.isActive = true;
+                        setMiningGroup({ ...miningGroup, ships: [...miningGroup.ships, shipInstance] });
+                      }}
+                    />
+                  )}
+                </>
               ) : (
                 <>
                   <ShipSelector
