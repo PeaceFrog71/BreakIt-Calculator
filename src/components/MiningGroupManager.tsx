@@ -14,11 +14,13 @@ import './ConfigManager.css';
 interface MiningGroupManagerProps {
   currentMiningGroup: MiningGroup;
   onLoad: (miningGroup: MiningGroup) => void;
+  onAfterLoad?: () => void;
 }
 
 export default function MiningGroupManager({
   currentMiningGroup,
   onLoad,
+  onAfterLoad,
 }: MiningGroupManagerProps) {
   const [savedGroups, setSavedGroups] = useState<SavedMiningGroup[]>(
     getSavedMiningGroups()
@@ -71,6 +73,7 @@ export default function MiningGroupManager({
     if (group) {
       // Include the saved name in the loaded group
       onLoad({ ...group.miningGroup, name: group.name });
+      onAfterLoad?.();
     }
   };
 

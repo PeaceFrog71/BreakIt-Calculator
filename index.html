@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="/peacefrog-favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Rock Breaker Calculator - Star Citizen Mining Tool</title>
 
     <!-- Open Graph / Social Media Preview -->
@@ -32,15 +32,22 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Ko-fi Widget -->
-    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+    <!-- Ko-fi Widget - only load on desktop -->
     <script>
-      kofiWidgetOverlay.draw('peacefroggaming', {
-        'type': 'floating-chat',
-        'floating-chat.donateButton.text': 'Support',
-        'floating-chat.donateButton.background-color': '#00ff88',
-        'floating-chat.donateButton.text-color': '#0a0e27'
-      });
+      // Only load Ko-fi widget on desktop (screen width > 800px)
+      if (screen.width > 800) {
+        const kofiScript = document.createElement('script');
+        kofiScript.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
+        kofiScript.onload = function() {
+          kofiWidgetOverlay.draw('peacefroggaming', {
+            'type': 'floating-chat',
+            'floating-chat.donateButton.text': 'Support',
+            'floating-chat.donateButton.background-color': '#00ff88',
+            'floating-chat.donateButton.text-color': '#0a0e27'
+          });
+        };
+        document.body.appendChild(kofiScript);
+      }
     </script>
     <style>
       /* Move Ko-fi's widget to lower left and stretch it */
@@ -104,8 +111,19 @@
         line-height: 1.3;
         text-align: center;
       }
+      /* On mobile: hide desktop Ko-fi overlay */
+      @media screen and (max-width: 800px) {
+        .floatingchat-container-wrap,
+        .floatingchat-container-wrap-mobi,
+        [class*="floatingchat-container-wrap"] {
+          display: none !important;
+        }
+        .kofi-overlay-btn {
+          display: none !important;
+        }
+      }
     </style>
-    <!-- Our styled button overlay - clicks pass through to Ko-fi underneath -->
+    <!-- Our styled button overlay - clicks pass through to Ko-fi underneath (desktop) -->
     <div class="kofi-overlay-btn">
       <img src="/rieger-icon.png" alt="" />
       <span>Buy me a Rieger-C3<br />on KO-FI</span>

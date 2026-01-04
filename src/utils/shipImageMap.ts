@@ -21,18 +21,18 @@ export interface ShipImageConfig {
  */
 export const SHIP_IMAGE_CONFIG: Record<string, ShipImageConfig> = {
   golem: {
-    width: "84px",
-    height: "33.6px",
+    width: "86.4px",
+    height: "56.16px",
     alt: "GOLEM",
   },
   mole: {
-    width: "148.5px",
-    height: "59.4px",
+    width: "120px",
+    height: "78px",
     alt: "MOLE",
   },
   prospector: {
-    width: "110px",
-    height: "44px",
+    width: "108px",
+    height: "70.2px",
     alt: "Prospector",
   },
 };
@@ -42,18 +42,41 @@ export const SHIP_IMAGE_CONFIG: Record<string, ShipImageConfig> = {
  */
 export const SHIP_IMAGE_CONFIG_SMALL: Record<string, ShipImageConfig> = {
   golem: {
-    width: "75px",
-    height: "30px",
+    width: "52.5px",
+    height: "34.13px",
     alt: "GOLEM",
   },
   mole: {
-    width: "135px",
-    height: "54px",
+    width: "88.58px",
+    height: "57.57px",
     alt: "MOLE",
   },
   prospector: {
-    width: "100px",
-    height: "40px",
+    width: "63.53px",
+    height: "41.29px",
+    alt: "Prospector",
+  },
+};
+
+/**
+ * Ship image configurations for portrait mobile multi-ship mode.
+ * Uses vw units for viewport-relative scaling.
+ * Aspect ratio maintained at 1.538:1 (120:78 base).
+ */
+export const SHIP_IMAGE_CONFIG_PORTRAIT: Record<string, ShipImageConfig> = {
+  golem: {
+    width: "14vw",
+    height: "9.1vw",
+    alt: "GOLEM",
+  },
+  mole: {
+    width: "24vw",
+    height: "15.6vw",
+    alt: "MOLE",
+  },
+  prospector: {
+    width: "17vw",
+    height: "11vw",
     alt: "Prospector",
   },
 };
@@ -62,10 +85,18 @@ export const SHIP_IMAGE_CONFIG_SMALL: Record<string, ShipImageConfig> = {
  * Get image configuration for a ship by ID.
  * @param shipId - The ship ID
  * @param small - If true, returns smaller dimensions for multi-ship mode
+ * @param portrait - If true, returns vw-based dimensions for portrait mobile
  * Returns null if ship ID is not found (fallback to symbol rendering).
  */
-export function getShipImageConfig(shipId: string, small = false): ShipImageConfig | null {
-  const config = small ? SHIP_IMAGE_CONFIG_SMALL : SHIP_IMAGE_CONFIG;
+export function getShipImageConfig(shipId: string, small = false, portrait = false): ShipImageConfig | null {
+  let config: Record<string, ShipImageConfig>;
+  if (portrait) {
+    config = SHIP_IMAGE_CONFIG_PORTRAIT;
+  } else if (small) {
+    config = SHIP_IMAGE_CONFIG_SMALL;
+  } else {
+    config = SHIP_IMAGE_CONFIG;
+  }
   return config[shipId] || null;
 }
 
