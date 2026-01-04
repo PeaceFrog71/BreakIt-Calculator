@@ -1214,6 +1214,8 @@ button, .btn-primary, .btn-secondary {
   .kofi-overlay-btn {
     left: auto !important;
     right: 10px !important;
+    transform: scale(0.9) !important;
+    transform-origin: bottom right !important;
   }
 
   /* Rock Properties & Gadget labels - consistent font size */
