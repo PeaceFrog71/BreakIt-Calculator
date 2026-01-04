@@ -68,6 +68,9 @@ export default function MiningGroupManager({
     setSavedGroups(getSavedMiningGroups());
     setGroupName('');
     setShowDialog(false);
+
+    // Close drawer after save (same callback as after load)
+    onAfterLoad?.();
   };
 
   const handleLoad = (id: string) => {
