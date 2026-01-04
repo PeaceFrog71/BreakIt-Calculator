@@ -1108,3 +1108,90 @@ button, .btn-primary, .btn-secondary {
     text-align: center;
   }
 }
+
+/* ==========================================================================
+   TABLET LANDSCAPE - Override all previous mobile rules for tablets
+   Tablets have landscape height > 600px, phones have < 500px
+   This MUST be at the end of the file to override earlier rules
+   ========================================================================== */
+@media (orientation: landscape) and (pointer: coarse) and (min-height: 600px) and (min-width: 768px) {
+  /* Header - tablet-appropriate sizing (not desktop huge, not phone tiny) */
+  .app-header {
+    padding: 0.75rem 2.5rem !important;
+    grid-template-columns: 60px 1fr 38px !important;
+    gap: 0.5rem !important;
+  }
+
+  .app-header h1 {
+    font-size: 1.4rem !important;
+  }
+
+  .header-logo {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .version-tag {
+    font-size: 0.6rem !important;
+  }
+
+  /* Tab navigation - compact for tablet */
+  .tab-navigation {
+    padding: 0.25rem 2.5rem !important;
+  }
+
+  .tab-button {
+    padding: 0.4rem 1rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Content area - 75% width, 60% height */
+  .overview-tab.mobile-single-column .overview-center {
+    max-width: calc(75vw - 5rem) !important;
+    width: 100% !important;
+  }
+
+  .overview-center {
+    max-width: calc(75vw - 5rem) !important;
+  }
+
+  /* Result display - scale entire display to fit */
+  .result-display {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .rock-display {
+    transform: scale(0.9) !important;
+    transform-origin: top center !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+    margin-top: -1rem !important;
+  }
+
+  /* Ensure ship image stays inside container */
+  .rock-display .ship-image-container {
+    overflow: hidden !important;
+    border-radius: 8px !important;
+  }
+
+  /* Status indicator - scale to match display (0.9 scale), tight to display */
+  .status-indicator {
+    padding: 0.5rem 1rem !important;
+    transform: scale(0.9) !important;
+    transform-origin: top center !important;
+    margin: 0 auto 0 auto !important;
+  }
+
+  .status-indicator h2 {
+    font-size: 1.2rem !important;
+  }
+
+  /* Power bar - scale to match display (0.9 scale), pull up to display */
+  .power-bar-container {
+    transform: scale(0.9) !important;
+    transform-origin: top center !important;
+    margin: -4rem auto 3.5rem auto !important;
+    padding: 0.5rem 1rem !important;
+  }
+}
