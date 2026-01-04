@@ -201,6 +201,29 @@ export default function MobileShipControlModal({
             </div>
           )}
 
+          {/* Scanning Laser Selector - Prospector/GOLEM (single-laser ships) */}
+          {!isMole && rock?.resistanceMode === 'modified' && onSetScanningShip && (
+            (() => {
+              const laser = config.lasers[0];
+              const hasLaser = laser?.laserHead && laser.laserHead.id !== 'none';
+              const isSelected = rock.scannedByShipId === currentShipId && rock.scannedByLaserIndex === 0;
+
+              if (!hasLaser) return null;
+
+              return (
+                <div className="mobile-control-section">
+                  <div className="mobile-control-label">Scanning Ship</div>
+                  <button
+                    className={`mobile-scanning-button single-laser ${isSelected ? 'selected' : ''}`}
+                    onClick={() => onSetScanningShip(currentShipId, 0)}
+                  >
+                    📡 {isSelected ? 'THIS SHIP SCANNED' : 'MARK AS SCANNER'}
+                  </button>
+                </div>
+              );
+            })()
+          )}
+
           {/* No controls message */}
           {!isMole && !hasAnyActiveModules && isSingleShipMode && (
             <div className="mobile-no-controls">

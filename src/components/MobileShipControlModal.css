@@ -229,6 +229,14 @@
   transform: scale(0.95);
 }
 
+.mobile-scanning-button.single-laser {
+  flex: none;
+  width: 100%;
+  height: 52px;
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+}
+
 .mobile-no-controls {
   text-align: center;
   color: var(--text-secondary);

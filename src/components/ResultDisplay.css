@@ -144,6 +144,16 @@
   pointer-events: auto; /* Re-enable clicks for ship icons */
 }
 
+/* Ship-type z-index: GOLEM behind lasers, Prospector/MOLE in front */
+.ship-icon.ship-golem {
+  z-index: 10; /* Below laser z-index: 20 */
+}
+
+.ship-icon.ship-prospector,
+.ship-icon.ship-mole {
+  z-index: 25; /* Above laser z-index: 20 */
+}
+
 .ship-icon.clickable {
   cursor: pointer;
 }
@@ -298,7 +308,7 @@
 }
 
 .laser-beam-gif {
-  z-index: 10;
+  z-index: 20;
 }
 
 .laser-beam-animated {
@@ -1289,15 +1299,26 @@
   }
 
   /* Smaller ship icons and labels for portrait multi-ship only */
+  .ships-around-rock.multi-ship-mode .ship-icon {
+    margin-top: -2vw !important;
+  }
+
   .ships-around-rock.multi-ship-mode .ship-image {
     max-width: clamp(35px, 12vw, 55px) !important;
     max-height: clamp(22px, 8vw, 38px) !important;
   }
 
   .ships-around-rock.multi-ship-mode .ship-label {
+    position: absolute !important;
+    top: 100% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin-top: 0.1rem !important;
     font-size: 0.55rem !important;
     padding: 0.1rem 0.2rem !important;
-    max-width: clamp(40px, 14vw, 60px) !important;
+    max-width: clamp(50px, 22vw, 90px) !important;
+    white-space: nowrap !important;
+    background: transparent !important;
   }
 
   /* Non-positioned status indicator - center with margin */

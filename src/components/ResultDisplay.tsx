@@ -612,7 +612,7 @@ export default function ResultDisplay({
 
                   {/* Ship icon */}
                   <div
-                    className={`ship-icon active ${isMobile ? 'mobile-tappable' : ''}`}
+                    className={`ship-icon active ship-${selectedShip.id} ${isMobile ? 'mobile-tappable' : ''}`}
                     style={{
                       position: "absolute",
                       top: `calc(50% + ${shipY}px)`,
@@ -988,18 +988,135 @@ export default function ResultDisplay({
                         const rockCenterEndY = center;
 
                         if (isPortraitMultiShip) {
-                          // 4 ship positions evenly distributed from 92% to 17%
-                          // In 800-unit SVG: positions at 736, 536, 336, 136
-                          const fixedYPositions = [736, 536, 336, 136];
+                          // Portrait multi-ship: ships on left (CSS left:0), rock on right (offset 25vw)
+                          //
+                          // Container dimensions:
+                          // - .rock-display has padding: 1rem (16px each side)
+                          // - So actual container width = viewport - 32px
+                          // - Container has aspect-ratio 3:4, so height = width * 4/3
+                          const viewportWidth = window.innerWidth;
+                          const containerPadding = 32; // 1rem × 2 sides
+                          const containerWidth = viewportWidth - containerPadding;
+                          const containerHeight = containerWidth * (4 / 3);
 
-                          // Ships are at CSS left: 0, flush to container edge
-                          // Use left edge of SVG for laser origin
-                          laserStartX = 30;
-                          laserStartY = fixedYPositions[index] ?? center;
+                          // SVG coordinate system: 800×800, centered on container
+                          // SVG point 400 = container center
+                          // To convert CSS (container-relative) to SVG:
+                          //   SVG_x = CSS_x - containerWidth/2 + 400
 
-                          // Rock is positioned with translateX(22vw) from flex-end
-                          // In 800-unit SVG, rock center is around 620-650
-                          rockCenterEndX = 640;
+                          // Ship positions: CSS left: 0, top: percent%
+                          // Ship image dimensions from portrait config (in vw):
+                          const shipWidthsVW: Record<string, number> = {
+                            prospector: 17,  // from SHIP_IMAGE_CONFIG_PORTRAIT
+                            golem: 14,
+                            mole: 24,
+                          };
+                          const shipHeightsVW: Record<string, number> = {
+                            prospector: 11,
+                            golem: 9.1,
+                            mole: 15.6,
+                          };
+                          const shipWidthVW = shipWidthsVW[shipInstance.ship.id] ?? 15;
+                          const shipHeightVW = shipHeightsVW[shipInstance.ship.id] ?? 10;
+                          // Convert vw to pixels: vw units are % of viewport, not container
+                          const shipWidthPx = (shipWidthVW / 100) * viewportWidth;
+                          const shipHeightPx = (shipHeightVW / 100) * viewportWidth;
+
+                          // Ship front (right edge) in container CSS coords
+                          // Add 1.5x ship width to account for flipped images and visual alignment
+                          const shipFrontCSS = shipWidthPx * 1.5;
+
+                          // Convert to SVG coords
+                          laserStartX = shipFrontCSS - containerWidth / 2 + 400;
+
+                          // Ship Y positions: 92%, 67%, 42%, 17% of container height
+                          const portraitYPercents = [0.92, 0.67, 0.42, 0.17];
+                          const shipYPercent = portraitYPercents[index] ?? 0.5;
+
+                          // Y position: convert from container % to SVG coords
+                          const shipYInContainer = shipYPercent * containerHeight;
+                          laserStartY = shipYInContainer - containerHeight / 2 + 400;
+
+                          // Account for CSS margin-top: -2vw on ship-icon
+                          const marginTopOffset = (2 / 100) * viewportWidth;
+                          laserStartY -= marginTopOffset;
+
+                          // Adjust Y to align with ship center (ships use translateY(-50%))
+                          // Upper ships need more offset due to position near container edge
+                          if (index === 3) {
+                            laserStartY += shipHeightPx * 1.4;
+                            // Prospector needs extra adjustments
+                            if (shipInstance.ship.id === 'prospector') {
+                              laserStartX -= shipWidthPx * 0.1;
+                              laserStartY += shipHeightPx * 0.3;
+                            }
+                            // GOLEM needs extra adjustments
+                            if (shipInstance.ship.id === 'golem') {
+                              laserStartX += shipWidthPx * 0.3;
+                              laserStartY += shipHeightPx * 0.6;
+                            }
+                            // MOLE needs extra adjustments
+                            if (shipInstance.ship.id === 'mole') {
+                              laserStartX -= shipWidthPx * 0.4;
+                              laserStartY -= shipHeightPx * 0.1;
+                            }
+                          } else if (index === 2) {
+                            laserStartY += shipHeightPx * 0.3;
+                            // Prospector needs extra adjustments
+                            if (shipInstance.ship.id === 'prospector') {
+                              laserStartY += shipHeightPx * 0.3;
+                            }
+                            // GOLEM needs extra adjustments
+                            if (shipInstance.ship.id === 'golem') {
+                              laserStartX += shipWidthPx * 0.4;
+                              laserStartY += shipHeightPx * 0.3;
+                            }
+                            // MOLE needs extra adjustments
+                            if (shipInstance.ship.id === 'mole') {
+                              laserStartX -= shipWidthPx * 0.4;
+                              laserStartY += shipHeightPx * 0.2;
+                            }
+                          } else if (index === 1) {
+                            laserStartY -= shipHeightPx * 0.8;
+                            laserStartX += shipWidthPx * 0.1;
+                            // Prospector needs extra adjustments
+                            if (shipInstance.ship.id === 'prospector') {
+                              laserStartX -= shipWidthPx * 0.1;
+                              laserStartY += shipHeightPx * 0.4;
+                            }
+                            // GOLEM needs extra adjustments
+                            if (shipInstance.ship.id === 'golem') {
+                              laserStartX += shipWidthPx * 0.3;
+                            }
+                            // MOLE needs extra adjustments
+                            if (shipInstance.ship.id === 'mole') {
+                              laserStartX -= shipWidthPx * 0.5;
+                              laserStartY += shipHeightPx * 0.4;
+                            }
+                          } else if (index === 0) {
+                            laserStartY -= shipHeightPx * 2.0;
+                            laserStartX += shipWidthPx * 0.1;
+                            // Prospector needs extra adjustments
+                            if (shipInstance.ship.id === 'prospector') {
+                              laserStartY += shipHeightPx * 0.3;
+                            }
+                            // GOLEM needs extra adjustments
+                            if (shipInstance.ship.id === 'golem') {
+                              laserStartX += shipWidthPx * 0.3;
+                              laserStartY -= shipHeightPx * 0.3;
+                            }
+                            // MOLE needs extra adjustments
+                            if (shipInstance.ship.id === 'mole') {
+                              laserStartX -= shipWidthPx * 0.5;
+                              laserStartY += shipHeightPx * 0.8;
+                            }
+                          }
+
+                          // Rock is at container center + translateX(25vw)
+                          // Rock center CSS X = containerWidth/2 + 25vw (in viewport pixels)
+                          const rockOffsetPx = (25 / 100) * viewportWidth;
+                          const rockCenterCSS = containerWidth / 2 + rockOffsetPx;
+                          rockCenterEndX = rockCenterCSS - containerWidth / 2 + 400;
                         } else {
                           // Landscape mode: use polar coordinates
                           const baseOffsets = SHIP_OFFSETS[shipInstance.ship.id] || SHIP_OFFSETS.prospector;
@@ -1103,7 +1220,7 @@ export default function ResultDisplay({
                     <div
                       className={`ship-icon ${
                         isActive ? "active" : "inactive"
-                      } clickable ${isMobile ? 'mobile-tappable' : ''}`}
+                      } clickable ship-${shipInstance.ship.id} ${isMobile ? 'mobile-tappable' : ''}`}
                       style={isPortraitMultiShip ? {
                         position: "absolute",
                         top: `${portraitYPercent}%`,
@@ -1197,39 +1314,32 @@ export default function ResultDisplay({
                       })()}
                       <div className="ship-label">{shipInstance.name}</div>
 
+                      {/* Scanning indicator - shows small icon when this ship is the scanner */}
+                      {rock.resistanceMode === 'modified' &&
+                       rock.scannedByShipId === shipInstance.id && (
+                        <span
+                          className="scanning-indicator"
+                          style={isPortraitMultiShip ? {
+                            // Portrait mode: +3vw up and +3vw right of ship
+                            position: "absolute",
+                            top: "-3vw",
+                            right: "-3vw",
+                            fontSize: "0.8rem",
+                            zIndex: 30,
+                            pointerEvents: "none"
+                          } : {
+                            // Landscape mode
+                            position: "absolute",
+                            top: "-15px",
+                            right: "-15px",
+                            fontSize: "0.9rem",
+                            zIndex: 10,
+                            pointerEvents: "none"
+                          }}>
+                          📡
+                        </span>
+                      )}
                     </div>
-
-                    {/* Scanning sensor for Prospector/GOLEM (single-laser ships) in multi-ship mode */}
-                    {onSetScanningShip &&
-                     rock.resistanceMode === 'modified' &&
-                     (shipInstance.ship.id === 'prospector' || shipInstance.ship.id === 'golem') &&
-                     shipInstance.config.lasers[0]?.laserHead &&
-                     shipInstance.config.lasers[0].laserHead.id !== 'none' && (
-                      <span
-                        className={`scanning-sensor ${
-                          rock.scannedByShipId === shipInstance.id && rock.scannedByLaserIndex === 0
-                            ? 'selected' : ''
-                        }`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          onSetScanningShip(shipInstance.id, 0);
-                        }}
-                        title="Click to mark as scanning ship"
-                        style={{
-                          position: "absolute",
-                          top: `calc(50% + ${y - 45}px)`,
-                          left: x < 0
-                            ? `calc(50% + ${x - 40}px)`
-                            : `calc(50% + ${x + 60}px)`,
-                          transform: "translate(-50%, -50%)",
-                          cursor: "pointer",
-                          pointerEvents: "auto",
-                          zIndex: 10
-                        }}>
-                        📡
-                      </span>
-                    )}
 
                     {/* Active module controls for Prospector/GOLEM in multi-ship mode */}
                     {(shipInstance.ship.id === 'prospector' || shipInstance.ship.id === 'golem') &&
@@ -1560,7 +1670,11 @@ export default function ResultDisplay({
         <div className="scanning-ship-message">
           <span className="message-icon">📡</span>
           <span className="message-text">
-            Select which ship/laser scanned this rock<br />by activating a sensor icon or laser radio button
+            {isMobile ? (
+              "SELECT SHIP/LASER USED TO SCAN"
+            ) : (
+              <>Select which ship/laser scanned this rock<br />by activating a sensor icon or laser radio button</>
+            )}
           </span>
         </div>
       )}
