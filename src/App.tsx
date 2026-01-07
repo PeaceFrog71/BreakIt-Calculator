@@ -30,6 +30,10 @@ import ResistanceModeSelector from "./components/ResistanceModeSelector";
 import MobileDrawer from "./components/MobileDrawer";
 import { useMobileDetection } from "./hooks/useMobileDetection";
 import pfLogo from "./assets/PFlogo.png";
+import gadgetLabelVertical from "./assets/gadget label vertical.png";
+import rockLabelVertical from "./assets/rocks_tray_label_small.png";
+import shipLibraryLabelVertical from "./assets/ship_library_small.png";
+import groupLibraryLabelVertical from "./assets/group_library_small.png";
 import { version } from "../package.json";
 
 // Default rock values for reset functionality
@@ -736,6 +740,7 @@ function App() {
                           side="left"
                           title="Rock Properties"
                           tabLabel="Rock"
+                          tabImage={rockLabelVertical}
                         >
                           {rockPropertiesContent}
                         </MobileDrawer>
@@ -746,6 +751,7 @@ function App() {
                           side="right"
                           title="Gadgets"
                           tabLabel="Gadgets"
+                          tabImage={gadgetLabelVertical}
                         >
                           {gadgetsContent}
                         </MobileDrawer>
@@ -843,6 +849,7 @@ function App() {
                     side="left"
                     title="Ship Library"
                     tabLabel="Ship Library"
+                    tabImage={shipLibraryLabelVertical}
                   >
                     <ConfigManager
                       onAddToGroup={(shipInstance) => {
@@ -863,6 +870,7 @@ function App() {
                     side="right"
                     title="Group Library"
                     tabLabel="Group Library"
+                    tabImage={groupLibraryLabelVertical}
                   >
                     <MiningGroupManager
                       currentMiningGroup={miningGroup}
