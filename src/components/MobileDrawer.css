@@ -305,14 +305,14 @@
 /* Edge tabs - visible when drawer is closed */
 .mobile-drawer-tab {
   position: fixed;
-  top: 50%;
+  top: 54%; /* Centered on display area (below header) */
   transform: translateY(-50%);
   z-index: 998;
   background: transparent;
   border: 2px solid var(--accent-cyan);
   color: var(--accent-cyan);
   cursor: pointer;
-  padding: 1.5rem 1rem; /* Wider padding */
+  padding: 1.5rem 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -335,24 +335,20 @@
   border-bottom-left-radius: 0;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
+  height: 26vh;
+  width: 8rem;
 }
 
-/* Right tab - flush right edge, rounded on left side (toward center)
-   The 180deg rotation flips the element, so we define pre-rotation borders:
-   - border-left: none removes what becomes the right (screen edge) border after rotation
-   - right-side border-radius become the left (center-facing) corners after rotation */
+/* Right tab - flush right edge, rounded on left side (toward center) */
 .mobile-drawer-tab.right {
   right: 0;
-  border-left: none;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: translateY(-50%) rotate(180deg);
+  border-right: none;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  height: 26vh;
+  width: 8rem;
 }
 
 /* Bottom tab - centered at bottom edge, width matches side tabs' height visually */
@@ -363,13 +359,13 @@
   transform: translateX(-50%);
   writing-mode: horizontal-tb;
   text-orientation: initial;
-  height: auto;
+  height: 1.4rem; /* Reduced further to avoid deficit bar collision on iPad */
   width: 33vw !important; /* Use vw for width to match side tabs' vh for height */
   max-width: 33vw !important;
   margin: 0 !important;
-  padding: 0.75rem 0.5rem;
+  padding: 0.1rem 0.5rem;
   border-bottom: none;
-  border-radius: 20px 20px 0 0;
+  border-radius: 10px 10px 0 0;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -379,6 +375,15 @@
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+/* Image label for tabs (for classic iPad support - no vertical text) */
+.mobile-drawer-tab-image {
+  height: 70%; /* Reduced by 20% to fit within restored tab width */
+  max-height: 70%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 /* Portrait mode - wider drawers and slimmer tabs for phone use */
@@ -391,19 +396,22 @@
   /* Slimmer tabs to save horizontal space */
   .mobile-drawer-tab {
     padding: 0.8rem 0.5rem;
-    top: 45%;
+    top: 50%; /* Centered on display area (below header) */
     height: 30vh;
   }
 
-  /* Right tab needs adjusted transform since it has rotation */
+  /* Side tabs - narrower for portrait mobile */
+  .mobile-drawer-tab.left,
   .mobile-drawer-tab.right {
-    transform: translateY(-50%) rotate(180deg);
+    width: 3rem;
+    height: 25vh;
   }
 
-  /* Bottom tab - use vw for width */
+  /* Bottom tab - use vw for width, taller for mobile phones */
   .mobile-drawer-tab.bottom {
     width: 50vw !important;
     max-width: 50vw !important;
+    height: 3rem; /* Taller for mobile phones */
     padding: 0.5rem 1rem;
   }
 
@@ -492,6 +500,12 @@
   .mobile-drawer-tab {
     padding: 0.5rem 0.4rem;
     height: 40vh;
+  }
+
+  /* Bottom tab - reduced height for iPad to avoid deficit bar collision */
+  .mobile-drawer-tab.bottom {
+    height: 2.75rem !important;
+    padding: 0.3rem 0.5rem !important;
   }
 
   .mobile-drawer-tab-text {

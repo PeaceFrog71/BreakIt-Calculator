@@ -27,6 +27,7 @@ import moleShipImage from "../assets/mining_ship_mole_pixel_120x78_transparent.p
 import prospectorShipImage from "../assets/mining_ship_prospector_pixel_120x78.png";
 import asteroidImage from "../assets/asteroid_pixel_1024x1024_true_transparent.png";
 import laserGif from "../assets/mining_laser_wave_tileable.gif";
+import dataLabelHorizontal from "../assets/Data_tray_label_small.png";
 
 // Map ship IDs to their imported image assets
 const SHIP_IMAGES: Record<string, string> = {
@@ -2021,6 +2022,7 @@ export default function ResultDisplay({
           side="bottom"
           title="Data"
           tabLabel="DATA"
+          tabImage={dataLabelHorizontal}
         >
           <div className="stats-grid mobile-drawer-stats">
             <div className="stat-card">

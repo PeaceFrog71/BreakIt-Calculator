@@ -8,6 +8,7 @@ interface MobileDrawerProps {
   side: 'left' | 'right' | 'bottom';
   title: string;
   tabLabel: string;
+  tabImage?: string;  // Optional image URL for tab label (for classic iPad support)
   children: ReactNode;
 }
 
@@ -18,6 +19,7 @@ export default function MobileDrawer({
   side,
   title,
   tabLabel,
+  tabImage,
   children,
 }: MobileDrawerProps) {
   return (
@@ -29,7 +31,15 @@ export default function MobileDrawer({
           onClick={onOpen}
           aria-label={`Open ${title}`}
         >
-          <span className="mobile-drawer-tab-text">{tabLabel}</span>
+          {tabImage ? (
+            <img
+              src={tabImage}
+              alt={tabLabel}
+              className="mobile-drawer-tab-image"
+            />
+          ) : (
+            <span className="mobile-drawer-tab-text">{tabLabel}</span>
+          )}
         </button>
       )}
 
