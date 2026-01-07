@@ -51,6 +51,13 @@
   }
 }
 
+/* Tablet landscape (iPad): larger font size for labels */
+@media (orientation: landscape) and (pointer: coarse) and (min-width: 768px) and (min-height: 600px) {
+  .tab-button {
+    font-size: 1.7rem !important;
+  }
+}
+
 /* Portrait mobile: smaller tab fonts to fit */
 @media (orientation: portrait) and (pointer: coarse) {
   .tab-navigation {

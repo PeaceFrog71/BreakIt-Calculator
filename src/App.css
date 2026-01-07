@@ -1163,9 +1163,11 @@ button, .btn-primary, .btn-secondary {
   }
 
   /* Result display - scale entire display to fit */
+  /* overflow:hidden contains the laser container that overflows from rock-display */
   .result-display {
     max-width: 100% !important;
     width: 100% !important;
+    overflow: hidden !important;
   }
 
   .rock-display {
@@ -1246,6 +1248,25 @@ button, .btn-primary, .btn-secondary {
     justify-content: center !important;
     align-items: center !important;
     text-align: center !important;
+  }
+
+  /* Remove scale(0.9) from rock-display so display matches container */
+  /* Add overflow:visible so the 800x800 laser container isn't clipped */
+  .rock-display {
+    transform: none !important;
+    overflow: visible !important;
+    border-radius: 12px !important;
+  }
+
+  /* Power bar - no scale needed since rock-display no longer scales */
+  .power-bar-container {
+    transform: none !important;
+    margin: 0 auto 4rem auto !important;
+  }
+
+  /* Add bottom padding for easier scrolling */
+  .App {
+    padding-bottom: 15vh !important;
   }
 }
 
