@@ -745,10 +745,11 @@ export default function ResultDisplay({
                       // Mobile: ship on left side
                       position: "absolute",
                       top: "50%",
-                      // Phones: push to left edge of display, Tablets: center then shift left with transform
-                      left: window.innerWidth < 768 ? "0" : "50%",
+                      // Phones: fixed position that doesn't change with rock size
+                      // Tablets: center then shift left with transform
+                      left: window.innerWidth < 768 ? "-5vw" : "50%",
                       transform: window.innerWidth < 768
-                        ? "translate(-105%, -50%)"  // Phone: push left to display edge
+                        ? "translateY(-50%)"  // Phone: only center vertically
                         : "translate(calc(-50% - 20vw), -50%)",  // Tablet: vw-based
                     } : {
                       // Desktop: ship positioned left (moved right 150px)
@@ -1482,8 +1483,8 @@ export default function ResultDisplay({
                           // GOLEM rotation - positions point toward rock
                           if (shipInstance.ship.id === "golem") {
                             if (index === 0) {
-                              // Top right (60°): rotate 30° clockwise
-                              shipTransform = "rotate(30deg)";
+                              // Top right (60°): rotate 10° clockwise (30° base - 20° down)
+                              shipTransform = "rotate(10deg)";
                             } else if (index === 1) {
                               // Bottom right (120°): rotate 60° clockwise
                               shipTransform = "rotate(60deg)";
@@ -1491,8 +1492,8 @@ export default function ResultDisplay({
                               // Bottom left (240°): mirror + 60° rotation
                               shipTransform = "scaleX(-1) rotate(60deg)";
                             } else if (index === 3) {
-                              // Top left (300°): mirror + 30° rotation
-                              shipTransform = "scaleX(-1) rotate(30deg)";
+                              // Top left (300°): mirror + 10° rotation (30° base - 20° down)
+                              shipTransform = "scaleX(-1) rotate(10deg)";
                             }
                           } else {
                             // Non-GOLEM ships (MOLE, Prospector) use original logic

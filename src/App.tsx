@@ -33,6 +33,7 @@ import pfLogo from "./assets/PFlogo.png";
 import gadgetLabelVertical from "./assets/gadget label vertical.png";
 import rockLabelVertical from "./assets/rocks_tray_label_small.png";
 import shipLibraryLabelVertical from "./assets/ship_library_small.png";
+import shipLibraryLabelHorz from "./assets/ship_library_small_horz.png";
 import groupLibraryLabelVertical from "./assets/group_library_small.png";
 import { version } from "../package.json";
 
@@ -828,6 +829,7 @@ function App() {
                   side="bottom"
                   title="Ship Library"
                   tabLabel="Library"
+                  tabImage={shipLibraryLabelHorz}
                 >
                   <ConfigManager
                     currentShip={selectedShip}
