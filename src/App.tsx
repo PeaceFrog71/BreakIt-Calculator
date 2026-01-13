@@ -30,9 +30,11 @@ import ResistanceModeSelector from "./components/ResistanceModeSelector";
 import MobileDrawer from "./components/MobileDrawer";
 import { useMobileDetection } from "./hooks/useMobileDetection";
 import pfLogo from "./assets/PFlogo.png";
+import communityLogo from "./assets/MadeByTheCommunity_Black.png";
 import gadgetLabelVertical from "./assets/gadget label vertical.png";
 import rockLabelVertical from "./assets/rocks_tray_label_small.png";
 import shipLibraryLabelVertical from "./assets/ship_library_small.png";
+import shipLibraryLabelHorz from "./assets/ship_library_small_horz.png";
 import groupLibraryLabelVertical from "./assets/group_library_small.png";
 import { version } from "../package.json";
 
@@ -137,6 +139,14 @@ function App() {
 
   // Mobile detection via shared hook
   const isMobile = useMobileDetection();
+  // Phone vs tablet detection (phones < 768px)
+  const [isPhone, setIsPhone] = useState(typeof window !== 'undefined' && window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsPhone(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Rock save slots (3 slots for quick save/load, pre-filled with defaults)
   const [rockSlots, setRockSlots] = useState<Rock[]>(() => {
@@ -765,19 +775,19 @@ function App() {
                           <h2>Rock Properties</h2>
                           {rockPropertiesContent}
                         </div>
-
-                        {/* Mobile Ko-fi link - only visible on mobile */}
-                        <a
-                          href="https://ko-fi.com/peacefroggaming"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="kofi-mobile-inline"
-                        >
-                          <img src="/rieger-icon.png" alt="Rieger-C3 mining module icon" />
-                          <span>Buy me a Rieger-C3<br />on KO-FI</span>
-                        </a>
                       </div>
                     )}
+
+                    {/* Mobile Ko-fi link - CSS controls visibility (shows only on mobile) */}
+                    <a
+                      href="https://ko-fi.com/peacefroggaming"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="kofi-mobile-inline"
+                    >
+                      <img src="/rieger-icon.png" alt="Rieger-C3 mining module icon" />
+                      <span>Buy me a Rieger-C3<br />on KO-FI</span>
+                    </a>
 
                     {/* Center - Mining Graphic */}
                     <div className="overview-center">
@@ -828,6 +838,7 @@ function App() {
                   side="bottom"
                   title="Ship Library"
                   tabLabel="Library"
+                  tabImage={shipLibraryLabelHorz}
                 >
                   <ConfigManager
                     currentShip={selectedShip}
@@ -956,6 +967,15 @@ function App() {
       </div>
 
       <HelpModal isOpen={showHelpModal} onClose={() => setShowHelpModal(false)} />
+
+      {/* Community Logo - desktop: lower right, tablet: lower left, phone: in data drawer */}
+      {!(isMobile && isPhone) && (
+        <img
+          src={communityLogo}
+          alt="Made by the Community"
+          className={`community-logo ${isMobile ? 'tablet' : ''}`}
+        />
+      )}
     </div>
   );
 }
