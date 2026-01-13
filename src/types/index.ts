@@ -104,11 +104,11 @@ export interface MiningGroup {
   name?: string; // Optional name for the group (preserved when loaded from saved configs)
 }
 
-// Ship presets
+// Ship presets - ordered by size: Golem → Prospector → MOLE
 export const SHIPS: Ship[] = [
+  { id: 'golem', name: 'Drake GOLEM', laserSlots: 1, maxLaserSize: 1, description: 'Heavy mining vehicle - Fixed Pitman laser' },
   { id: 'prospector', name: 'MISC Prospector', laserSlots: 1, maxLaserSize: 1, description: 'Solo mining ship - Size 1 lasers only' },
   { id: 'mole', name: 'Argo MOLE', laserSlots: 3, maxLaserSize: 2, minLaserSize: 2, description: 'Multi-crew mining ship - Size 2 lasers only' },
-  { id: 'golem', name: 'Drake GOLEM', laserSlots: 1, maxLaserSize: 1, description: 'Heavy mining vehicle - Fixed Pitman laser' },
 ];
 
 // Laser heads database - modifiers from RedMonster's Mining Cheatsheet
@@ -133,7 +133,7 @@ export const LASER_HEADS: LaserHead[] = [
 
 // Modules database - values from RedMonsterSC's Mining Cheatsheet
 export const MODULES: Module[] = [
-  { id: 'none', name: '---', powerModifier: 1, resistModifier: 1, category: 'passive' },
+  { id: 'none', name: 'No Module Selected', powerModifier: 1, resistModifier: 1, category: 'passive' },
   // Active Modules
   // activationType: 'stackable' = can run with other actives (only Surge), 'sustained' = only one at a time
   { id: 'brandt', name: 'Brandt', powerModifier: 1.35, resistModifier: 1.15, shatterDamageModifier: 0.7, category: 'active', activationType: 'sustained', duration: '60s', uses: 5 },

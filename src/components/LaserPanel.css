@@ -10,19 +10,46 @@
 }
 
 .laser-panel-header h3 {
-  margin: 0;
+  margin: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.laser-panel-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.laser-panel-header .expand-indicator {
+  position: static !important;
+  transform: none !important;
+  right: auto !important;
+  top: auto !important;
+  color: var(--accent-cyan);
+  font-size: 0.9rem;
+  opacity: 0.9;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
 .manned-status-button {
-  font-size: 0.65rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  padding: 0.15rem 0.4rem;
-  border-radius: 3px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
+}
+
+/* Tablet: larger manned button */
+@media (pointer: coarse) and (min-width: 768px) {
+  .manned-status-button {
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+  }
 }
 
 .manned-status-button.manned {
@@ -131,4 +158,35 @@
 .effect-badge.neutral {
   color: var(--text-secondary);
   background: rgba(168, 181, 199, 0.15);
+}
+
+/* Make data plaques tappable on mobile when collapsed */
+.laser-panel .component-info-box.tappable {
+  cursor: pointer;
+  transition: background 0.2s ease;
+  position: relative;
+}
+
+.laser-panel .component-info-box.tappable:active {
+  background: rgba(0, 255, 255, 0.15);
+}
+
+/* Subtle hint that plaques are tappable */
+.laser-panel .component-info-box.tappable::after {
+  content: '✎';
+  position: absolute;
+  right: 0.4rem;
+  top: 0.3rem;
+  color: var(--accent-cyan);
+  font-size: 0.65rem;
+  opacity: 0.5;
+}
+
+/* Make entire laser panel clickable on mobile when collapsed */
+.laser-panel.clickable {
+  cursor: pointer;
+}
+
+.laser-panel.clickable:active {
+  background: rgba(0, 255, 255, 0.05);
 }

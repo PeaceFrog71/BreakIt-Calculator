@@ -1,7 +1,9 @@
+import { useState, useRef } from 'react';
 import type { LaserConfiguration, Ship, LaserHead, Module } from '../types';
 import { LASER_HEADS, MODULES } from '../types';
 import { calculateLaserPower } from '../utils/calculator';
 import { formatModuleTooltip, formatPct } from '../utils/formatters';
+import { useMobileDetection } from '../hooks/useMobileDetection';
 import './LaserPanel.css';
 
 // Helper to get the best modifier display for modules without power modifier
@@ -120,12 +122,27 @@ interface LaserPanelProps {
 }
 
 export default function LaserPanel({ laserIndex, laser, selectedShip, onChange, showMannedToggle }: LaserPanelProps) {
+  const isMobile = useMobileDetection();
+  // Start collapsed if laser is selected (modules showing "No Module Selected" counts as set)
+  const hasLaserOnInit = laser.laserHead && laser.laserHead.id !== 'none';
+  const [isEditing, setIsEditing] = useState(!hasLaserOnInit);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Setup complete when laser is selected (null modules showing "No Module Selected" count as set)
+  const hasLaser = laser.laserHead && laser.laserHead.id !== 'none';
+  const isGolem = selectedShip.id === 'golem';
+  const setupComplete = hasLaser;
+
+  // Show selectors if: not mobile, OR editing, OR setup not complete
+  const showSelectors = !isMobile || isEditing || !setupComplete;
+
   const handleLaserHeadChange = (headId: string) => {
     const head = LASER_HEADS.find((h) => h.id === headId) || null;
     // Reset modules array to match the new laser head's module slot count
     const moduleSlots = head?.moduleSlots || 3;
     const newModules = Array(moduleSlots).fill(null);
     onChange({ ...laser, laserHead: head, modules: newModules });
+    // Don't auto-collapse here - wait until module is also selected
   };
 
   const handleModuleChange = (moduleIndex: number, moduleId: string) => {
@@ -144,10 +161,10 @@ export default function LaserPanel({ laserIndex, laser, selectedShip, onChange, 
     newModuleActive[moduleIndex] = false;
 
     onChange({ ...laser, modules: newModules, moduleActive: newModuleActive });
+    // No auto-collapse - user must tap data box to close dropdowns
   };
 
-  // Check if GOLEM ship - if so, lock to Pitman laser
-  const isGolem = selectedShip.id === 'golem';
+  // Get Pitman laser for GOLEM display
   const pitmanLaser = LASER_HEADS.find((h) => h.id === 'pitman');
 
   // Determine which laser heads to show based on ship type
@@ -169,77 +186,100 @@ export default function LaserPanel({ laserIndex, laser, selectedShip, onChange, 
     onChange({ ...laser, isManned: !currentState });
   };
 
+  // Handle click on the panel area to toggle editing on mobile
+  const handlePanelClick = (e: React.MouseEvent) => {
+    if (!isMobile) return;
+    // Don't trigger if clicking on interactive elements
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'SELECT' || target.tagName === 'BUTTON' || target.tagName === 'INPUT') return;
+    setIsEditing(!isEditing);
+  };
+
   return (
-    <div className="laser-panel panel">
+    <div className={`laser-panel panel ${isMobile ? 'clickable' : ''}`} ref={panelRef} onClick={handlePanelClick}>
       <div className="laser-panel-header">
         <h3>Laser {laserIndex + 1}</h3>
-        {showMannedToggle && (
-          <button
-            className={`manned-status-button ${laser.isManned !== false ? 'manned' : 'unmanned'}`}
-            onClick={handleMannedToggle}
-            title={laser.isManned !== false ? 'Click to mark as unmanned' : 'Click to mark as manned'}
-          >
-            {laser.isManned !== false ? 'MANNED' : 'UNMANNED'}
-          </button>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label>Laser Head:</label>
-        {isGolem ? (
-          <div className="locked-laser">
-            <input
-              type="text"
-              value={pitmanLaser ? formatLaserHeadOption(pitmanLaser) : 'Pitman'}
-              disabled
-              style={{ width: '100%', opacity: 0.7, cursor: 'not-allowed' }}
-              title={pitmanLaser ? formatLaserHeadTooltip(pitmanLaser) : ''}
-            />
-            <small style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-              GOLEM has a fixed bespoke Pitman laser.
-            </small>
-          </div>
-        ) : (
-          <select
-            value={laser.laserHead?.id || 'none'}
-            onChange={(e) => handleLaserHeadChange(e.target.value)}
-            title={laser.laserHead ? formatLaserHeadTooltip(laser.laserHead) : 'Select a laser head'}
-          >
-            {availableLaserHeads.map((head) => (
-              <option key={head.id} value={head.id} title={formatLaserHeadTooltip(head)}>
-                {formatLaserHeadOption(head)}
-              </option>
-            ))}
-          </select>
-        )}
-      </div>
-
-      <div className="modules-section">
-        <label>Modules ({moduleSlotCount} slots):</label>
-        {Array.from({ length: moduleSlotCount }).map((_, moduleIndex) => (
-          <div key={moduleIndex} className="form-group">
-            <select
-              value={laser.modules[moduleIndex]?.id || 'none'}
-              onChange={(e) => handleModuleChange(moduleIndex, e.target.value)}
-              disabled={!laser.laserHead || laser.laserHead.id === 'none'}
-              title={laser.modules[moduleIndex] ? formatModuleTooltip(laser.modules[moduleIndex]!) : 'Select a module'}
+        <div className="header-right">
+          {showMannedToggle && (
+            <button
+              className={`manned-status-button ${laser.isManned !== false ? 'manned' : 'unmanned'}`}
+              onClick={handleMannedToggle}
+              title={laser.isManned !== false ? 'Click to mark as unmanned' : 'Click to mark as manned'}
             >
-              {MODULES.map((module) => (
-                <option key={module.id} value={module.id} title={formatModuleTooltip(module)}>
-                  {module.name}
-                  {getBestModifierDisplay(module)}
+              {laser.isManned !== false ? 'MANNED' : 'UNMANNED'}
+            </button>
+          )}
+          {isMobile && (
+            <span className="expand-indicator">{showSelectors ? '▲' : '▼'}</span>
+          )}
+        </div>
+      </div>
+
+      {/* Laser head selector - hidden on mobile when setup complete and not editing */}
+      {showSelectors && (
+        <div className="form-group">
+          <label>Laser Head:</label>
+          {isGolem ? (
+            <div className="locked-laser">
+              <input
+                type="text"
+                value={pitmanLaser ? formatLaserHeadOption(pitmanLaser) : 'Pitman'}
+                disabled
+                style={{ width: '100%', opacity: 0.7, cursor: 'not-allowed' }}
+                title={pitmanLaser ? formatLaserHeadTooltip(pitmanLaser) : ''}
+              />
+              <small style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                GOLEM has a fixed bespoke Pitman laser.
+              </small>
+            </div>
+          ) : (
+            <select
+              value={laser.laserHead?.id || 'none'}
+              onChange={(e) => handleLaserHeadChange(e.target.value)}
+              title={laser.laserHead ? formatLaserHeadTooltip(laser.laserHead) : 'Select a laser head'}
+            >
+              {availableLaserHeads.map((head) => (
+                <option key={head.id} value={head.id} title={formatLaserHeadTooltip(head)}>
+                  {formatLaserHeadOption(head)}
                 </option>
               ))}
             </select>
-          </div>
-        ))}
-      </div>
+          )}
+        </div>
+      )}
+
+      {/* Module selectors - hidden on mobile when setup complete and not editing */}
+      {showSelectors && (
+        <div className="modules-section">
+          <label>Modules ({moduleSlotCount} slots):</label>
+          {Array.from({ length: moduleSlotCount }).map((_, moduleIndex) => (
+            <div key={moduleIndex} className="form-group">
+              <select
+                value={laser.modules[moduleIndex]?.id || 'none'}
+                onChange={(e) => handleModuleChange(moduleIndex, e.target.value)}
+                disabled={!laser.laserHead || laser.laserHead.id === 'none'}
+                title={laser.modules[moduleIndex] ? formatModuleTooltip(laser.modules[moduleIndex]!) : 'Select a module'}
+              >
+                {MODULES.map((module) => (
+                  <option key={module.id} value={module.id} title={formatModuleTooltip(module)}>
+                    {module.name}
+                    {getBestModifierDisplay(module)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Component info boxes */}
       {laser.laserHead && laser.laserHead.id !== 'none' && (
         <div className="component-info-boxes">
-          {/* Laser head box */}
-          <div className="component-info-box laser-box">
+          {/* Laser head box - tappable on mobile to toggle editing */}
+          <div
+            className={`component-info-box laser-box ${isMobile ? 'tappable' : ''}`}
+            onClick={() => isMobile && setIsEditing(!isEditing)}
+          >
             <div className="component-header">
               <span className="component-name">{laser.laserHead.name}</span>
               <span className="component-power">{laser.laserHead.maxPower} → {calculateLaserPower(laser, true).toFixed(0)}</span>
@@ -299,7 +339,11 @@ export default function LaserPanel({ laserIndex, laser, selectedShip, onChange, 
             };
 
             return (
-              <div key={idx} className="component-info-box module-box">
+              <div
+                key={idx}
+                className={`component-info-box module-box ${isMobile ? 'tappable' : ''}`}
+                onClick={() => isMobile && setIsEditing(!isEditing)}
+              >
                 <div className="component-header">
                   <span className="component-name">{module.name}</span>
                   {module.category === 'active' && (

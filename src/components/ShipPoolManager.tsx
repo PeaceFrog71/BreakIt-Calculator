@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import type { MiningGroup, ShipInstance } from '../types';
 import ShipConfigModal from './ShipConfigModal';
-import ShipPoolLibrary from './ShipPoolLibrary';
-import MiningGroupManager from './MiningGroupManager';
 import { saveShipConfig, updateShipConfig, getSavedShipConfigs } from '../utils/storage';
 import { calculateLaserPower } from '../utils/calculator';
 import './ShipPoolManager.css';
@@ -98,29 +96,15 @@ export default function ShipPoolManager({ miningGroup, onChange }: ShipPoolManag
     onChange({ ...miningGroup, ships: updatedShips });
   };
 
-  const handleLoadShipFromLibrary = (shipInstance: ShipInstance) => {
-    if (miningGroup.ships.length >= 4) {
-      alert('Maximum of 4 ships allowed in mining group');
-      return;
-    }
-
-    shipInstance.isActive = true;
-    onChange({ ...miningGroup, ships: [...miningGroup.ships, shipInstance] });
-  };
-
-  const handleLoadMiningGroup = (loadedGroup: MiningGroup) => {
-    onChange(loadedGroup);
-  };
-
   return (
     <div className="ship-pool-manager">
       <div className="ship-pool-header">
         <h2>
           Mining Group
-          {miningGroup.name && <span className="group-name">: {miningGroup.name}</span>}
+          {miningGroup.name && <span className="group-name">{miningGroup.name}</span>}
         </h2>
         <button className="add-ship-button" onClick={handleAddShip}>
-          + Add Ship
+          Add<br />Ship
         </button>
       </div>
 
@@ -136,42 +120,19 @@ export default function ShipPoolManager({ miningGroup, onChange }: ShipPoolManag
               <div
                 key={ship.id}
                 className={`ship-card ${ship.isActive === false ? 'inactive' : 'active'}`}
-                onClick={() => handleToggleActive(ship.id)}
-                title={ship.isActive === false ? 'Click to activate ship' : 'Click to deactivate ship'}
               >
                 <div className="ship-card-header">
                   <div className="ship-info">
-                    <h3>
-                      {ship.name}
-                      <span className={`status-indicator ${ship.isActive === false ? 'off' : 'on'}`}>
-                        {ship.isActive === false ? ' [OFF]' : ' [ON]'}
-                      </span>
-                    </h3>
+                    <h3>{ship.name}</h3>
                     <p className="ship-type">{ship.ship.name}</p>
                   </div>
-                  <div className="ship-actions" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      className="edit-button"
-                      onClick={() => handleEditShip(ship)}
-                      title="Edit ship configuration"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="save-library-button"
-                      onClick={() => handleSaveShipToLibrary(ship)}
-                      title="Save to Ship Library"
-                    >
-                      💾
-                    </button>
-                    <button
-                      className="remove-button"
-                      onClick={() => handleRemoveShip(ship.id)}
-                      title="Remove ship from group"
-                    >
-                      ×
-                    </button>
-                  </div>
+                  <button
+                    className={`status-indicator ${ship.isActive === false ? 'off' : 'on'}`}
+                    onClick={() => handleToggleActive(ship.id)}
+                    title={ship.isActive === false ? 'Click to activate ship' : 'Click to deactivate ship'}
+                  >
+                    {ship.isActive === false ? 'OFF' : 'ON'}
+                  </button>
                 </div>
                 <div className="ship-card-body">
                   <div className="config-details">
@@ -198,6 +159,29 @@ export default function ShipPoolManager({ miningGroup, onChange }: ShipPoolManag
                     })()}
                   </div>
                 </div>
+                <div className="ship-actions" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    className="edit-button"
+                    onClick={() => handleEditShip(ship)}
+                    title="Edit ship configuration"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    className="save-library-button"
+                    onClick={() => handleSaveShipToLibrary(ship)}
+                    title="Save to Ship Library"
+                  >
+                    💾
+                  </button>
+                  <button
+                    className="remove-button"
+                    onClick={() => handleRemoveShip(ship.id)}
+                    title="Remove ship from group"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -213,13 +197,6 @@ export default function ShipPoolManager({ miningGroup, onChange }: ShipPoolManag
         onSave={handleSaveShip}
         editingShip={editingShip}
       />
-
-      <MiningGroupManager
-        currentMiningGroup={miningGroup}
-        onLoad={handleLoadMiningGroup}
-      />
-
-      <ShipPoolLibrary onLoadShip={handleLoadShipFromLibrary} />
     </div>
   );
 }
