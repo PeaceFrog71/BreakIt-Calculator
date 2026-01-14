@@ -1128,6 +1128,67 @@ button, .btn-primary, .btn-secondary {
   }
 }
 
+/* Tablet portrait - constrain mode toggle and content to fit between drawer tabs
+   NOTE: This query uses `pointer: coarse` for real touch devices.
+   A duplicate viewport-only query exists below for DevTools compatibility testing
+   (DevTools doesn't emulate touch pointer by default). Both are intentionally kept. */
+@media (pointer: coarse) and (min-width: 768px) and (orientation: portrait) {
+  .mining-config-tab {
+    padding-bottom: 4rem !important;
+  }
+
+  .mining-config-tab .mode-toggle {
+    width: calc(100vw - 9rem);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mining-config-tab .lasers-setup {
+    width: calc(100vw - 9rem);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Ko-fi inline link - match width with status indicator (single ship mode) */
+  .kofi-mobile-inline {
+    width: calc(100vw - 11rem) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Multi-ship mode: narrower to match status indicator */
+  .overview-tab:has(.multi-ship-mode) .kofi-mobile-inline {
+    width: 70vw !important;
+  }
+
+  /* Multi-ship mode: bottom padding for results tab */
+  .overview-tab:has(.multi-ship-mode) {
+    padding-bottom: 2rem !important;
+  }
+}
+
+/* DevTools-compatible: Tablet portrait Ko-fi link width
+   NOTE: Duplicate of above query but WITHOUT `pointer: coarse` so it works in
+   Chrome DevTools device emulation (which doesn't enable touch by default).
+   See CLAUDE.md "DevTools Testing" section for details. */
+@media (orientation: portrait) and (min-width: 768px) and (max-width: 1180px) {
+  .kofi-mobile-inline {
+    width: calc(100vw - 11rem) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Multi-ship mode: narrower to match status indicator */
+  .overview-tab:has(.multi-ship-mode) .kofi-mobile-inline {
+    width: 70vw !important;
+  }
+
+  /* Multi-ship mode: bottom padding for results tab */
+  .overview-tab:has(.multi-ship-mode) {
+    padding-bottom: 2rem !important;
+  }
+}
+
 /* Tablet landscape - constrain mode toggle and content to fit between drawer tabs */
 @media (pointer: coarse) and (min-width: 768px) and (orientation: landscape) {
   .overview-tab {

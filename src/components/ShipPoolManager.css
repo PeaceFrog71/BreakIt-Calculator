@@ -340,6 +340,15 @@
   }
 }
 
+/* Tablet portrait - constrain width to fit between drawer tabs */
+@media (pointer: coarse) and (min-width: 768px) and (orientation: portrait) {
+  .ship-pool-manager {
+    width: calc(100vw - 9rem); /* 4.5rem tabs on each side */
+    margin: 0 auto;
+    padding-bottom: 2rem;
+  }
+}
+
 /* Tablet landscape - constrain width to fit between drawer tabs */
 @media (pointer: coarse) and (min-width: 768px) and (orientation: landscape) {
   .ship-pool-manager {

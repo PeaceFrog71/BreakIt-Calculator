@@ -139,6 +139,23 @@
           display: none !important;
         }
       }
+      /* Tablet portrait: Ko-fi button on right, clickable (opens in new tab) */
+      @media (orientation: portrait) and (pointer: coarse) and (min-width: 768px) {
+        .floatingchat-container-wrap,
+        .floatingchat-container-wrap-mobi,
+        [class*="floatingchat-container-wrap"] {
+          display: none !important;  /* Hide widget on tablets */
+        }
+        .kofi-overlay-btn {
+          left: auto !important;
+          right: 10px !important;
+          transform: scale(0.7, 0.85) !important; /* narrower to match content */
+          transform-origin: right bottom !important;
+          pointer-events: auto !important;  /* Make clickable on tablets */
+          text-decoration: none;
+          cursor: pointer;
+        }
+      }
       /* Tablet landscape: Ko-fi button on right, clickable (opens in new tab) */
       @media (orientation: landscape) and (pointer: coarse) and (min-height: 600px) and (min-width: 768px) {
         .floatingchat-container-wrap,
