@@ -1128,7 +1128,10 @@ button, .btn-primary, .btn-secondary {
   }
 }
 
-/* Tablet portrait - constrain mode toggle and content to fit between drawer tabs */
+/* Tablet portrait - constrain mode toggle and content to fit between drawer tabs
+   NOTE: This query uses `pointer: coarse` for real touch devices.
+   A duplicate viewport-only query exists below for DevTools compatibility testing
+   (DevTools doesn't emulate touch pointer by default). Both are intentionally kept. */
 @media (pointer: coarse) and (min-width: 768px) and (orientation: portrait) {
   .mining-config-tab {
     padding-bottom: 4rem !important;
@@ -1164,7 +1167,10 @@ button, .btn-primary, .btn-secondary {
   }
 }
 
-/* DevTools-compatible: Tablet portrait Ko-fi link width */
+/* DevTools-compatible: Tablet portrait Ko-fi link width
+   NOTE: Duplicate of above query but WITHOUT `pointer: coarse` so it works in
+   Chrome DevTools device emulation (which doesn't enable touch by default).
+   See CLAUDE.md "DevTools Testing" section for details. */
 @media (orientation: portrait) and (min-width: 768px) and (max-width: 1180px) {
   .kofi-mobile-inline {
     width: calc(100vw - 11rem) !important;

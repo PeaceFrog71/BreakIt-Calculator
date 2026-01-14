@@ -500,9 +500,6 @@ export default function ResultDisplay({
     return "rock-huge";
   };
 
-  // All rocks centered at the same position (no vertical offset)
-  const rockVerticalOffset = 0;
-
   // Get ship icon based on ship type
   const getShipIcon = (shipId: string) => {
     switch (shipId) {
@@ -671,8 +668,7 @@ export default function ResultDisplay({
 
                 if (isPhone) {
                   // Phone: ship center at 15%, rock at center + 20vw
-                  // Ship dimensions in vw: prospector 22vw, mole 28vw, left 2
-                  //  18vw
+                  // Ship dimensions in vw: prospector 22vw, mole 28vw, golem 18vw
                   // LaserBeam uses 800px coords centered on container, so we convert:
                   // svgX = containerX - containerWidth/2 + 400
                   const containerWidth = window.innerWidth;
@@ -2232,8 +2228,6 @@ export default function ResultDisplay({
               hasExcessiveOvercharge ? "overcharge-warning" : ""
             } ${!miningGroup && !isMobile ? "desktop-single-ship" : ""}`}
             style={{
-              marginTop:
-                rockVerticalOffset > 0 ? `${rockVerticalOffset}px` : undefined,
               // Ships-on-left multi-ship mode: rock offset for phones + portrait tablets + vintage iPad landscape
               // Larger tablets in landscape use polar layout (rock stays centered)
               ...(miningGroup &&

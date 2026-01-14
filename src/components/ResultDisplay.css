@@ -1381,8 +1381,12 @@
   }
 }
 
-/* Tablet portrait: ship labels below and left-justified */
-/* Two selectors: one for real touch devices, one for DevTools viewport simulation */
+/* Tablet portrait: ship labels below and left-justified
+   Two selectors (comma-separated): one for real touch devices (`pointer: coarse`),
+   one for DevTools viewport simulation (viewport-only). Both needed because
+   DevTools doesn't emulate touch pointer by default. See CLAUDE.md for details.
+   NOTE: Some styles also appear in the DevTools-only query near EOF for additional
+   rock-display sizing that only applies in viewport-based detection. */
 @media (orientation: portrait) and (pointer: coarse) and (min-width: 768px),
        (orientation: portrait) and (min-width: 768px) and (max-width: 1180px) {
   /* Single ship mode: constrain entire results column to fit between drawer tabs */
@@ -1698,8 +1702,11 @@
   opacity: 0.6;
 }
 
-/* DevTools-compatible: Tablet portrait (768-1180px width, portrait orientation) */
-/* This uses only viewport conditions, no touch detection */
+/* DevTools-compatible: Tablet portrait (768-1180px width, portrait orientation)
+   This query contains ADDITIONAL styles for rock-display sizing that aren't in
+   the combined query above. Some rules (status-indicator, power-bar) are duplicated
+   intentionally because this viewport-only query provides fallback when `pointer: coarse`
+   doesn't match (e.g., DevTools testing). See CLAUDE.md "DevTools Testing" section. */
 @media (orientation: portrait) and (min-width: 768px) and (max-width: 1180px) {
   /* Target the parent rock-display to control overall dimensions */
   .rock-display:has(.multi-ship-mode) {
