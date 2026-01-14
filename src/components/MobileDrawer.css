@@ -582,6 +582,19 @@
   }
 }
 
+/* Tablet portrait - wider tabs for easier touch targets */
+@media (orientation: portrait) and (pointer: coarse) and (min-width: 768px) {
+  .mobile-drawer-tab.left,
+  .mobile-drawer-tab.right {
+    width: 4.5rem; /* 50% wider than phone portrait 3rem */
+  }
+
+  .mobile-drawer-tab.bottom {
+    width: 45vw !important; /* 10% narrower than phone portrait 50vw */
+    max-width: 45vw !important;
+  }
+}
+
 /* Landscape mode - smaller fonts for limited vertical space */
 @media (orientation: landscape) {
   /* Full height drawers in landscape */
